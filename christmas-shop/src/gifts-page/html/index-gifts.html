@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Christmas Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../dist/styles/style.css">
+  <link type="image/x-icon" href="../../../assets/images/snowflake.svg" rel="shortcut icon">
 </head>
 <body>
   <div class="wrapper">
@@ -11,25 +16,25 @@
     <header class="header">
       <a class="action logo" href="../../home-page/html/index-home.html">
         <div class="logo__image"><img class="logo__snowflake" src="../../../assets/images/snowflake.svg" alt="snowflake"></div>
-        <div class="logo__text">the gifts</div>
+        <div class="logo__text action-small">the gifts</div>
       </a>
 
       <nav class="navigation">
         <ul class="menu">
-          <li class="menu__item"><a class="action" href="#">gifts</a></li>
-          <li class="menu__item"><a class="action" href="../../home-page/html/index-home.html#about">about</a></li>
-          <li class="menu__item"><a class="action" href="../../home-page/html/index-home.html#best">best</a></li>
-          <li class="menu__item"><a class="action" href="#contacts">contacts</a></li>
+          <li class="menu__item"><div class="action action-small menu__link action__disabled" href="#">gifts</div></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="../../home-page/html/index-home.html#about">about</a></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="../../home-page/html/index-home.html#best">best</a></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="#contacts">contacts</a></li>
         </ul>
       </nav>
     </header>
 
     <main class="main">
       <section class="section gifts">
-        <h1 class="h1">Achieve health, harmony, and inner strength</h1>
+        <h1 class="h1 gifts__header">Achieve health, harmony, and inner strength</h1>
 
         <div class="tabs">
-          <div class="tabs-item action-small" data-tab="all">All</div>
+          <div class="tabs-item action-small tabs-item__disabled" data-tab="all">All</div>
           <div class="tabs-item action-small" data-tab="for work">for work</div>
           <div class="tabs-item action-small" data-tab="for health">for health</div>
           <div class="tabs-item action-small" data-tab="for harmony">for harmony</div>
@@ -179,8 +184,8 @@
             <img class="contacts-card__image" src="../../../assets/images/santa-claus.svg" alt="santa-claus">
           </div>
 
-          <div class="action-large">+375 (29) 111-22-33</div>
-          <h3 class="h3">Call Us</h3>
+          <div class="action-large contacts-card__text">+375 (29) 111-22-33</div>
+          <h3 class="h3 contacts-card__text">Call Us</h3>
         </a>
 
         <a class="action contacts-card" href="https://maps.app.goo.gl/JzDkhoUpyT4hBhWAA" target="_blank">
@@ -188,8 +193,8 @@
             <img class="contacts-card__image" src="../../../assets/images/christmas-tree.svg" alt="christmas-tree">
           </div>
 
-          <div class="action-large">Magic forest</div>
-          <h3 class="h3">meet us</h3>
+          <div class="action-large contacts-card__text">Magic forest</div>
+          <h3 class="h3 contacts-card__text">meet us</h3>
         </a>
 
         <a class="action contacts-card" href="mailto:gifts@magic.com">
@@ -197,8 +202,8 @@
             <img class="contacts-card__image" src="../../../assets/images/snake.svg" alt="snake">
           </div>
 
-          <div class="action-large">gifts@magic.com</div>
-          <h3 class="h3">write us</h3>
+          <div class="action-large contacts-card__text">gifts@magic.com</div>
+          <h3 class="h3 contacts-card__text">write us</h3>
         </a>
       </div>
 
@@ -241,7 +246,7 @@
         </div>
 
         <p class="prgf">© Copyright 2025, All Rights Reserved</p>
-        <a class="action caption" href="https://rs.school/" target="_blank">Made in Rolling Scopes School</a>
+        <a class="action caption modern__caption" href="https://rs.school/" target="_blank">Made in Rolling Scopes School</a>
       </div>
     </footer>
 

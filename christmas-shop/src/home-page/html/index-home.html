@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Christmas Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../dist/styles/style.css">
+  <link type="image/x-icon" href="../../../assets/images/snowflake.svg" rel="shortcut icon">
 </head>
 <body>
   <div class="wrapper">
@@ -11,15 +16,15 @@
     <header class="header">
       <div class="logo">
         <div class="logo__image"><img class="logo__snowflake" src="../../../assets/images/snowflake.svg" alt="snowflake"></div>
-        <div class="logo__text">the gifts</div>
+        <div class="logo__text action-small">the gifts</div>
       </div>
 
       <nav class="navigation">
         <ul class="menu">
-          <li class="menu__item"><a class="action" href="../../gifts-page/html/index-gifts.html">gifts</a></li>
-          <li class="menu__item"><a class="action" href="#about">about</a></li>
-          <li class="menu__item"><a class="action" href="#best">best</a></li>
-          <li class="menu__item"><a class="action" href="#contacts">contacts</a></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="../../gifts-page/html/index-gifts.html">gifts</a></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="#about">about</a></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="#best">best</a></li>
+          <li class="menu__item"><a class="action action-small menu__link" href="#contacts">contacts</a></li>
         </ul>
       </nav>
     </header>
@@ -28,8 +33,8 @@
       <section class="section hero">
         <div class="hero__block">
           <div class="caption">Merry Christmas</div>
-          <h1 class="h1">Gift yourself the magic of new possibilities</h1>
-          <a class="action link-btn action-small" href="../../gifts-page/html/index-gifts.html" target="_blank">Explore Magical Gifts</a>
+          <h1 class="h1 hero__h1">Gift yourself the magic of new possibilities</h1>
+          <a class="action link-btn action-small" href="../../gifts-page/html/index-gifts.html">Explore Magical Gifts</a>
           <div class="caption">and Happy New Year</div>
         </div>
       </section>
@@ -37,7 +42,7 @@
       <section class="section about" id="about">
         <div class="about__block">
           <div class="about__text-block">
-            <div class="caption">About</div>
+            <div class="caption about__caption">About</div>
             <h2 class="h2">Unleash your inner superhero!</h2>
             <p class="prgf">This New Year marks the beginning of your journey to inner harmony and new strengths. We offer unique gifts that will help you improve your life.</p>
           </div>
@@ -49,8 +54,10 @@
       </section>
 
       <section class="section slider">
-        <div class="caption">Become Happier!</div>
-        <h2 class="h2">in the new 2025</h2>
+        <div class="slider__header">
+          <div class="caption">Become Happier!</div>
+          <h2 class="h2">in the new 2025</h2>
+        </div>
         
         <div class="slider__block">
           <div class="slider__line">
@@ -67,24 +74,25 @@
 
         <div class="slider__buttons">
           <div class="buttons__block">
-            <div class="button-left">
+
+            <div class="button-left button__disable">
               <div class="arrow">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 7H13.5M13.5 7L7.5 1M13.5 7L7.5 13" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 12H18.5M18.5 12L12.5 6M18.5 12L12.5 18" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
             </div>
 
             <div class="button-right">
               <div class="arrow">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 7H13.5M13.5 7L7.5 1M13.5 7L7.5 13" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 12H18.5M18.5 12L12.5 6M18.5 12L12.5 18" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
             </div>
+
           </div>
         </div>
-
       </section>
 
       <section class="section best-gifts" id="best">
@@ -143,41 +151,46 @@
 
       <section class="section cta">
         <div class="cta__content">
-          <h2 class="h2">Ready to start your journey to a better version of yourself?</h2>
-          <a class="action link-btn action-small" href="../../gifts-page/html/index-gifts.html" target="_blank">Explore Magical Gifts</a>
-        </div>
 
-        <div class="timer__content">
-          <div class="caption">The New Year is Coming Soon...</div>
+          <div class="cta__header">
+            <h2 class="h2 cta__h2">Ready to start your journey to a better version of yourself?</h2>
+            <a class="action link-btn action-small" href="../../gifts-page/html/index-gifts.html">Explore Magical Gifts</a>
+          </div>
+  
+          <div class="timer__content">
+            <div class="caption">The New Year is Coming Soon...</div>
 
-          <div class="timer">
-            <div class="timer__cell">
-              <h2 class="h2 timer__num timer__days">47</h2>
-              <h4 class="h4 timer__text">days</h4>
-            </div>
-
-            <div class="separator"></div>
-
-            <div class="timer__cell">
-              <h2 class="h2 timer__num timer__hours">5</h2>
-              <h4 class="h4 timer__text">hours</h4>
-            </div>
-
-            <div class="separator"></div>
-
-            <div class="timer__cell">
-              <h2 class="h2 timer__num timer__minutes">34</h2>
-              <h4 class="h4 timer__text">minutes</h4>
-            </div>
-
-            <div class="separator"></div>
-
-            <div class="timer__cell">
-              <h2 class="h2 timer__num timer__seconds">12</h2>
-              <h4 class="h4 timer__text">seconds</h4>
+            <div class="timer">
+              <div class="timer__cell">
+                <h2 class="h2 timer__num timer__days">47</h2>
+                <h4 class="h4 timer__text">days</h4>
+              </div>
+  
+              <div class="separator"></div>
+  
+              <div class="timer__cell">
+                <h2 class="h2 timer__num timer__hours">5</h2>
+                <h4 class="h4 timer__text">hours</h4>
+              </div>
+  
+              <div class="separator"></div>
+  
+              <div class="timer__cell">
+                <h2 class="h2 timer__num timer__minutes">34</h2>
+                <h4 class="h4 timer__text">minutes</h4>
+              </div>
+  
+              <div class="separator"></div>
+  
+              <div class="timer__cell">
+                <h2 class="h2 timer__num timer__seconds">12</h2>
+                <h4 class="h4 timer__text">seconds</h4>
+              </div>
             </div>
           </div>
+
         </div>
+        
       </section>
     </main>
 
@@ -188,8 +201,8 @@
             <img class="contacts-card__image" src="../../../assets/images/santa-claus.svg" alt="santa-claus">
           </div>
 
-          <div class="action-large">+375 (29) 111-22-33</div>
-          <h3 class="h3">Call Us</h3>
+          <div class="action-large contacts-card__text">+375 (29) 111-22-33</div>
+          <h3 class="h3 contacts-card__text">Call Us</h3>
         </a>
 
         <a class="action contacts-card" href="https://maps.app.goo.gl/JzDkhoUpyT4hBhWAA" target="_blank">
@@ -197,8 +210,8 @@
             <img class="contacts-card__image" src="../../../assets/images/christmas-tree.svg" alt="christmas-tree">
           </div>
 
-          <div class="action-large">Magic forest</div>
-          <h3 class="h3">meet us</h3>
+          <div class="action-large contacts-card__text">Magic forest</div>
+          <h3 class="h3 contacts-card__text">meet us</h3>
         </a>
 
         <a class="action contacts-card" href="mailto:gifts@magic.com">
@@ -206,8 +219,8 @@
             <img class="contacts-card__image" src="../../../assets/images/snake.svg" alt="snake">
           </div>
 
-          <div class="action-large">gifts@magic.com</div>
-          <h3 class="h3">write us</h3>
+          <div class="action-large contacts-card__text">gifts@magic.com</div>
+          <h3 class="h3 contacts-card__text">write us</h3>
         </a>
       </div>
 
@@ -250,7 +263,7 @@
         </div>
 
         <p class="prgf">© Copyright 2025, All Rights Reserved</p>
-        <a class="action caption" href="https://rs.school/" target="_blank">Made in Rolling Scopes School</a>
+        <a class="action caption modern__caption" href="https://rs.school/" target="_blank">Made in Rolling Scopes School</a>
       </div>
     </footer>
   </div>

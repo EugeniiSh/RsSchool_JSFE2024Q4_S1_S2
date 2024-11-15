@@ -1,3 +1,4 @@
-@use 'common/style-common.scss';
-@use '../home-page/style/style-home.scss';
-@use '../gifts-page/style/style-gifts.scss';
+// @use 'prebundle.scss';
+@use '_style-common.scss';
+@use '_style-home.scss';
+@use '_style-gifts.scss';
