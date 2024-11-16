@@ -4,7 +4,7 @@
   },
   "scripts":
   {
-    "sasrun": "sass src/styles/styles-bundle.scss dist/styles/style.css",
-    "saswatch": "sass --watch src/styles/styles-bundle.scss dist/styles/style.css"
+    "sasrun": "sass src/styles/styles-bundle.scss distan/styles/style.css",
+    "saswatch": "sass --watch src/styles/styles-bundle.scss distan/styles/style.css"
   }
 }
