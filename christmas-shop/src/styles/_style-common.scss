@@ -1,0 +1,339 @@
+/*  +++ === _style-common.scss === +++   */
+
+:root
+{
+  --primary: #FF4646;
+  --primary10: #ff46460A;
+  --dark: #181C29;
+  --s-white: #FFFFFF;
+  --s-white40: #FFFFFF3A;
+  --s-white20: #FFFFFF1A;
+  --tag-purple: #4361FF;
+  --tag-pink: #FF43F7;
+  --tag-green: #06A44F;
+  --content-bgc: #ECF3F8;
+}
+
+html
+{
+  font-size: 1px;
+  scroll-behavior: smooth;
+}
+
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body
+{
+  color: var(--dark);
+}
+
+.h1
+{
+  font-family: Montserrat;
+  font-size: 32rem;
+  font-weight: 600;
+  line-height: 150%;
+  // letter-spacing: 18%;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.h2
+{
+  font-family: Montserrat;
+  font-size: 24rem;
+  font-weight: 600;
+  line-height: 152%;
+  // letter-spacing: 16%;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.h3
+{
+  font-family: Montserrat;
+  font-size: 16rem;
+  font-weight: 600;
+  line-height: 152%;
+  // letter-spacing: 8%;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.h4
+{
+  font-family: Montserrat;
+  font-size: 12rem;
+  font-weight: 600;
+  line-height: 130%;
+  // letter-spacing: 5%;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.prgf
+{
+  font-family: Montserrat;
+  font-size: 16rem;
+  font-weight: 400;
+  line-height: 148%;
+}
+
+.action
+{
+  display: block;
+
+  color: var(--dark);
+  text-decoration: none;
+}
+
+.action-large
+{
+  font-family: Montserrat;
+  font-size: 24rem;
+  font-weight: 600;
+  line-height: 152%;
+  // letter-spacing: 16%;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.action-small
+{
+  font-family: Montserrat;
+  font-size: 12rem;
+  font-weight: 600;
+  line-height: 130%;
+  // letter-spacing: 5%;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.caption
+{
+  font-family: Allura;
+  font-size: 24rem;
+  font-weight: 400;
+  line-height: 100%;
+  // letter-spacing: 5%;
+  letter-spacing: 0.05em;
+}
+
+.wrapper
+{
+  width: 1440rem;
+  margin: 0 auto;
+
+  overflow: hidden;
+}
+
+.header
+{
+  display: flex;
+  justify-content: space-between;
+  padding: 12rem 82rem;
+
+  background-color: var(--s-white);
+}
+
+.logo
+{
+  display: flex;
+  align-items: center;
+  gap: 8rem;
+  
+  padding: 8rem 20rem;
+}
+
+.menu
+{
+  display: flex;
+  gap: 8rem;
+}
+
+.menu__link
+{
+  padding: 12rem 20rem;
+
+  border-radius: 12rem;
+  transition: 0.3s;
+  
+  @media (hover: hover)
+  {
+    &:hover
+    {
+      color: var(--primary);
+      background-color: var(--primary10);
+    }
+  }
+}
+
+.main
+{
+  border-radius: 12rem;
+  background-color: var(--primary);
+}
+
+.section
+{
+  padding: 60rem 82rem;
+
+  background-image: url(../../assets/images/bg-snow.png);
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card
+{
+  border-radius: 20rem;
+  background-color: var(--content-bgc);
+
+  transition: 0.3s;
+  cursor: pointer;
+
+  @media (hover: hover)
+  {
+    &:hover .name
+    {
+      color: var(--primary);
+    }
+  }
+}
+
+.card__image-block
+{
+  width: 310rem;
+  height: 230rem;
+}
+
+.card__image
+{
+  width: 100%;
+  height: 100%;
+}
+
+.card__text-block
+{
+  height: 112rem;
+  width: 310rem;
+
+  padding: 20rem 0 0 20rem;
+
+  border-radius: 20rem;
+  background-color: var(--s-white);
+}
+
+.name
+{
+  margin-top: 8rem;
+
+  transition: 0.3s;
+}
+
+.work
+{
+  color: var(--tag-purple);
+}
+
+.health
+{
+  color: var(--tag-green);
+}
+
+.harmony
+{
+  color: var(--tag-pink);
+}
+
+.footer
+{
+  padding: 60rem 82rem;
+}
+
+.contacts
+{
+  display: flex;
+  gap: 12rem;
+}
+
+.contacts-card
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rem;
+
+  width: 100%;
+  padding: 20rem;
+
+  border-radius: 20rem;
+  background-color: var(--content-bgc);
+
+  @media (hover: hover)
+  {
+    &:hover .contacts-card__text
+    {
+      color: var(--primary);
+    }
+  }
+}
+
+.contacts-card__text
+{
+  transition: 0.3s;
+}
+
+.modern
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rem;
+
+  margin-top: 60rem;
+}
+
+.socials
+{
+  display: flex;  
+  gap: 12rem;
+}
+
+.socials__item
+{
+  padding: 8rem;
+
+  & svg path
+  {
+    transition: 0.3s;
+  }
+
+  @media (hover: hover)
+  {
+    &:hover svg path
+    {
+      stroke: var(--primary);
+    }
+  }
+}
+
+.modern__caption
+{
+  transition: 0.3s;
+
+  @media (hover: hover)
+  {
+    &:hover
+    {
+      color: var(--primary);
+    }
+  }
+}
+
+/*  --- === _style-common.scss === ---   */
