@@ -27,6 +27,11 @@
 
   text-align: center;
   color: var(--s-white);
+
+  @media (max-width: 400px)
+  {
+    width: auto;
+  }
 }
 
 .tabs
@@ -35,6 +40,11 @@
   gap: 8rem;
 
   color: var(--s-white);
+
+  @media (max-width: 560px)
+  {
+    gap: 0;
+  }
 }
 
 .tabs-item
@@ -52,6 +62,11 @@
       background-color: var(--s-white20);
     }
   }
+
+  @media (max-width: 560px)
+  {
+    padding: 12rem 8rem;
+  }
 }
 
 .tabs-item__disabled
@@ -64,6 +79,8 @@
 {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   gap: 12rem;
 }
 /*  --- === _style-gifts.scss === ---   */

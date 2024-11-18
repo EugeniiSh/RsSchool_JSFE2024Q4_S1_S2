@@ -114,6 +114,11 @@ body {
   padding: 12rem 82rem;
   background-color: var(--s-white);
 }
+@media (max-width: 1300px) {
+  .header {
+    padding: 12rem 8rem;
+  }
+}
 
 .logo {
   display: flex;
@@ -125,6 +130,19 @@ body {
 .menu {
   display: flex;
   gap: 8rem;
+}
+@media (max-width: 780px) {
+  .menu {
+    position: fixed;
+    top: 64rem;
+    left: 100%;
+    bottom: 0;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--s-white);
+  }
 }
 
 .menu__link {
@@ -139,17 +157,41 @@ body {
   }
 }
 
+.burger {
+  display: none;
+  padding: 16rem 10rem;
+}
+@media (max-width: 780px) {
+  .burger {
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+  }
+}
+
+.burger__first-line,
+.burger__second-line {
+  width: 20rem;
+  height: 1rem;
+  background-color: var(--dark);
+}
+
 .main {
-  border-radius: 12rem;
+  border-radius: 20rem;
   background-color: var(--primary);
 }
 
 .section {
   padding: 60rem 82rem;
   background-image: url(../../assets/images/bg-snow.png);
-  background-size: 100%;
+  background-size: 1440rem auto;
   background-position: center;
   background-repeat: no-repeat;
+}
+@media (max-width: 1300px) {
+  .section {
+    padding: 60rem 8rem;
+  }
 }
 
 .card {
@@ -202,10 +244,20 @@ body {
 .footer {
   padding: 60rem 82rem;
 }
+@media (max-width: 1300px) {
+  .footer {
+    padding: 60rem 8rem;
+  }
+}
 
 .contacts {
   display: flex;
   gap: 12rem;
+}
+@media (max-width: 1300px) {
+  .contacts {
+    flex-direction: column;
+  }
 }
 
 .contacts-card {
@@ -268,9 +320,19 @@ body {
   display: flex;
   justify-content: center;
   background-image: url(../../assets/images/bg-ball.png), url(../../assets/images/bg-snow.png);
-  background-size: 100%;
+  background-size: 1440rem auto;
   background-position: center;
   background-repeat: no-repeat;
+}
+@media (max-width: 1400px) {
+  .hero {
+    background-size: 1255rem, 1440rem auto;
+  }
+}
+@media (max-width: 700px) {
+  .hero {
+    background-size: 1360rem, 1440rem auto;
+  }
 }
 
 .hero__block {
@@ -304,9 +366,13 @@ body {
 .about__block {
   display: flex;
   justify-content: space-between;
-  padding-left: 60rem;
   border-radius: 20rem;
   background-color: var(--s-white);
+}
+@media (max-width: 570px) {
+  .about__block {
+    flex-direction: column;
+  }
 }
 
 .about__text-block {
@@ -315,15 +381,50 @@ body {
   justify-content: center;
   align-items: start;
   gap: 20rem;
-  width: 426rem;
+  width: 50%;
+  height: 528rem;
+}
+.about__text-block > :nth-child(1n) {
+  max-width: 76.17%;
+  padding-left: 60rem;
+}
+@media (max-width: 1400px) {
+  .about__text-block > :nth-child(1n) {
+    max-width: 84.04%;
+  }
+}
+@media (max-width: 570px) {
+  .about__text-block > :nth-child(1n) {
+    max-width: 100%;
+    padding: 0 20rem;
+  }
+}
+@media (max-width: 570px) {
+  .about__text-block {
+    gap: 20rem;
+    width: 100%;
+    height: auto;
+    padding: 60rem 0;
+  }
 }
 
 .about__caption {
   color: var(--primary);
 }
 
-.about__image {
+.about__image-block {
+  width: 50%;
+  height: 528rem;
   border-radius: 20rem;
+  background-image: url(../../assets/images/santa.png);
+  background-size: auto 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+@media (max-width: 570px) {
+  .about__image-block {
+    width: 100%;
+  }
 }
 
 .slider {
@@ -428,6 +529,13 @@ body {
   gap: 12rem;
   margin-top: 20rem;
 }
+@media (max-width: 1400px) {
+  .best-gifts__content {
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+}
 
 .cta {
   display: flex;
@@ -435,7 +543,7 @@ body {
   align-items: center;
   color: var(--s-white);
   background-image: url(../../assets/images/bg-forest.png), url(../../assets/images/bg-snow.png);
-  background-size: 100%;
+  background-size: auto 100%;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -510,11 +618,21 @@ body {
   text-align: center;
   color: var(--s-white);
 }
+@media (max-width: 400px) {
+  .gifts__header {
+    width: auto;
+  }
+}
 
 .tabs {
   display: flex;
   gap: 8rem;
   color: var(--s-white);
+}
+@media (max-width: 560px) {
+  .tabs {
+    gap: 0;
+  }
 }
 
 .tabs-item {
@@ -528,6 +646,11 @@ body {
     background-color: var(--s-white20);
   }
 }
+@media (max-width: 560px) {
+  .tabs-item {
+    padding: 12rem 8rem;
+  }
+}
 
 .tabs-item__disabled {
   cursor: auto;
@@ -537,6 +660,8 @@ body {
 .gifts-content {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   gap: 12rem;
 }
 

@@ -139,6 +139,11 @@ body
   padding: 12rem 82rem;
 
   background-color: var(--s-white);
+
+  @media (max-width: 1300px)
+  {
+    padding: 12rem 8rem;
+  }
 }
 
 .logo
@@ -154,6 +159,22 @@ body
 {
   display: flex;
   gap: 8rem;
+
+  @media (max-width: 780px)
+  {
+    position: fixed;
+    top: 64rem;
+    left: 100%;
+    bottom: 0;
+
+    width: 100%;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--s-white);
+  }
 }
 
 .menu__link
@@ -173,9 +194,31 @@ body
   }
 }
 
+.burger
+{
+  display: none;
+
+  padding: 16rem 10rem;
+
+  @media (max-width: 780px)
+  {
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+  }
+}
+
+.burger__first-line,
+.burger__second-line
+{
+  width: 20rem;
+  height: 1rem;
+  background-color: var(--dark);
+}
+
 .main
 {
-  border-radius: 12rem;
+  border-radius: 20rem;
   background-color: var(--primary);
 }
 
@@ -184,9 +227,14 @@ body
   padding: 60rem 82rem;
 
   background-image: url(../../assets/images/bg-snow.png);
-  background-size: 100%;
+  background-size: 1440rem auto;
   background-position: center;
   background-repeat: no-repeat;
+
+  @media (max-width: 1300px)
+  {
+    padding: 60rem 8rem;
+  }
 }
 
 .card
@@ -254,12 +302,22 @@ body
 .footer
 {
   padding: 60rem 82rem;
+
+  @media (max-width: 1300px)
+  {
+    padding: 60rem 8rem;
+  }
 }
 
 .contacts
 {
   display: flex;
   gap: 12rem;
+
+  @media (max-width: 1300px)
+  {
+    flex-direction: column;
+  }
 }
 
 .contacts-card
