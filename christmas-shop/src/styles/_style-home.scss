@@ -5,9 +5,19 @@
   justify-content: center;
 
   background-image: url(../../assets/images/bg-ball.png), url(../../assets/images/bg-snow.png);
-  background-size: 100%;
+  background-size: 1440rem auto;
   background-position: center;
   background-repeat: no-repeat;
+
+  @media (max-width: 1400px)
+  {
+    background-size: 1255rem, 1440rem auto;
+  }
+
+  @media (max-width: 700px)
+  {
+    background-size: 1360rem, 1440rem auto;
+  }
 }
 
 .hero__block
@@ -54,11 +64,14 @@
   display: flex;
   justify-content: space-between;
 
-  padding-left: 60rem;
-
   border-radius: 20rem;
 
   background-color: var(--s-white);
+
+  @media (max-width: 570px)
+  {
+    flex-direction: column;
+  }
 }
 
 .about__text-block
@@ -69,7 +82,34 @@
   align-items: start;
   gap: 20rem;
 
-  width: 426rem;
+  width: 50%;
+  height: 528rem;
+
+  & > :nth-child(1n)
+  {
+    max-width: 76.17%;
+    padding-left: 60rem;
+
+    @media (max-width: 1400px)
+    {
+      max-width: 84.04%;
+    }
+    @media (max-width: 570px)
+    {
+      max-width: 100%;
+      padding: 0 20rem;
+    }
+  }
+
+  @media (max-width: 570px)
+  {
+    gap: 20rem;
+
+    width: 100%;
+    height: auto;
+
+    padding: 60rem 0;
+  }
 }
 
 .about__caption
@@ -77,9 +117,22 @@
   color: var(--primary);
 }
 
-.about__image
+.about__image-block
 {
+  width: 50%;
+  height: 528rem;
+
   border-radius: 20rem;
+
+  background-image: url(../../assets/images/santa.png);
+  background-size: auto 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  @media (max-width: 570px)
+  {
+    width: 100%;
+  }
 }
 
 .slider
@@ -211,6 +264,13 @@
   gap: 12rem;
 
   margin-top: 20rem;
+
+  @media (max-width: 1400px)
+  {
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .cta
@@ -222,7 +282,8 @@
   color: var(--s-white);
 
   background-image: url(../../assets/images/bg-forest.png), url(../../assets/images/bg-snow.png);
-  background-size: 100%;
+  // background-size: 100%;
+  background-size: auto 100%;
   background-position: center;
   background-repeat: no-repeat;
 }
