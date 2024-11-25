@@ -25,25 +25,42 @@ export function getRandomGifts(data, amount)
   }
 
   const result = [];
-  randomNums.forEach((num) => result.push({ num: num, content: data[num] }));
+  randomNums.forEach((num) => result.push({ num: num, content: data[num], isRandom: true, }));
   return result;
 }
 
-export function createCard(data)
+export function createCard(data, index)
 {
-  const category = data.content.category.toLowerCase().split(' ');
+  let num;
+  let category;
+  let name;
+
+  if(data.isRandom)
+  {
+    num = data.num;
+    category = data.content.category;
+    name = data.content.name;
+  }
+  else
+  {
+    num = index;
+    category = data.category;
+    name = data.name;
+  }
+
+  const splitCategory = category.toLowerCase().split(' ');
 
   const card = document.createElement('div');
   card.classList.add('card');
-  card.dataset.item = data.num;
+  card.dataset.item = num;
   card.innerHTML = `
     <div class="card__image-block">
-      <img class="card__image" src="../../../assets/images/gift-${category[0]}-${category[1]}.png" alt="gift-${category[0]}-${category[1]}">
+      <img class="card__image" src="../../../assets/images/gift-${splitCategory[0]}-${splitCategory[1]}.png" alt="gift-${splitCategory[0]}-${splitCategory[1]}">
     </div>
 
     <div class="card__text-block">
-      <h4 class="h4 category ${category[1]}">${data.content.category}</h4>
-      <h3 class="h3 name">${data.content.name}</h3>
+      <h4 class="h4 category ${splitCategory[1]}">${category}</h4>
+      <h3 class="h3 name">${name}</h3>
     </div>
   `;
 
@@ -53,7 +70,91 @@ export function createCard(data)
 export function addCards(parentNode, cards, cardCreatorFunc)
 {
   parentNode.innerHTML = '';
-  parentNode.append(...cards.map((card) => cardCreatorFunc(card)));
+  parentNode.append(...cards.map((card, index) => cardCreatorFunc(card, index)));
+}
+
+export function showModalWindow(data, index)
+{
+  const newCard = createCard(data[index], index);
+
+  function addSnowflake(powerNum)
+  {
+    const power = +powerNum[1];
+    const wrapper = document.createElement('div');
+
+    for(let i = 1; i <= 5; i += 1)
+    {
+      const item = document.createElement('div');
+      item.classList.add('power__item');
+      if(i <= power) item.classList.add('power__item_active');
+
+      wrapper.append(item);
+    }
+
+    return wrapper.innerHTML;
+  }
+
+  const newDescription = document.createElement('div');
+  newDescription.classList.add('card_description');
+  newDescription.innerHTML = 
+  `
+    <p class="prgf description">${data[index].description}</p>
+
+    <div class="superpowers">
+      <div class="h4">Adds superpowers to:</div>
+      <div class="stats">
+        <div class="stats__name">
+          <p class="prgf">Live</p>
+          <p class="prgf">Create</p>
+          <p class="prgf">Love</p>
+          <p class="prgf">Dream</p>
+        </div>
+
+        <div class="stats__power">
+          <div class="power__name power__live">
+            <p class="prgf">${data[index].superpowers.live}</p>
+            <div class="power">${addSnowflake(data[index].superpowers.live)}</div>
+          </div>
+          <div class="power__name power__create">
+            <p class="prgf">${data[index].superpowers.create}</p>
+            <div class="power">${addSnowflake(data[index].superpowers.create)}</div>
+          </div>
+          <div class="power__name power__love">
+            <p class="prgf">${data[index].superpowers.love}</p>
+            <div class="power">${addSnowflake(data[index].superpowers.love)}</div>
+          </div>
+          <div class="power__name power__dream">
+            <p class="prgf">${data[index].superpowers.dream}</p>
+            <div class="power">${addSnowflake(data[index].superpowers.dream)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-close"></div>
+  `
+
+  newCard.querySelector('.card__text-block').append(newDescription);
+
+  const modalWindow = document.querySelector('.modal-window');
+
+  modalWindow.innerHTML = '';
+  modalWindow.append(newCard);
+  modalWindow.classList.add('modal-window_active');
+
+  modalWindow.addEventListener('click', function close(event)
+  {
+    const target = event.target;
+
+    if(target.closest('.button-close')
+    || !target.closest('.card'))
+    {
+      modalWindow.classList.remove('modal-window_active');
+      setTimeout(hiddenBodyScroll, 200);
+
+      modalWindow.removeEventListener('click', close);
+    }
+  });
 }
 
 export class BurgerMenu

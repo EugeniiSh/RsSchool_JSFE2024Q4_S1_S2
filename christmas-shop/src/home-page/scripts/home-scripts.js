@@ -6,6 +6,16 @@ const bestGifts = document.querySelector('.best-gifts__content');
 const randomGifts = mod.getRandomGifts(gifts, 4);
 mod.addCards(bestGifts, randomGifts, mod.createCard);
 
+bestGifts.addEventListener('click', (event) =>
+{
+  const target = event.target.closest('.card');
+
+  if(!target) return;
+
+  mod.showModalWindow(gifts, target.dataset.item);
+  mod.hiddenBodyScroll();
+});
+
 const burgerMenu = new mod.BurgerMenu('navigation', 'burger', mod.hiddenBodyScroll);
 
 const sliderBlock = document.querySelector('.slider__block');
@@ -22,3 +32,7 @@ const timerSeconds = document.querySelector('.timer__seconds');
 const trackDate = Date.UTC(2025, 0, 1);
 
 const reversTimer = new mod.ReversTimer(timerDays, timerHours, timerMinutes, timerSeconds, trackDate);
+
+
+// const modalWindow = document.querySelector('.modal-window');
+// modalWindow.append(mod.showModalWindow(gifts, 1));
