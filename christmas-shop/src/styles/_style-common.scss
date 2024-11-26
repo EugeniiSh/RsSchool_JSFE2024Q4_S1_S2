@@ -164,7 +164,7 @@ body
 {
   transition: 0.6s ease-out;
 
-  @media (max-width: 780px)
+  @media (max-width: 768px)
   {
     position: fixed;
     top: 63rem;
@@ -187,7 +187,7 @@ body
   display: flex;
   gap: 8rem;
 
-  @media (max-width: 780px)
+  @media (max-width: 768px)
   {
     flex-direction: column;
     justify-content: center;
@@ -239,7 +239,7 @@ body
     transform:translateY(-3.5px) rotate(-45deg);
   }
 
-  @media (max-width: 780px)
+  @media (max-width: 768px)
   {
     display: flex;
     flex-direction: column;

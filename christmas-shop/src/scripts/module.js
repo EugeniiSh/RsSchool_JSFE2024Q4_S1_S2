@@ -1,7 +1,16 @@
 export function hiddenBodyScroll()
 {
   const bodyWidth = document.body.clientWidth;
-  const isAdd = document.body.classList.toggle('scroll-hidden');
+  let isAdd;
+
+  if(bodyWidth > 768)
+  {
+    isAdd = document.body.classList.toggle('scroll-hidden', false);
+  }
+  else
+  {
+    isAdd = document.body.classList.toggle('scroll-hidden');
+  }
 
   if(isAdd)
   {
@@ -191,6 +200,20 @@ export class BurgerMenu
         hiddenScrollFuncA();
       }
     })
+
+    window.addEventListener('resize', () =>
+    {
+      const windowWidth = document.documentElement.clientWidth;
+
+      if(windowWidth > 768)
+      {
+        this.menu.classList.remove(`${menuA}_active`);
+        this.menu.querySelector('ul').classList.remove('action-large');
+        this.burger.classList.remove(`${burgerA}_active`);
+
+        hiddenScrollFuncA();
+      }
+    })
   }
 }
 
@@ -208,7 +231,7 @@ export class Slider
 
   getMaxClick()
   {
-    const bodyWidth = document.body.clientWidth;
+    const bodyWidth = window.innerWidth;
 
     if(bodyWidth > 767) return 3;
 

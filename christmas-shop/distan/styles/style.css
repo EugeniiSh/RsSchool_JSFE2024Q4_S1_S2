@@ -134,7 +134,7 @@ body {
 .navigation {
   transition: 0.6s ease-out;
 }
-@media (max-width: 780px) {
+@media (max-width: 768px) {
   .navigation {
     position: fixed;
     top: 63rem;
@@ -152,7 +152,7 @@ body {
   display: flex;
   gap: 8rem;
 }
-@media (max-width: 780px) {
+@media (max-width: 768px) {
   .menu {
     flex-direction: column;
     justify-content: center;
@@ -189,7 +189,7 @@ body {
 .burger_active .burger__second-line {
   transform: translateY(-3.5px) rotate(-45deg);
 }
-@media (max-width: 780px) {
+@media (max-width: 768px) {
   .burger {
     display: flex;
     flex-direction: column;
