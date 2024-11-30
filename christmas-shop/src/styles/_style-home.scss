@@ -155,9 +155,13 @@
 
 .slider__line
 {
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: 20rem;
+
+  transition: 0.3s ease-out;
 }
 
 .slider-item__text

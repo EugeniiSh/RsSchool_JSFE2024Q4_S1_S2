@@ -32,6 +32,11 @@ body
   color: var(--dark);
 }
 
+.scroll-hidden
+{
+  overflow: hidden;
+}
+
 .h1
 {
   font-family: Montserrat;
@@ -155,26 +160,48 @@ body
   padding: 8rem 20rem;
 }
 
-.menu
+.navigation
 {
-  display: flex;
-  gap: 8rem;
+  transition: 0.6s ease-out;
 
-  @media (max-width: 780px)
+  @media (max-width: 768px)
   {
     position: fixed;
-    top: 64rem;
+    top: 63rem;
     left: 100%;
     bottom: 0;
 
     width: 100%;
 
+    z-index: 109;
+
+    &_active
+    {
+      left: 0;
+    }
+  }
+}
+
+.menu
+{
+  display: flex;
+  gap: 8rem;
+
+  @media (max-width: 768px)
+  {
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
+    height: 100%;
+
     background-color: var(--s-white);
   }
+}
+
+.menu__item
+{
+  list-style: none;
 }
 
 .menu__link
@@ -200,7 +227,19 @@ body
 
   padding: 16rem 10rem;
 
-  @media (max-width: 780px)
+  cursor: pointer;
+
+  &_active .burger__first-line
+  {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  &_active .burger__second-line
+  {
+    transform:translateY(-3.5px) rotate(-45deg);
+  }
+
+  @media (max-width: 768px)
   {
     display: flex;
     flex-direction: column;
@@ -213,7 +252,10 @@ body
 {
   width: 20rem;
   height: 1rem;
+
   background-color: var(--dark);
+
+  transition: 0.3s ease-out;
 }
 
 .main
@@ -239,6 +281,8 @@ body
 
 .card
 {
+  position: relative;
+
   border-radius: 20rem;
   background-color: var(--content-bgc);
 
@@ -264,14 +308,16 @@ body
 {
   width: 100%;
   height: 100%;
+
+  object-fit: cover;
 }
 
 .card__text-block
 {
-  height: 112rem;
+  min-height: 112rem;
   width: 310rem;
 
-  padding: 20rem 0 0 20rem;
+  padding: 20rem;
 
   border-radius: 20rem;
   background-color: var(--s-white);
@@ -394,4 +440,137 @@ body
   }
 }
 
+.modal-window
+{
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(24, 28, 41, 0.8);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.3s;
+
+  & .card__image-block,
+  & .card__text-block
+  {
+    width: 400rem;
+  }
+
+  @media (max-width: 430px)
+  {
+    & .card__image-block,
+    & .card__text-block
+    {
+      width: 364rem;
+    }
+  }
+}
+
+.modal-window_active
+{
+  opacity: 1;
+  visibility: visible;
+  z-index: 110;
+}
+
+.card_description
+{
+  margin-top: 8rem;
+}
+
+.superpowers
+{
+  margin-top: 20rem;
+}
+
+.stats
+{
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 8rem;
+}
+
+.power__name
+{
+  display: flex;
+  gap: 12rem;
+}
+
+.power
+{
+  display: flex;
+  align-items: center;
+  gap: 8rem;
+}
+
+.power__item
+{
+  width: 16rem;
+  height: 16rem;
+
+  background-image: url(../../assets/images/snowflake.svg);
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0.1;
+}
+
+.power__item_active
+{
+  opacity: 1;
+}
+
+.button-close
+{
+  position: absolute;
+  top: 12rem;
+  right: 12rem;
+
+  width: 40rem;
+  height: 40rem;
+
+  @media (hover: hover)
+  {
+    &:hover
+    {
+      cursor: pointer;
+    }
+  }
+
+  &::before
+  {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 30rem;
+    height: 1.5rem;
+
+    background-color: var(--dark);
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  &::after
+  {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 30rem;
+    height: 1.5rem;
+
+    background-color: var(--dark);
+    transform: translateX(-50%) rotate(-45deg);
+  }
+}
 /*  --- === _style-common.scss === ---   */
