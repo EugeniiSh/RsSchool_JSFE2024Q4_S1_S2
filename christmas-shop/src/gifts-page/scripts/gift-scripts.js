@@ -79,7 +79,7 @@ buttonUp.addEventListener('click', (event) =>
   );
 });
 
-// console.log(gifts);
+
 
 
 
