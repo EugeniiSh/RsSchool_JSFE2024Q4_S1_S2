@@ -1,16 +1,15 @@
-export function hiddenBodyScroll()
+export function hiddenBodyScroll(remove = false)
 {
   const bodyWidth = document.body.clientWidth;
-  let isAdd;
 
-  if(bodyWidth > 768)
+  if(remove)
   {
-    isAdd = document.body.classList.toggle('scroll-hidden', false);
+    document.body.classList.remove('scroll-hidden');
+    document.body.style.paddingRight = '';
+    return;
   }
-  else
-  {
-    isAdd = document.body.classList.toggle('scroll-hidden');
-  }
+
+  const isAdd = document.body.classList.toggle('scroll-hidden');
 
   if(isAdd)
   {
@@ -209,9 +208,13 @@ export class BurgerMenu
       {
         this.menu.classList.remove(`${menuA}_active`);
         this.menu.querySelector('ul').classList.remove('action-large');
-        this.burger.classList.remove(`${burgerA}_active`);
 
-        hiddenScrollFuncA();
+        if(this.burger.classList.contains(`${burgerA}_active`))
+        {
+          hiddenScrollFuncA(true);
+        }
+
+        this.burger.classList.remove(`${burgerA}_active`);
       }
     })
   }
