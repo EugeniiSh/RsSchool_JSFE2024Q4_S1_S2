@@ -34,5 +34,3 @@ const trackDate = Date.UTC(2025, 0, 1);
 const reversTimer = new mod.ReversTimer(timerDays, timerHours, timerMinutes, timerSeconds, trackDate);
 
 
-// const modalWindow = document.querySelector('.modal-window');
-// modalWindow.append(mod.showModalWindow(gifts, 1));
