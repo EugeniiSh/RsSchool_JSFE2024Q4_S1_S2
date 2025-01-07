@@ -1,0 +1,27 @@
+:root
+{
+  --bodyBgc: rgb(235, 233, 229);
+}
+
+html
+{
+  font-size: 1px;
+}
+
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body
+{
+  width: 100%;
+
+  background-color: var(--bodyBgc);
+  background-image: url(../assets/images/SimonSays.jpg);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: auto;
+}

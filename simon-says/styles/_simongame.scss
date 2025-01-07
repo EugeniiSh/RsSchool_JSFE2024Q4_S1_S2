@@ -1,0 +1,60 @@
+:root
+{
+  --mainBgc: rgb(241, 241, 240);
+  --blackMid: rgb(56, 56, 56);
+}
+
+.simon-game-wrapper
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 1070rem;
+}
+
+.speech-baloon
+{
+  position: relative;
+
+  width: 500rem;
+  height: 300rem;
+
+  padding: 50rem 50rem;
+
+  font-size: 36rem;
+
+  border: 2rem solid var(--blackMid);
+  border-radius: 50%;
+  background-color: var(--mainBgc);
+}
+
+.simon-speech
+{
+  transform: translateX(-25%);
+
+  &::after
+  {
+    position: absolute;
+    right: 25rem;
+    bottom: 25rem;
+
+    content: '';
+    width: 50rem;
+    height: 70rem;
+
+    border-right: 2rem solid var(--blackMid);
+    border-bottom: 2rem solid var(--blackMid);
+    background-color: var(--mainBgc);
+
+    transform: skewX(20deg) rotate(23deg);
+  }
+
+  &__own,
+  &__word,
+  &__answer
+  {
+    text-align: center;
+  }
+}
