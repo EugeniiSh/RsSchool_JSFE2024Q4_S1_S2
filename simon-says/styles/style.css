@@ -31,7 +31,8 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  min-height: 1070rem;
+  height: 100vh;
+  max-height: 1070rem;
 }
 
 .speech-baloon {
@@ -40,7 +41,7 @@ body {
   height: 300rem;
   padding: 50rem 50rem;
   font-size: 36rem;
-  border: 2rem solid var(--blackMid);
+  border: 4rem solid var(--blackMid);
   border-radius: 50%;
   background-color: var(--mainBgc);
 }
@@ -50,18 +51,63 @@ body {
 }
 .simon-speech::after {
   position: absolute;
-  right: 25rem;
-  bottom: 25rem;
+  right: 23rem;
+  bottom: 23rem;
   content: "";
   width: 50rem;
   height: 70rem;
-  border-right: 2rem solid var(--blackMid);
-  border-bottom: 2rem solid var(--blackMid);
+  border-right: 4rem solid var(--blackMid);
+  border-bottom: 4rem solid var(--blackMid);
   background-color: var(--mainBgc);
   transform: skewX(20deg) rotate(23deg);
 }
 .simon-speech__own, .simon-speech__word, .simon-speech__answer {
   text-align: center;
+}
+
+.settings {
+  display: flex;
+  gap: 15rem;
+  transform: translateX(-40%);
+}
+
+.difficulty {
+  display: flex;
+  flex-direction: column;
+  gap: 15rem;
+  width: 200rem;
+  padding: 15rem;
+  border-radius: 15rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+}
+.difficulty__elem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 24rem;
+}
+.difficulty__label {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.difficulty__input {
+  transform: scale(2);
+  cursor: pointer;
+}
+
+.round-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15rem;
+  width: 200rem;
+  padding: 15rem;
+  border-radius: 15rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  font-size: 36rem;
+  text-transform: capitalize;
 }
 
 /*# sourceMappingURL=style.css.map */
