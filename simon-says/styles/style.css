@@ -24,14 +24,17 @@ body {
 :root {
   --mainBgc: rgb(241, 241, 240);
   --blackMid: rgb(56, 56, 56);
+  --playerColor: rgb(0, 0, 200);
+  --simonColor: rgb(150, 39, 254);
 }
 
 .shade {
-  position: fixed;
+  position: absolute;
   inset: 0;
 }
 
 .simon-game-wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -73,13 +76,27 @@ body {
 .simon-speech__own, .simon-speech__word, .simon-speech__answer {
   text-align: center;
 }
+.simon-speech__word {
+  font-size: 48rem;
+  font-weight: 700;
+  color: var(--simonColor);
+}
 
 .start-button {
   align-self: center;
   padding: 20rem;
   border-radius: 15rem;
-  border: 2rem solid var(--blackMid);
+  border: 2rem solid var(var(--simonColor));
+  box-shadow: 0 0 4rem 4rem var(--simonColor);
+  transition: 0.3s;
   cursor: pointer;
+}
+@media (hover: hover) {
+  .start-button:hover {
+    box-shadow: 0 0 1rem 4rem var(--simonColor);
+    background-color: var(--simonColor);
+    color: var(--mainBgc);
+  }
 }
 
 .settings {
@@ -89,6 +106,7 @@ body {
 }
 
 .difficulty {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8rem;
@@ -97,6 +115,7 @@ body {
   border-radius: 15rem;
   border: 2rem solid var(--blackMid);
   background-color: var(--mainBgc);
+  transition: 0.3s;
 }
 .difficulty__elem {
   display: flex;
@@ -129,6 +148,7 @@ body {
 }
 
 .keyboard {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -139,6 +159,7 @@ body {
   border: 2rem solid var(--blackMid);
   background-color: var(--mainBgc);
   transform: translate(-25%);
+  transition: 0.3s;
 }
 .keyboard__button {
   width: 40rem;
@@ -150,12 +171,17 @@ body {
   text-align: center;
   line-height: 1.5;
   cursor: pointer;
+  transition: 0.3s;
+}
+.keyboard__button:active {
+  background-color: aqua;
 }
 
 .player-speech {
   position: relative;
   align-self: flex-end;
   padding-right: 40rem;
+  transition: 0.3s;
 }
 .player-speech::after {
   position: absolute;
@@ -180,12 +206,17 @@ body {
   letter-spacing: 2rem;
   text-align: center;
   text-transform: uppercase;
+  color: var(--playerColor);
 }
 
 .player-buttons {
+  position: relative;
   display: flex;
   justify-content: space-between;
   margin-bottom: 10rem;
+}
+.player-buttons__help, .player-buttons__new-game {
+  position: relative;
 }
 
 .button-player {
@@ -197,12 +228,17 @@ body {
   font-size: 24rem;
   line-height: 1.4;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-.block-hidden {
+.block_action_hidden {
   position: absolute;
   opacity: 0;
   visibility: hidden;
+}
+
+.block_action_disable {
+  opacity: 0.6;
 }
 
 /*# sourceMappingURL=style.css.map */
