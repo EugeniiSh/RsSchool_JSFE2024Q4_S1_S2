@@ -171,10 +171,14 @@ body {
   text-align: center;
   line-height: 1.5;
   cursor: pointer;
-  transition: 0.3s;
 }
-.keyboard__button:active {
-  background-color: aqua;
+.keyboard__button_active_simon {
+  background-color: var(--simonColor);
+  color: var(--mainBgc);
+}
+.keyboard__button_active_player {
+  background-color: var(--playerColor);
+  color: var(--mainBgc);
 }
 
 .player-speech {
@@ -238,7 +242,7 @@ body {
 }
 
 .block_action_disable {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 /*# sourceMappingURL=style.css.map */

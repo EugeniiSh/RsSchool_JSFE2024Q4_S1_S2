@@ -5,6 +5,7 @@ class SimonSaysGame
     this.body = body;
     this.options = options,
     this.logs = {},
+    this.keyFlags = [];
     
     this.setup();
     this.addEvents();
@@ -145,7 +146,8 @@ class SimonSaysGame
       for(let i = startPosition; i < startPosition + letterCount; i += 1)
       {
         const letter = String.fromCodePoint(i);
-        this.createBlock({ tag: 'div', classes: ['keyboard__button'],  parent: parentNode, text: letter });
+        const button = this.createBlock({ tag: 'div', classes: ['keyboard__button'],  parent: parentNode, text: letter });
+        button.dataset[letter] = letter.toUpperCase();
       }
     })
 
@@ -160,46 +162,54 @@ class SimonSaysGame
   }
 
   //Отключение взаимодействия пользователя с определённым блоком.
-  disableUI(node)
+  disableUI(...nodes)
   {
-    node.append(this.shadeBlock.cloneNode());
-    node.addEventListener('keydown', this.disableEvent, true);
-
-    const logs = this.logs.disableUI;
-
-    if(logs)
+    nodes.forEach((node) =>
     {
-      logs.set(node, 'Disable');
-    }
-    else
-    {
-      this.logs.disableUI = new Map();
-      this.logs.disableUI.set(node, 'Disable');
-    }
+      node.append(this.shadeBlock.cloneNode());
+      node.addEventListener('keydown', this.disableEvent, true);
+      node.classList.add('block_action_disable');
+
+      const logs = this.logs.disableUI;
+
+      if(logs)
+      {
+        logs.set(node, 'Disable');
+      }
+      else
+      {
+        this.logs.disableUI = new Map();
+        this.logs.disableUI.set(node, 'Disable');
+      }
+    })
   }
 
   //Возврат взаимодействия пользователя с определённым блоком.
-  anableUI(node)
+  anableUI(...nodes)
   {
-    node.querySelector('.shade').remove();
-    node.removeEventListener('keydown', this.disableEvent, true);
-
-    const logs = this.logs.disableUI;
-
-    if(logs)
+    nodes.forEach((node) =>
     {
-      logs.set(node, 'Anable');
-    }
-    else
-    {
-      console.log('Logs not found');
-    }
+      node.querySelector('.shade').remove();
+      node.removeEventListener('keydown', this.disableEvent, true);
+      node.classList.remove('block_action_disable');
+
+      const logs = this.logs.disableUI;
+
+      if(logs)
+      {
+        logs.set(node, 'Anable');
+      }
+      else
+      {
+        console.log('Logs not found');
+      }
+    }) 
   }
 
   //Приветственное вступление
   greetings()
   {
-    this.disableUI(this.wrapper);
+    this.disableUI(this.difficultyBlock, this.keyboard, this.playerSpeechBaloon);
 
     this.lettertByLetterPrint
     (
@@ -222,13 +232,7 @@ class SimonSaysGame
   //Показ начального экрана с кнопкой Start
   showStartWindow()
   {
-    this.anableUI(this.wrapper);
-
-    this.keyboard.classList.add('block_action_disable');
-    this.disableUI(this.keyboard);
-    this.playerSpeechBaloon.classList.add('block_action_disable');
-    this.disableUI(this.playerSpeechBaloon);
-
+    this.anableUI(this.difficultyBlock);
     this.startGameButton.classList.remove('block_action_hidden');
   }
 
@@ -244,7 +248,7 @@ class SimonSaysGame
         word: this.options.gameSpeech, 
         node: this.simonSpeechOwn,
         gap: this.options.printGap,
-        callBack: this.getNewSymbols.bind(this),
+        callBack: this.simonPrint.bind(this, this.getNewSymbols(), this.options.simonPrintGap),
       }
     )
   }
@@ -274,7 +278,8 @@ class SimonSaysGame
   {
     const length = this.keyboardButtons.length;
     const nodsArr = [];
-    this.currentSymbols = [];
+    const symbolsArr = [];
+    this.currentSymbols = {};
 
     // console.log('Current round = ', this.currentRound);
     // console.log('Difficulty scale = ', this.options.difficultyScale);
@@ -292,23 +297,58 @@ class SimonSaysGame
       // console.log('Nods array width buttons = ', nodsArr);
       // console.log('Buttons node text content = ', nodsArr.at(-1).textContent);
 
-      this.currentSymbols.push(nodsArr.at(-1).textContent);
+      // this.currentSymbols.push(nodsArr.at(-1).textContent);
+      symbolsArr.push(nodsArr.at(-1).textContent);
     }
 
-    console.log('Current symbols = ', this.currentSymbols);
+    console.log('Current symbols = ', symbolsArr);
+
+    this.currentSymbols.nods = nodsArr;
+    this.currentSymbols.symbols = symbolsArr;
+
+    return nodsArr;
+  }
+
+  simonPrint(nodsArr, gap)
+  {
+    const printEvent = new CustomEvent
+    (
+      'print-event',
+      {
+        detail: 'simon',
+        bubbles: true,
+      }
+    );
+
+    nodsArr.forEach((node, index, arr) =>
+    {
+      setTimeout(() =>
+      {
+        node.dispatchEvent(printEvent);
+
+        if(index === arr.length - 1)
+        {
+          setTimeout(() =>
+          {
+            this.simonSpeechWord.textContent = '';
+            this.playerSpeechOwn.value = '';
+
+            this.anableUI(this.keyboard, this.playerSpeechBaloon);
+          }, gap);
+        }
+      }, gap * index);
+    });
   }
 
   addEvents()
   {
-    // this.simonSpeechBaloon.addEventListener('click', () => this.lettertByLetterPrint.call(this, this.options.greetings, this.simonSpeechOwn, this.options.printGap));
-    // this.disableUI();
+    //Запуск приветствия после полной загрузки страницы
+    window.addEventListener('DOMContentLoaded', () => setTimeout(() => this.greetings(), 0));
 
-    // window.addEventListener('DOMContentLoaded', () => setTimeout(() => this.greetings(), 0));
-
+    //Запуск первого раунда после нажатия кнопку "Старт"
     this.startGameButton.addEventListener('click', () =>
     {
       this.disableUI(this.difficultyBlock);
-      this.difficultyBlock.classList.add('block_action_disable');
       this.startGameButton.classList.add('block_action_hidden');
 
       this.lettertByLetterPrint
@@ -323,12 +363,112 @@ class SimonSaysGame
       );
     })
 
+    //Изменение сложности и вида экранной клавиатуры
     this.difficultyBlock.addEventListener('change', (event) =>
     {
       const newDifficulty = event.target.previousElementSibling.textContent;
       const difficultyValue = this.options.difficulty.find((item) => item.tag === newDifficulty);
       
-      this.createKeyboard(difficultyValue.value, this.keyboard)
+      this.createKeyboard(difficultyValue.value, this.keyboard);
+
+      const logs = this.logs.disableUI;
+      if(logs && logs.has(this.keyboard))
+      {
+        const value = logs.get(this.keyboard);
+        if(value === 'Disable') this.keyboard.append(this.shadeBlock.cloneNode());
+      }
+    });
+
+    //Обработка Custom события 'print-event' - определяет кто печатает символы
+    this.keyboard.addEventListener('print-event', (event) =>
+    {
+      const eventTarget = event.target.closest('.keyboard__button');
+      if(!eventTarget) return;
+
+      const caller = event.detail;
+      const printNode = caller === 'simon' ? this.simonSpeechWord : this.playerSpeechOwn;
+      const printField = printNode.tagName === 'INPUT' ? 'value' : 'textContent';
+
+      printNode[printField] += eventTarget.textContent;
+      eventTarget.classList.add(`keyboard__button_active_${caller}`);
+      if(printNode.tagName === 'INPUT') printNode.dispatchEvent(new Event('input'));
+
+      setTimeout(() =>
+      {
+        eventTarget.classList.remove(`keyboard__button_active_${caller}`);
+      }, caller === 'simon' ? this.options.simonPrintGap : this.options.printGap);
+    });
+
+    //Обработка стандартного 'click' на экранной клавиатуре и передача управления в 'print-event'
+    this.keyboard.addEventListener('click', (event) =>
+    {
+      const eventTarget = event.target.closest('.keyboard__button');
+      if(!eventTarget) return;
+
+      const printEvent = new CustomEvent
+      (
+        'print-event',
+        {
+          detail: 'player',
+          bubbles: true,
+        }
+      );
+
+      eventTarget.dispatchEvent(printEvent);
+    });
+
+    /////////////////////////////////////////
+    this.playerSpeechOwn.addEventListener('input', (event) =>
+    {
+      // console.log(event.target.value);
+      const currentValue = event.target.value.toUpperCase();
+      const currentSymbols = this.currentSymbols.symbols;
+
+      console.log('Current value = ', currentValue);
+      console.log('Current value last letter = ', currentValue.at(-1));
+      console.log('Current symbols = ', currentSymbols);
+
+      if(currentValue.at(-1) !== currentSymbols[currentValue.length - 1])
+      {
+        console.log('WRONG');
+      }
+
+    });
+
+    ////////////////////////////////////////
+    this.playerSpeechOwn.addEventListener('keydown', (event) =>
+    {
+      event.preventDefault();
+
+      const currenyKeydown = (event.code).at(-1).toUpperCase();
+
+      console.log('Current key down = ', currenyKeydown);
+     
+      const matchButton = this.keyboard.querySelector(`[data-${currenyKeydown}]`);
+
+      console.log('Match Button = ', matchButton);
+      console.log(this.keyboardButtons);
+
+      if(event.repeat || this.keyFlags.length > 0 || !matchButton)
+      {
+        return;
+      } 
+
+      this.keyFlags.push(currenyKeydown);
+      setTimeout(() => this.keyFlags.pop(), 300);
+
+      const printEvent = new CustomEvent
+      (
+        'print-event',
+        {
+          detail: 'player',
+          bubbles: true,
+        }
+      );
+
+      matchButton.dispatchEvent(printEvent);
+
+      console.log(event);
     });
   }
 }
@@ -343,8 +483,9 @@ const gameOptions =
   goodAnswer: '... Correct ...',
   badAnswer: '!!! WRONG !!!',
   countdown: '3210',
-  printGap: 100,
   countdownGap: 1000,
+  printGap: 100,
+  simonPrintGap: 600,
   difficulty: 
   [
     {

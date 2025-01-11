@@ -211,12 +211,30 @@
     line-height: 1.5;
 
     cursor: pointer;
-    transition: 0.3s;
+    // transition: 0.3s;
 
-    &:active
+    &_active_simon
     {
-      background-color: aqua;
+      background-color: var(--simonColor);
+      color: var(--mainBgc);
     }
+
+    &_active_player
+    {
+      background-color: var(--playerColor);
+      color: var(--mainBgc);
+    }
+
+    // &:active
+    // {
+    //   background-color: var(--playerColor);
+    //   color: var(--mainBgc);
+    // }
+
+    // &:focus
+    // {
+    //   background-color: rgb(77, 255, 0);
+    // }
   }
 }
 
@@ -306,5 +324,5 @@
 
 .block_action_disable
 {
-  opacity: 0.6;
+  opacity: 0.7;
 }
