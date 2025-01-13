@@ -24,4 +24,14 @@ body
   background-position: center top;
   background-repeat: no-repeat;
   background-size: auto;
+
+  @media(max-width: 768px)
+  {
+    background-size: 1526rem 861rem;
+  }
+
+  @media(max-width: 540px)
+  {
+    background-size: 1063rem 600rem;
+  }
 }
