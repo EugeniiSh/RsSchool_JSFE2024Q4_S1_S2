@@ -1,0 +1,2 @@
+(()=>{"use strict";var e,t;null===(e=document.querySelector("body"))||void 0===e||e.append(((t=document.createElement("div")).classList.add("oHMVwAHO"),t),function(){var e=document.createElement("div");return e.classList.add("bnwrIngn"),e}())})();
+//# sourceMappingURL=main.e9e4d5ede2b2182fc496.js.map
