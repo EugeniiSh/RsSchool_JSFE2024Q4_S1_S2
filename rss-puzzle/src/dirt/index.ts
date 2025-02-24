@@ -1,8 +1,36 @@
-import test1 from './components/test1/test1';
-import {  test2} from './components/test2/test1';
+import * as common from './components/common/common';
+import loginForm from './components/login-form/loginForm'
 
-// const abc ='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
-document.querySelector('body')?.append(test1(), test2());
 
-// console.log('tut');
+
+class PuzzleGame
+{
+  constructor
+  (
+    private game: common.Component,
+  ){}
+
+  render(root: HTMLElement | null) 
+  {
+    if(root !== null)
+    {
+      root.append(this.game.getNode());
+    }
+    else
+    {
+      throw Error(`Cannot render. Root is = ${root}`);
+    }
+    
+  }   
+}
+
+
+
+
+const body = document.querySelector('body');
+const game = new PuzzleGame(loginForm);
+game.render(body);
+
+
+
