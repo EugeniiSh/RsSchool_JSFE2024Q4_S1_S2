@@ -1,8 +1,8 @@
-import * as common from './components/common/common';
+import { Component } from './modules/layout/common/component';
 import loginForm from './components/login-form/loginForm';
 
 class PuzzleGame {
-  constructor(private game: common.Component) {}
+  constructor(private game: Component) {}
 
   render(root: HTMLElement | null) {
     if (root !== null) {
