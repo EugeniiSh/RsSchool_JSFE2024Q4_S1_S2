@@ -1,5 +1,6 @@
+import './style.module.scss';
 import { Component } from './modules/layout/common/component';
-import loginForm from './components/login-form/loginForm';
+import gameHandler from './components/game-wrapper/game-wrapper';
 
 class PuzzleGame {
   constructor(private game: Component) {}
@@ -14,5 +15,5 @@ class PuzzleGame {
 }
 
 const body = document.querySelector('body');
-const game = new PuzzleGame(loginForm);
+const game = new PuzzleGame(gameHandler);
 game.render(body);

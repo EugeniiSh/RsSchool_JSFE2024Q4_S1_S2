@@ -1,17 +1,24 @@
 import * as style from './loginButton-style.module.scss';
 import {
-  Input,
-  IInputOptions,
-} from '../../../../modules/layout/login-form/input';
+  InputButton,
+  IInputButtonOptions,
+} from '../../../../modules/layout/login-form/input/input-button';
 
-const buttonInputOptions: IInputOptions = {
+function loginButtonClickListener(event: Event) {
+  console.log('lofin button event = ', event);
+}
+
+function loginButtonChangeStatus(status: boolean) {
+  console.log('login bautton status = ', status);
+}
+
+const buttonInputOptions: IInputButtonOptions = {
   className: [style.button],
   text: '',
-  attributes: [
-    ['type', 'button'],
-    ['value', 'Login'],
-  ],
+  attributes: [['value', 'Login']],
+  clickListener: loginButtonClickListener,
+  changeStatus: loginButtonChangeStatus,
 };
 
-const loginButton = new Input(buttonInputOptions);
+const loginButton = new InputButton(buttonInputOptions);
 export default loginButton;

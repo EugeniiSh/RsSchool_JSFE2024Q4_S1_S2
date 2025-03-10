@@ -58,10 +58,10 @@ export function buildPlugins(options: BuildOptions): Configuration['plugins']
               from: path.resolve(options.paths.src, 'dirt'), 
               to: path.resolve(options.paths.src, 'clean') 
             },
-            { 
-              from: path.resolve(options.paths.public, 'fonts'), 
-              to: path.resolve(options.paths.output, 'fonts') 
-            },
+            // { 
+            //   from: path.resolve(options.paths.public, 'fonts'), 
+            //   to: path.resolve(options.paths.output, 'fonts') 
+            // },
           ],
         }
       )

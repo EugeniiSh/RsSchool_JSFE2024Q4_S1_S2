@@ -1,11 +1,16 @@
 import * as style from './loginForm-style.module.scss';
-import { Form } from '../../modules/layout/login-form/form';
+import { Form, IFormOptions } from '../../modules/layout/login-form/form';
 
-import firstName from './fields/firstName';
+import { firstName } from './fields/firstName';
 import lastName from './fields/lastName';
 import loginButton from './buttons/login/loginButton';
 
-const formOptions =
+function loginFormInputListener(event: Event)
+{
+  console.log('login form event = ', event)
+} 
+
+const formOptions: IFormOptions =
 {
   className: [style.form],
   text: '',
@@ -14,7 +19,15 @@ const formOptions =
     firstName,
     lastName,
     loginButton,
-  ]
+  ],
+  attributes: [['action', '#']],
+  fields:
+  [
+    firstName,
+    lastName
+  ],
+  submit: loginButton,
+  inputListener: loginFormInputListener
 }
 
 const loginForm = new Form(formOptions);

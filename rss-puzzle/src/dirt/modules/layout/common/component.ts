@@ -126,9 +126,9 @@ export class Component {
    * Toggles the presence of a CSS class on the component's HTML node.
    * @param {string} className - The class name to toggle.
    */
-  toggleClass(className: string) 
+  toggleClass(className: string, force: boolean | undefined = undefined): boolean
   {
-    this.node.classList.toggle(className);
+    return this.node.classList.toggle(className, force);
   }
 
   /**
@@ -137,7 +137,7 @@ export class Component {
    * @param {EventListener} listener - The callback function to be executed when the event occurs.
    * @param {boolean|AddEventListenerOptions} [options=false] - An options object specifying characteristics of the event listener.
    */
-  addListener(event: string, listener: () => void, options = false) 
+  addListener(event: string, listener: EventListener, options = false) 
   {
     this.node.addEventListener(event, listener, options);
   }
@@ -148,7 +148,7 @@ export class Component {
    * @param {EventListener} listener - The listener function to be removed.
    * @param {boolean|EventListenerOptions} [options=false] - Options that were used when adding the listener.
    */
-  removeListener(event: string, listener: () => void, options = false) 
+  removeListener(event: string, listener: EventListener, options = false) 
   {
     this.node.removeEventListener(event, listener, options);
   }
