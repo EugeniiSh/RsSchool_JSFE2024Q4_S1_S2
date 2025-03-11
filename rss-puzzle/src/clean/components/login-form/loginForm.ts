@@ -1,4 +1,5 @@
 import * as style from './loginForm-style.module.scss';
+import * as comp from '../../modules/layout/common/component';
 import { Form, IFormOptions } from '../../modules/layout/login-form/form';
 
 import { firstName } from './fields/firstName';
@@ -20,4 +21,28 @@ const formOptions: IFormOptions = {
 };
 
 const loginForm = new Form(formOptions);
-export default loginForm;
+
+const loginFormHeader = new comp.Component({
+  tag: 'h3',
+  className: [style.header],
+  text: 'visitor card',
+});
+
+const loginFormRequired = new comp.Component({
+  tag: 'div',
+  className: [style.required],
+  text: '* - required',
+});
+
+const loginFormWrapper = new comp.Component(
+  {
+    tag: 'div',
+    className: [style.wrapper],
+    text: '',
+  },
+  loginFormHeader,
+  loginForm,
+  loginFormRequired,
+);
+
+export default loginFormWrapper;

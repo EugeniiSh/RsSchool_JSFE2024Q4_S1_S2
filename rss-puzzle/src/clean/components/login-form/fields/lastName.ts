@@ -13,7 +13,7 @@ import {
 } from './firstName';
 
 const inputLastnameId = 'lname';
-const lastnameLabel = 'Last name';
+const lastnameLabel = 'last name *';
 
 const lastNamelabelOptions = {
   className: [style.lable],
@@ -43,7 +43,7 @@ const lastNameInputOptions: IInputTextOptions = {
 };
 
 const FieldFormLastNameOptions = {
-  className: [style['wrapper__last-name']],
+  className: [style.wrapper],
   text: '',
   items: [new Label(lastNamelabelOptions), new InputText(lastNameInputOptions)],
   inputListener: fieldFirstNameInputListener,

@@ -1,27 +1,25 @@
-.input {
-  background-color: aquamarine;
-}
-
-.lable {
-  background-color: rgb(241, 241, 160);
-}
-
 .wrapper {
-  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
-  &__first-name {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.lable::first-letter {
+  text-transform: uppercase;
+}
 
-    width: auto;
-  }
+.input {
+  padding-top: 0.5em;
 
-  &__last-name {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  font-size: 0.66em;
+  font-family: 'Special Elite', serif;
+  font-weight: 400;
+  font-style: italic;
+  text-align: center;
 
-    width: auto;
-  }
+  border: 0;
+  border-bottom: 1rem solid black;
+  background-color: transparent;
+  outline: none;
 }

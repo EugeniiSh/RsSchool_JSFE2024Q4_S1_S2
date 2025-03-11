@@ -17,7 +17,7 @@ const buttonInputOptions: IInputButtonOptions =
   text: '',
   attributes: 
   [
-    ['value', 'Login'],
+    ['value', 'login'],
   ],
   clickListener: loginButtonClickListener,
   changeStatus: loginButtonChangeStatus,

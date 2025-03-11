@@ -1,32 +1,29 @@
-.input
-{
-  background-color: aquamarine; 
-}
-
-.lable
-{
-  background-color: rgb(241, 241, 160);
-}
-
 .wrapper
 {
-  width: auto;
-
-  &__first-name
-  {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    width: auto;
-  }
-
-  &__last-name
-  {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    width: auto;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
+.lable::first-letter
+{
+  text-transform: uppercase;
+}
+
+.input
+{
+  padding-top: 0.5em;
+
+  font-size: 0.66em;
+  font-family: "Special Elite", serif;
+  font-weight: 400;
+  font-style: italic;
+  text-align: center;
+
+  border: 0;
+  border-bottom: 1rem solid black;
+  background-color: transparent;
+  outline: none; 
+}
+

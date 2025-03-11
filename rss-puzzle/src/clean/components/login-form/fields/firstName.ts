@@ -8,7 +8,7 @@ import {
 } from '../../../modules/layout/login-form/input/input-text';
 
 const inputFirstNameId = 'fname';
-const firstNameLabel = 'First name';
+const firstNameLabel = 'first name *';
 
 const firstNamelabelOptions = {
   className: [style.lable],
@@ -73,7 +73,7 @@ const firsNameInputOptions: IInputTextOptions = {
 };
 
 const FieldFormFirstNameOptions = {
-  className: [style.wrapper, style['wrapper__first-name']],
+  className: [style.wrapper, style.wrapper],
   text: '',
   items: [
     new Label(firstNamelabelOptions),

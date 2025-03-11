@@ -15,7 +15,7 @@ function loginButtonChangeStatus(status: boolean) {
 const buttonInputOptions: IInputButtonOptions = {
   className: [style.button],
   text: '',
-  attributes: [['value', 'Login']],
+  attributes: [['value', 'login']],
   clickListener: loginButtonClickListener,
   changeStatus: loginButtonChangeStatus,
 };
