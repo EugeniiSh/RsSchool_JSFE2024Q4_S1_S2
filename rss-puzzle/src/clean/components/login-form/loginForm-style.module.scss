@@ -1,0 +1,52 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16rem;
+
+  width: var(--login-form-width);
+
+  padding: 32rem 0;
+
+  font-size: 24rem;
+  // font-size: min(24rem, calc());
+  font-family: 'Special Elite', serif;
+  font-weight: 400;
+  font-style: normal;
+
+  background-image: url(../../../assets/images/post-card.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  box-shadow: inset 0rem 0rem 5rem 2rem rgb(140, 93, 65);
+
+  transform-style: preserve-3d;
+  transform: rotateX(5deg);
+}
+
+.header {
+  font-size: 1.2em;
+  text-transform: capitalize;
+  text-align: center;
+
+  border-bottom: 1rem solid black;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32rem;
+
+  padding: 20rem;
+
+  border: 1rem dotted black;
+}
+
+.required {
+  align-self: end;
+  padding-right: 10%;
+  font-size: 0.66em;
+}

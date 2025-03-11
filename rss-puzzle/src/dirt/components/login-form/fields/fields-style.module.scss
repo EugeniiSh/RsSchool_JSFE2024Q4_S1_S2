@@ -1,0 +1,29 @@
+.wrapper
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lable::first-letter
+{
+  text-transform: uppercase;
+}
+
+.input
+{
+  padding-top: 0.5em;
+
+  font-size: 0.66em;
+  font-family: "Special Elite", serif;
+  font-weight: 400;
+  font-style: italic;
+  text-align: center;
+
+  border: 0;
+  border-bottom: 1rem solid black;
+  background-color: transparent;
+  outline: none; 
+}
+
