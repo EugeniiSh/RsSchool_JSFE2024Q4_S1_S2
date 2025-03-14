@@ -26,6 +26,12 @@ export interface IFormOptions
 
 export class Form extends comp.Component
 {
+  private isValid = false;
+
+  private fields: FieldForm[];
+
+  private submit: InputButton;
+
   private onInput: EventListener;
 
   constructor
@@ -35,17 +41,30 @@ export class Form extends comp.Component
       text, 
       items, 
       attributes,
-      // fields,
-      // submit, 
+      fields,
+      submit, 
       inputListener
     }: IFormOptions
   )
   {
     super({ tag: 'form', className, text });
     this.appendChildren(items);
+    this.fields = fields;
+    this.submit = submit;
     attributes.forEach(([ attribut, value ]) => this.setAttribute(attribut, value), this);
-    this.onInput = inputListener;
+    this.onInput = inputListener.bind(this);
     this.addListener('input', this.onInput);
+  }
+
+  protected setFormValid()
+  {
+    this.isValid = this.fields.every((field) => field.isFieldValid());
+    this.submit.changeStatus(this.isValid);
+  }
+
+  public isFormValid(): boolean 
+  { 
+    return this.isValid; 
   }
 
   destroy() 

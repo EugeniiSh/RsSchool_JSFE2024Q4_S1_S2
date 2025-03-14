@@ -1,13 +1,17 @@
 import * as style from './loginForm-style.module.scss';
 import * as comp from '../../modules/layout/common/component';
 import { Form, IFormOptions } from '../../modules/layout/login-form/form';
+import {
+  IWrapperForm,
+  WrapperForm,
+} from '../../modules/layout/login-form/wrapper-form';
 
 import { firstName } from './fields/firstName';
-import lastName from './fields/lastName';
+import { lastName } from './fields/lastName';
 import loginButton from './buttons/login/loginButton';
 
-function loginFormInputListener(event: Event) {
-  console.log('login form event = ', event);
+function loginFormInputListener(this: Form) {
+  this.setFormValid();
 }
 
 const formOptions: IFormOptions = {
@@ -34,15 +38,17 @@ const loginFormRequired = new comp.Component({
   text: '* - required',
 });
 
-const loginFormWrapper = new comp.Component(
-  {
-    tag: 'div',
-    className: [style.wrapper],
-    text: '',
-  },
-  loginFormHeader,
-  loginForm,
-  loginFormRequired,
-);
+function wrapperFormLoginListener(this: WrapperForm) {
+  console.log('catch login event on WrapperForm');
+}
 
-export default loginFormWrapper;
+const WrapperFormOptions: IWrapperForm = {
+  className: [style.wrapper],
+  text: '',
+  items: [loginFormHeader, loginForm, loginFormRequired],
+  loginListener: wrapperFormLoginListener,
+};
+
+const wrapperFormElem = new WrapperForm(WrapperFormOptions);
+
+export default wrapperFormElem;

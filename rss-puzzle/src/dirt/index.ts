@@ -1,6 +1,6 @@
 import './style.module.scss';
 import { Component } from './modules/layout/common/component';
-import gameHandler from './components/game-wrapper/game-wrapper';
+import gameHandler from './components/game-handler/game-handler';
 
 
 

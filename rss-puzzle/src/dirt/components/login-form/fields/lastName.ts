@@ -1,8 +1,15 @@
 import * as style from './fields-style.module.scss';
 import { FieldForm } from '../../../modules/layout/login-form/field-form';
 import { Label } from '../../../modules/layout/login-form/label';
-import { InputText, IInputTextOptions, TInputTextFieldsCheckers } from '../../../modules/layout/login-form/input/input-text';
-import { firstNamefieldCheckers, firstNameInputListener, fieldFirstNameInputListener } from './firstName';
+import { InputText, IInputTextOptions } from '../../../modules/layout/login-form/input/input-text';
+import { lastNamefieldCheckers, lastNameHintsBlock } from './field-hints/lastNameHints';
+import 
+{ 
+  firstNameInputListener, 
+  fieldFirstNameInputListener,
+  fieldCheckersName
+} from './firstName';
+
 
 const inputLastnameId = 'lname';
 const lastnameLabel = 'last name *';
@@ -14,15 +21,9 @@ const lastNamelabelOptions =
   forAttribute: inputLastnameId,
 }
 
-const lastNamefieldCheckers: TInputTextFieldsCheckers = new Map();
-lastNamefieldCheckers.set('size', (value: string) => value.length >= 4 );
-firstNamefieldCheckers.forEach((value, key) =>
-{
-  if(key !== 'size')
-  {
-    lastNamefieldCheckers.set(key, value);
-  }
-})
+
+
+
 
 const lastNameInputOptions: IInputTextOptions =
 {
@@ -39,6 +40,12 @@ const lastNameInputOptions: IInputTextOptions =
   inputListener: firstNameInputListener
 }
 
+const lastNameInput = new InputText(lastNameInputOptions);
+
+
+
+
+
 const FieldFormLastNameOptions =
 {
   className: [style.wrapper],
@@ -46,10 +53,14 @@ const FieldFormLastNameOptions =
   items: 
   [
     new Label(lastNamelabelOptions),
-    new InputText(lastNameInputOptions),
+    lastNameInput,
+    lastNameHintsBlock
   ],
+  validateItem: lastNameInput,
+  checkFieldFor: fieldCheckersName,
+  hintsBlock: lastNameHintsBlock,
   inputListener: fieldFirstNameInputListener
 }
 
 const lastName = new FieldForm(FieldFormLastNameOptions);
-export default lastName;
+export { lastName, lastNamefieldCheckers };
