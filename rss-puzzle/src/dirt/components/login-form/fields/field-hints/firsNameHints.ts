@@ -70,7 +70,7 @@ function setStateHintFieldComponent(this: HintField, state: boolean)
 
 firstNamefieldCheckers.forEach((value, checkFor) =>
 {
-  const firstHint = new Component({ tag: 'div', className: [style.tick], text: '' });
+  const firstHint = new Component({ tag: 'div', className: [style.tick, style.error], text: '' });
   const secondHint = new Component({ tag: 'div', className: [style.string], text: value.text });
   const hintField = new HintField
   (

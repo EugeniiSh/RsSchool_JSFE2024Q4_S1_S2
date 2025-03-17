@@ -1,4 +1,9 @@
 .wrapper {
+  position: fixed;
+  top: minmax(10vh, 20vh);
+  left: 10vw;
+  // left: var(--current-login-form-left);
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -6,6 +11,7 @@
   gap: 16rem;
 
   width: var(--login-form-width);
+  min-width: 240rem;
 
   padding: 32rem 0;
 
@@ -26,7 +32,7 @@
 }
 
 .header {
-  font-size: 1.2em;
+  // font-size: 1.2em;
   text-transform: capitalize;
   text-align: center;
 

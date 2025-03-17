@@ -29,7 +29,7 @@ const hintFieldsMap: Map<string, HintField> = new Map();
 lastNamefieldCheckers.forEach((value, checkFor) => {
   const firstHint = new Component({
     tag: 'div',
-    className: [style.tick],
+    className: [style.tick, style.error],
     text: '',
   });
   const secondHint = new Component({
