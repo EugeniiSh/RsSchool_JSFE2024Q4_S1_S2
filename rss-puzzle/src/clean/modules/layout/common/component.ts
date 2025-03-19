@@ -53,6 +53,11 @@ export class Component {
     this.node.append(child.getNode());
   }
 
+  protected prepend(child: Component) {
+    this.children.unshift(child);
+    this.node.prepend(child.getNode());
+  }
+
   /**
    * Appends an array of child components to the current component.
    * @param {Array<Component>} children - Array of child components to be appended.
@@ -60,6 +65,12 @@ export class Component {
   appendChildren(children: Component[]) {
     children.forEach((el) => {
       this.append(el);
+    });
+  }
+
+  protected prependChildren(children: Component[]) {
+    children.forEach((el) => {
+      this.prepend(el);
     });
   }
 

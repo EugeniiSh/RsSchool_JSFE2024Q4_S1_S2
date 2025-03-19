@@ -1,0 +1,31 @@
+.cover-top {
+  border: 1rem solid honeydew;
+}
+
+.front {
+  background-color: gray;
+}
+
+.header {
+  background-color: khaki;
+
+  &-top {
+    border: 1rem solid red;
+  }
+
+  &-bottom {
+    border: 1rem solid blue;
+  }
+}
+
+.span {
+  background-color: lightblue;
+}
+
+.back {
+  background-color: gold;
+}
+
+.cover-bottom {
+  border: 1rem solid cadetblue;
+}
