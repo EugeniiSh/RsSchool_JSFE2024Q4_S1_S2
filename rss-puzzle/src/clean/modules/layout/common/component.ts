@@ -1,8 +1,10 @@
-export interface IComponentOptions {
+export interface IComponentOptions
+{
   tag: string;
   className: string[];
   text: string;
 }
+
 
 /**
  * Represents a component for creating and managing HTML elements with additional functionalities.
@@ -12,12 +14,12 @@ export class Component {
   /**
    * @type {Array<Component>} - An array to store child components.
    */
-  private children: Component[] = [];
+  protected children: Component[] = [];
 
   /**
    * @type {HTMLElement} - The HTML node associated with the component.
    */
-  private node: HTMLElement;
+  protected node: HTMLElement;
 
   /**
    * Creates a new Component.
@@ -29,17 +31,25 @@ export class Component {
    * @param {...Component} children - Child components to be appended.
    */
 
-  constructor(
-    { tag = 'div', className = [], text = '' }: IComponentOptions,
+
+  constructor
+  (
+    { 
+      tag = "div", 
+      className = [], 
+      text = "" 
+    }:IComponentOptions,
 
     ...children: Component[]
-  ) {
+  ) 
+  {
     const node = document.createElement(tag);
     node.classList.add(...className);
     node.textContent = text;
     this.node = node;
 
-    if (children) {
+    if (children) 
+    {
       this.appendChildren(children);
     }
   }
@@ -48,12 +58,14 @@ export class Component {
    * Appends a child component to the current component.
    * @param {Component} child - The child component to be appended.
    */
-  append(child: Component) {
+  append(child: Component) 
+  {
     this.children.push(child);
     this.node.append(child.getNode());
   }
 
-  protected prepend(child: Component) {
+  protected prepend(child: Component)
+  {
     this.children.unshift(child);
     this.node.prepend(child.getNode());
   }
@@ -62,14 +74,18 @@ export class Component {
    * Appends an array of child components to the current component.
    * @param {Array<Component>} children - Array of child components to be appended.
    */
-  appendChildren(children: Component[]) {
-    children.forEach((el) => {
+  appendChildren(children: Component[]) 
+  {
+    children.forEach((el) => 
+    {
       this.append(el);
     });
   }
 
-  protected prependChildren(children: Component[]) {
-    children.forEach((el) => {
+  protected prependChildren(children: Component[]) 
+  {
+    children.forEach((el) => 
+    {
       this.prepend(el);
     });
   }
@@ -78,7 +94,8 @@ export class Component {
    * Returns the HTML node associated with the component.
    * @returns {HTMLElement} - The HTML node.
    */
-  getNode() {
+  getNode() 
+  {
     return this.node;
   }
 
@@ -86,7 +103,8 @@ export class Component {
    * Returns an array of child components.
    * @returns {Array<Component>} - Array of child components.
    */
-  getChildren() {
+  getChildren() 
+  {
     return this.children;
   }
 
@@ -94,7 +112,8 @@ export class Component {
    * Sets the text content of the component.
    * @param {string} content - The text content to be set.
    */
-  setTextContent(content: string) {
+  setTextContent(content: string) 
+  {
     this.node.textContent = content;
   }
 
@@ -103,7 +122,8 @@ export class Component {
    * @param {string} attribute - The attribute to set.
    * @param {string} value - The value to set for the attribute.
    */
-  setAttribute(attribute: string, value: string) {
+  setAttribute(attribute: string, value: string) 
+  {
     this.node.setAttribute(attribute, value);
   }
 
@@ -111,7 +131,8 @@ export class Component {
    * Removes an attribute from the component's HTML node.
    * @param {string} attribute - The attribute to remove.
    */
-  removeAttribute(attribute: string) {
+  removeAttribute(attribute: string) 
+  {
     this.node.removeAttribute(attribute);
   }
 
@@ -119,10 +140,8 @@ export class Component {
    * Toggles the presence of a CSS class on the component's HTML node.
    * @param {string} className - The class name to toggle.
    */
-  toggleClass(
-    className: string,
-    force: boolean | undefined = undefined,
-  ): boolean {
+  toggleClass(className: string, force: boolean | undefined = undefined): boolean
+  {
     return this.node.classList.toggle(className, force);
   }
 
@@ -132,7 +151,8 @@ export class Component {
    * @param {EventListener} listener - The callback function to be executed when the event occurs.
    * @param {boolean|AddEventListenerOptions} [options=false] - An options object specifying characteristics of the event listener.
    */
-  addListener(event: string, listener: EventListener, options = false) {
+  addListener(event: string, listener: EventListener, options = false) 
+  {
     this.node.addEventListener(event, listener, options);
   }
 
@@ -142,15 +162,23 @@ export class Component {
    * @param {EventListener} listener - The listener function to be removed.
    * @param {boolean|EventListenerOptions} [options=false] - Options that were used when adding the listener.
    */
-  removeListener(event: string, listener: EventListener, options = false) {
+  removeListener(event: string, listener: EventListener, options = false) 
+  {
     this.node.removeEventListener(event, listener, options);
   }
+
+  dispatchSomeEvent(event: Event)
+  {
+    this.node.dispatchEvent(event);
+  } 
 
   /**
    * Destroys all child components associated with the current component.
    */
-  destroyChildren() {
-    this.children.forEach((child) => {
+  destroyChildren() 
+  {
+    this.children.forEach((child) => 
+    {
       child.destroy();
     });
 
@@ -160,7 +188,8 @@ export class Component {
   /**
    * Destroys the current component and removes its HTML node from the DOM.
    */
-  destroy() {
+  destroy() 
+  {
     this.destroyChildren();
     this.node.remove();
   }

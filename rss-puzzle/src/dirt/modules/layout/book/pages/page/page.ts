@@ -1,7 +1,7 @@
 import { Component } from '../../../common/component';
 import { PageSide } from './page-side';
 
-export interface IPage
+export interface IPageOption
 {
   className: string[], 
   text: string,
@@ -22,7 +22,7 @@ export class Page extends Component
       text,
       pageFront,
       pageBack 
-    }: IPage
+    }: IPageOption
   )
   {
     super({ tag: 'div', className, text });

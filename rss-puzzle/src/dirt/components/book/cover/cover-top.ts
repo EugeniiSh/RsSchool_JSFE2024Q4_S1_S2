@@ -10,7 +10,7 @@ const coverTopOption =
   (
     {
       tag: 'div',
-      className: [style.front],
+      className: [style['cover-side'], style.front],
       text: ''
     },
 
@@ -31,7 +31,7 @@ const coverTopOption =
   (
     {
       tag: 'div',
-      className: [style.back],
+      className: [style['cover-side'], style.back],
       text: ''
     }
   )

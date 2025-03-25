@@ -21,7 +21,13 @@ export class PageContent extends Component
   )
   {
     super({ tag: 'div', className, text });
-    this.append(content);
+    super.append(content);
     this.content = content;
+  }
+
+  append(child: Component): void 
+  {
+    this.destroyChildren();
+    super.append(child);
   }
 }

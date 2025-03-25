@@ -1,6 +1,6 @@
 import * as style from './loginButton-style.module.scss';
 import { InputButton, IInputButtonOptions } from '../../../../modules/layout/login-form/input/input-button';
-import customEventList from '../../../events/custom';
+import { customEventList } from '../../../events/custom';
 
 const loginEvent = customEventList.login;
 
@@ -14,6 +14,15 @@ function loginButtonChangeStatus(this: InputButton, status: boolean)
 {
   const invertStatus = !status;
   this.toggleClass(style.disabled, invertStatus);
+
+  if(status)
+  {
+    this.removeAttribute('disabled');
+  } 
+  else
+  {
+    this.setAttribute('disabled', 'disabled');
+  }
 }
 
 const buttonInputOptions: IInputButtonOptions =
@@ -23,6 +32,7 @@ const buttonInputOptions: IInputButtonOptions =
   attributes: 
   [
     ['value', 'login'],
+    ['disabled', 'disabled'],
   ],
   loginCustomEvent: loginEvent,
   clickListener: loginButtonClickListener,
@@ -30,4 +40,5 @@ const buttonInputOptions: IInputButtonOptions =
 }
 
 const loginButton = new InputButton(buttonInputOptions);
+
 export default loginButton;

@@ -14,12 +14,12 @@ export class Component {
   /**
    * @type {Array<Component>} - An array to store child components.
    */
-  private children: Component[] = [];
+  protected children: Component[] = [];
 
   /**
    * @type {HTMLElement} - The HTML node associated with the component.
    */
-  private node: HTMLElement;
+  protected node: HTMLElement;
 
   /**
    * Creates a new Component.
@@ -166,6 +166,11 @@ export class Component {
   {
     this.node.removeEventListener(event, listener, options);
   }
+
+  dispatchSomeEvent(event: Event)
+  {
+    this.node.dispatchEvent(event);
+  } 
 
   /**
    * Destroys all child components associated with the current component.

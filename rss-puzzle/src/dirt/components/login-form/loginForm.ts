@@ -54,7 +54,8 @@ const loginFormRequired = new comp.Component
 
 function wrapperFormLoginListener(this: WrapperForm)
 {
-  console.log('catch login event on WrapperForm');
+  this.toggleClass(style['wrapper-hidden'], true);
+  this.setAttribute('tabindex', '-1');
 }
 
 const WrapperFormOptions: IWrapperForm =

@@ -1,31 +1,91 @@
-.cover-top {
-  border: 1rem solid honeydew;
+.cover-top
+{
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  transform-style: preserve-3d;
+  transform-origin: 0.5% center;
+
+  transition: 1s;
 }
 
-.front {
-  background-color: gray;
+.cover-side
+{
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  backface-visibility: hidden;
 }
 
-.header {
-  background-color: khaki;
+.front
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 10%;
 
-  &-top {
-    border: 1rem solid red;
+  padding-top: 30%;
+
+  font-family: "Magic Spell Jf";
+  line-height: 1;
+
+  background-image: url(../../../../assets/images/book-cover.png);
+}
+
+.header
+{
+  font-size: calc(var(--cover-height) * 0.13);
+  text-align: center;
+  letter-spacing: 6rem;
+
+  text-shadow:  2rem -2rem 3rem rgb(101, 66, 44), -1rem 1rem 3rem rgb(149, 127, 116);
+
+  color: rgb(44, 28, 13);
+
+  &-top
+  {
+    text-transform: uppercase;
   }
 
-  &-bottom {
-    border: 1rem solid blue;
+  &-bottom
+  {
+    text-transform: capitalize;
   }
 }
 
-.span {
-  background-color: lightblue;
+.span
+{
+  display: block;
 }
 
-.back {
-  background-color: gold;
+.back
+{
+  background-image: url(../../../../assets/images/book-cover-back.png);
+
+  transform: rotateY(-180deg) rotate(180deg);
 }
 
-.cover-bottom {
-  border: 1rem solid cadetblue;
+.cover-bottom
+{
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  height: var(--cover-height);
+  width: calc(var(--cover-height) * var(--cover-width-ratio));
+
+  background-image: url(../../../../assets/images/book-cover-back.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  transform: rotateX(180deg);
 }

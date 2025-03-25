@@ -1,9 +1,12 @@
 .wrapper
 {
+  --login-form-left: 10vw;
+
   position: fixed;
-  top: minmax(10vh, 20vh);
-  left: 10vw;
+  // top: minmax(10vh, 20vh);
+  // left: 10vw;
   // left: var(--current-login-form-left);
+  left: var(--login-form-left);
   
 
   display: flex;
@@ -31,6 +34,17 @@
 
   transform-style: preserve-3d;
   transform: rotateX(5deg);
+
+  transition-property: left, transform, visibility;
+  transition-duration: 1s, 1s, 2s;
+  transition-timing-function: cubic-bezier(0.23,-0.5,0,1);
+
+  &-hidden
+  {
+    left: calc(1rem - (var(--login-form-width) * 2));
+    transform: skewX(-20deg);
+    visibility: hidden;
+  }
 }
 
 .header

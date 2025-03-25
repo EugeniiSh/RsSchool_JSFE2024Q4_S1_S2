@@ -3,7 +3,11 @@ import { Component } from './modules/layout/common/component';
 import gameHandler from './components/game-handler/game-handler';
 
 
-
+// document.querySelector('body')?.addEventListener('keydown', (event) =>
+// {
+//   const code = event.code;
+//   if(code === 'Tab') console.log(event);
+// });
 
 class PuzzleGame
 {

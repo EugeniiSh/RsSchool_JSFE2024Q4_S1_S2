@@ -25,6 +25,7 @@
 
 .disabled
 {
-  opacity: 0.5;
+  border: 1rem dashed rgba(0,0,0, 0.5);
   box-shadow: 1rem 1rem 1rem 0rem rgb(140, 93, 65);
+  cursor: auto;
 }

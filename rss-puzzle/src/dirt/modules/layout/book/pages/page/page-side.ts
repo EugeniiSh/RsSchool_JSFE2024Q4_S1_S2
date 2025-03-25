@@ -1,21 +1,31 @@
+import { Component } from '../../../common/component';
 import { PageContent, IPageContentOption } from './page-content';
 
-export interface IPageSide extends IPageContentOption
+export interface IPageSideOption extends IPageContentOption
 {
   content: PageContent
 }
 
-export class PageSide extends PageContent
+export class PageSide extends Component
 {
+  protected content: Component
+
   constructor
   (
     {
       className,
       text,
       content
-    }: IPageSide
+    }: IPageSideOption
   )
   {
-    super({ className, text,  content });
+    super({ tag: 'div', className, text });
+    super.append(content);
+    this.content = content;
+  }
+
+  append(child: Component): void 
+  {
+    this.content.append(child);
   }
 }
