@@ -50,10 +50,20 @@ export class Book extends Component
   {
     this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI);
 
-    this.coverTop.toggleClass(turnOverClass, true);
-    this.coverTop.addListener('transitionend', this.openCoverEnd);
+    // this.coverTop.toggleClass(turnOverClass, true);
+    // this.coverTop.addListener('transitionend', this.openCoverEnd);
 
-    this.pagesBlock.firstTurnOverPages(turnOverClass, 200);
+    // this.pagesBlock.firstTurnOverPages(turnOverClass, 200);
+
+    this.coverTop.scullLaugh();
+
+    setTimeout(() =>
+    {
+      this.coverTop.toggleClass(turnOverClass, true);
+      this.coverTop.addListener('transitionend', this.openCoverEnd);
+
+      this.pagesBlock.firstTurnOverPages(turnOverClass, 400);
+    }, 5000);
   }
 
   public turnPage

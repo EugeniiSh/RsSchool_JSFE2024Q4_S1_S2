@@ -111,7 +111,7 @@ export class PagesBlock extends Component
         upperPage.dispatchSomeEvent(this.customEventsUI.disableUI);
         upperPage.toggleClass(turnOverClass, true);
         upperPage.addListener('transitionend', turnOffFunc);
-      }, turnOverDelay * i);
+      }, turnOverDelay * (i * i));
     }
   }
 
