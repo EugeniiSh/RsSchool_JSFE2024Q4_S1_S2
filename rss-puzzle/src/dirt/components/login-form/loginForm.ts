@@ -1,14 +1,15 @@
 import * as style from './loginForm-style.module.scss';
 import * as comp from '../../modules/layout/common/component'
 import { Form, IFormOptions } from '../../modules/layout/login-form/form';
+import { IWrapperForm, WrapperForm } from '../../modules/layout/login-form/wrapper-form';
 
 import { firstName } from './fields/firstName';
-import lastName from './fields/lastName';
+import { lastName } from './fields/lastName';
 import loginButton from './buttons/login/loginButton';
 
-function loginFormInputListener(event: Event)
+function loginFormInputListener(this: Form)
 {
-  console.log('login form event = ', event)
+  this.setFormValid();
 } 
 
 const formOptions: IFormOptions =
@@ -51,17 +52,26 @@ const loginFormRequired = new comp.Component
   }
 );
 
-const loginFormWrapper = new comp.Component
-(
-  {
-    tag: 'div',
-    className: [style.wrapper],
-    text: ''
-  },
-  loginFormHeader,
-  loginForm,
-  loginFormRequired
-);
+function wrapperFormLoginListener(this: WrapperForm)
+{
+  this.toggleClass(style['wrapper-hidden'], true);
+  this.setAttribute('tabindex', '-1');
+}
+
+const WrapperFormOptions: IWrapperForm =
+{
+  className: [style.wrapper],
+  text: '',
+  items:
+  [
+    loginFormHeader,
+    loginForm,
+    loginFormRequired
+  ],
+  loginListener: wrapperFormLoginListener
+}
+  
+const wrapperFormElem = new WrapperForm(WrapperFormOptions);
 
 
-export default loginFormWrapper;
+export default wrapperFormElem;

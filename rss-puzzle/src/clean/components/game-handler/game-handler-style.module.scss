@@ -1,4 +1,5 @@
-.game {
+.game
+{
   position: relative;
 
   display: flex;
@@ -16,3 +17,24 @@
 
   overflow: hidden;
 }
+
+.disableUI::after
+{
+  position: absolute;
+  inset: 0;
+  content: '';
+
+  background-color: black;
+  opacity: 0.2;
+}
+
+.turn-over
+{
+  transform: rotateY(-180deg);
+}
+
+.new-content
+{
+  background-color: mediumslateblue;
+}
+

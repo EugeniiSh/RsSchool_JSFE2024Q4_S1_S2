@@ -1,6 +1,6 @@
 import * as comp from '../../common/component';
 
-export type TInputAttributes = 'type' | 'id' | 'name' | 'value' | 'required'; 
+export type TInputAttributes = 'type' | 'id' | 'name' | 'value' | 'required' | 'disabled'; 
 
 export interface IInputOptions
 {

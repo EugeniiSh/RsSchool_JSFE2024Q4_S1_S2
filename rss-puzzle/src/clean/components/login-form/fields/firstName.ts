@@ -1,51 +1,35 @@
 import * as style from './fields-style.module.scss';
 import { FieldForm } from '../../../modules/layout/login-form/field-form';
 import { Label } from '../../../modules/layout/login-form/label';
-import {
-  InputText,
-  IInputTextOptions,
-  TInputTextFieldsCheckers,
-} from '../../../modules/layout/login-form/input/input-text';
+import { InputText, IInputTextOptions } from '../../../modules/layout/login-form/input/input-text';
+import { firstNamefieldCheckers, firstNameHintsBlock } from './field-hints/firsNameHints';
+
 
 const inputFirstNameId = 'fname';
 const firstNameLabel = 'first name *';
 
-const firstNamelabelOptions = {
+
+const firstNamelabelOptions =
+{
   className: [style.lable],
   text: firstNameLabel,
   forAttribute: inputFirstNameId,
-};
+}
 
-const firstNamefieldCheckers: TInputTextFieldsCheckers = new Map();
-firstNamefieldCheckers.set('size', (value: string) => value.length >= 3);
-firstNamefieldCheckers.set('upperCase', (value: string) =>
-  value[0] ? value[0] === value[0].toUpperCase() : false,
-);
-firstNamefieldCheckers.set('latinLeter', (value: string) => {
-  if (value.length === 0) return false;
 
-  for (let i = 0; i < value.length; i += 1) {
-    const char = value[i];
-    const charPoint = char.codePointAt(0);
 
-    if (!charPoint) return false;
 
-    if (charPoint !== 45) {
-      if (charPoint < 65 || charPoint > 122) return false;
-      if (charPoint > 90 && charPoint < 97) return false;
-    }
-  }
 
-  return true;
-});
-
-function firstNameInputListener(this: InputText, event: Event) {
-  if (event.target === null) {
+function firstNameInputListener(this:InputText, event: Event)
+{
+  if(event.target === null) 
+  {
     console.log('Event Target = ', null);
     return;
   }
 
-  if (!(event.target instanceof HTMLInputElement)) {
+  if(!(event.target instanceof HTMLInputElement)) 
+  {
     console.log('Event Target not instanceof HTMLInputElement ');
     return;
   }
@@ -55,37 +39,68 @@ function firstNameInputListener(this: InputText, event: Event) {
   this.setValid(text);
 }
 
-function fieldFirstNameInputListener(event: Event) {
-  console.log('empty', event);
-}
-
-const firsNameInputOptions: IInputTextOptions = {
+const firsNameInputOptions: IInputTextOptions =
+{
   className: [style.input],
   text: '',
-  attributes: [
+  attributes: 
+  [
     ['id', inputFirstNameId],
     ['name', inputFirstNameId],
     ['value', ''],
     ['required', ''],
   ],
   fieldCheckers: firstNamefieldCheckers,
-  inputListener: firstNameInputListener,
-};
+  inputListener: firstNameInputListener
+}
 
-const FieldFormFirstNameOptions = {
-  className: [style.wrapper, style.wrapper],
+const firstNameInput = new InputText(firsNameInputOptions);
+
+
+
+
+
+const fieldCheckersName = Object.keys(Object.fromEntries(firstNamefieldCheckers));
+
+function fieldFirstNameInputListener(this: FieldForm)
+{
+  const validList: boolean[] = [];
+  
+  this.checkFieldFor.forEach((checkFor) =>
+  {
+    const isValidCondition = this.validateItem.getValid(checkFor);
+    validList.push(isValidCondition);
+    this.hintsBlock.setState(isValidCondition, checkFor);
+  })
+
+  this.setFieldValid(validList);
+}
+
+const FieldFormFirstNameOptions =
+{
+  className: [style.wrapper],
   text: '',
-  items: [
+  items: 
+  [
     new Label(firstNamelabelOptions),
-    new InputText(firsNameInputOptions),
+    firstNameInput,
+    firstNameHintsBlock
   ],
-  inputListener: fieldFirstNameInputListener,
-};
+  validateItem: firstNameInput,
+  checkFieldFor: fieldCheckersName,
+  hintsBlock: firstNameHintsBlock,
+  inputListener: fieldFirstNameInputListener
+}
+
+
+
+
 
 const firstName = new FieldForm(FieldFormFirstNameOptions);
-export {
-  firstName,
-  firstNamefieldCheckers,
-  firstNameInputListener,
-  fieldFirstNameInputListener,
+export 
+{ 
+  firstName, 
+  fieldCheckersName, 
+  firstNameInputListener, 
+  fieldFirstNameInputListener 
 };

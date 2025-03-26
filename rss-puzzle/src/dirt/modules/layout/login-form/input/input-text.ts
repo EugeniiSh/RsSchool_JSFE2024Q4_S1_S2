@@ -1,7 +1,7 @@
 import * as input from './input';
 
 export type TInputTextAttributes = Exclude<input.TInputAttributes, 'type'>;
-export type TInputTextFieldsCheckers = Map<string, (value: string) => boolean>;
+export type TInputTextFieldsCheckers = Map<string, { func: (value: string) => boolean, text: string }>;
 
 export interface IInputTextOptions extends input.IInputOptions
 {
@@ -39,9 +39,9 @@ export class InputText extends input.Input
 
   protected setValid(inputValue: string)
   {
-    this.fieldCheckers.forEach((funcChecker, checkFor) =>
+    this.fieldCheckers.forEach((value, checkFor) =>
     {
-      this.validList.set(checkFor, funcChecker(inputValue));
+      this.validList.set(checkFor, value.func(inputValue));
     })
   }
 

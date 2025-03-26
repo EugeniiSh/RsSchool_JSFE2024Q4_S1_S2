@@ -1,40 +1,65 @@
 import * as comp from '../common/component';
-// import { Input } from './input/input';
+import { InputText } from './input/input-text';
+import { HintsBlock } from '../hint/hintsBlock';
 
-export interface IFieldFormOptions {
+export interface IFieldFormOptions
+{
   className: string[];
   text: string;
   items: comp.Component[];
-  // validateItem: Input;
-  // checkFieldFor: string[];
-  inputListener: EventListener;
+  validateItem: InputText;
+  checkFieldFor: string[];
+  hintsBlock: HintsBlock;
+  inputListener: EventListener,
 }
 
-export class FieldForm extends comp.Component {
+export class FieldForm extends comp.Component
+{
   private isValid = false;
 
   private onInput: EventListener;
 
-  constructor({
-    className,
-    text,
-    items,
-    // validateItem,
-    // checkFieldFor,
-    inputListener,
-  }: IFieldFormOptions) {
+  protected checkFieldFor: string[];
+
+  protected validateItem: InputText;
+
+  protected hintsBlock: HintsBlock;
+
+  constructor
+  (
+    { 
+      className, 
+      text, 
+      items,
+      validateItem,
+      checkFieldFor,
+      hintsBlock,
+      inputListener
+    }: IFieldFormOptions
+  )
+  {
     super({ tag: 'div', className, text });
     this.appendChildren(items);
-    this.onInput = inputListener;
+    this.validateItem = validateItem;
+    this.checkFieldFor = checkFieldFor;
+    this.hintsBlock = hintsBlock;
+    this.onInput = inputListener.bind(this);
     this.addListener('input', this.onInput);
   }
 
-  public isFieldValid(): boolean {
-    return this.isValid;
+  protected setFieldValid(validationResult: boolean[])
+  {
+    this.isValid = validationResult.every((item) => item);
   }
 
-  destroy() {
-    this.removeListener('input', this.onInput);
+  public isFieldValid(): boolean 
+  { 
+    return this.isValid; 
+  }
+
+  destroy() 
+  {
+    this.removeListener("input", this.onInput);
     super.destroy();
   }
 }

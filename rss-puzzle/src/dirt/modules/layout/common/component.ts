@@ -14,12 +14,12 @@ export class Component {
   /**
    * @type {Array<Component>} - An array to store child components.
    */
-  private children: Component[] = [];
+  protected children: Component[] = [];
 
   /**
    * @type {HTMLElement} - The HTML node associated with the component.
    */
-  private node: HTMLElement;
+  protected node: HTMLElement;
 
   /**
    * Creates a new Component.
@@ -64,6 +64,12 @@ export class Component {
     this.node.append(child.getNode());
   }
 
+  protected prepend(child: Component)
+  {
+    this.children.unshift(child);
+    this.node.prepend(child.getNode());
+  }
+
   /**
    * Appends an array of child components to the current component.
    * @param {Array<Component>} children - Array of child components to be appended.
@@ -73,6 +79,14 @@ export class Component {
     children.forEach((el) => 
     {
       this.append(el);
+    });
+  }
+
+  protected prependChildren(children: Component[]) 
+  {
+    children.forEach((el) => 
+    {
+      this.prepend(el);
     });
   }
 
@@ -152,6 +166,11 @@ export class Component {
   {
     this.node.removeEventListener(event, listener, options);
   }
+
+  dispatchSomeEvent(event: Event)
+  {
+    this.node.dispatchEvent(event);
+  } 
 
   /**
    * Destroys all child components associated with the current component.
