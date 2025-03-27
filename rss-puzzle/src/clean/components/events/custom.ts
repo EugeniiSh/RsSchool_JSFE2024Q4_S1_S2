@@ -1,21 +1,14 @@
-import { TCustomEventList, TCustomEventsUI } from "../../modules/events/custom";
+import { TCustomEventList, TCustomEventsUI } from '../../modules/events/custom';
 
-
-const customEventList: TCustomEventList = 
-{
+const customEventList: TCustomEventList = {
   login: new CustomEvent('login', { bubbles: true }),
   anableUI: new CustomEvent('anableUI', { bubbles: true }),
   disableUI: new CustomEvent('disableUI', { bubbles: true }),
 };
 
-const customEventsUI: TCustomEventsUI =
-{
+const customEventsUI: TCustomEventsUI = {
   anableUI: customEventList.anableUI,
   disableUI: customEventList.disableUI,
-}
+};
 
-export 
-{
-  customEventList,
-  customEventsUI
-} 
+export { customEventList, customEventsUI };
