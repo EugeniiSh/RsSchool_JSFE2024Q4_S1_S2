@@ -1,5 +1,4 @@
-.wrapper
-{
+.wrapper {
   --login-form-left: 10vw;
 
   position: fixed;
@@ -7,7 +6,6 @@
   // left: 10vw;
   // left: var(--current-login-form-left);
   left: var(--login-form-left);
-  
 
   display: flex;
   flex-direction: column;
@@ -22,7 +20,7 @@
 
   font-size: 24rem;
   // font-size: min(24rem, calc());
-  font-family: "Special Elite", serif;
+  font-family: 'Special Elite', serif;
   font-weight: 400;
   font-style: normal;
 
@@ -37,18 +35,16 @@
 
   transition-property: left, transform, visibility;
   transition-duration: 1s, 1s, 2s;
-  transition-timing-function: cubic-bezier(0.23,-0.5,0,1);
+  transition-timing-function: cubic-bezier(0.23, -0.5, 0, 1);
 
-  &-hidden
-  {
+  &-hidden {
     left: calc(1rem - (var(--login-form-width) * 2));
     transform: skewX(-20deg);
     visibility: hidden;
   }
 }
 
-.header
-{
+.header {
   // font-size: 1.2em;
   text-transform: capitalize;
   text-align: center;
@@ -56,23 +52,20 @@
   border-bottom: 1rem solid black;
 }
 
-.form
-{
+.form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 32rem;;
-  
+  gap: 32rem;
+
   padding: 20rem;
 
   border: 1rem dotted black;
 }
 
-.required
-{
+.required {
   align-self: end;
   padding-right: 10%;
   font-size: 0.66em;
 }
-

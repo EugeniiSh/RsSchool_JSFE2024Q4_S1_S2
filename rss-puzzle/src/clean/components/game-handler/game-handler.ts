@@ -1,6 +1,9 @@
 import * as style from './game-handler-style.module.scss';
 // import { Component } from '../../modules/layout/common/component';
-import { GameHandler, TCustomEventListeners } from '../../modules/game-handler/game-handler';
+import {
+  GameHandler,
+  TCustomEventListeners,
+} from '../../modules/game-handler/game-handler';
 import wrapperFormElem from '../login-form/loginForm';
 import book from '../book/book';
 
@@ -16,8 +19,7 @@ import book from '../book/book';
 //   return new Component(option);
 // }
 
-function loginHandler(this: GameHandler)
-{
+function loginHandler(this: GameHandler) {
   this.book.openCover(style['turn-over']);
 
   // for(let i = 1; i < 5; i += 1)
@@ -29,48 +31,38 @@ function loginHandler(this: GameHandler)
   // }
 }
 
-function disableUIHandler(this: GameHandler)
-{
+function disableUIHandler(this: GameHandler) {
   this.disableUICount += 1;
 
-  if(this.disableUICount === 1)
-  {
+  if (this.disableUICount === 1) {
     this.toggleClass(style.disableUI, true);
     this.addListener('keydown', GameHandler.disableEvent, true);
   }
 }
 
-function anableUIHandler(this: GameHandler)
-{
+function anableUIHandler(this: GameHandler) {
   this.disableUICount -= 1;
 
-  if(this.disableUICount === 0)
-  {
+  if (this.disableUICount === 0) {
     this.toggleClass(style.disableUI, false);
     this.removeListener('keydown', GameHandler.disableEvent, true);
   }
 }
 
-const customEventListeners: TCustomEventListeners =
-{
+const customEventListeners: TCustomEventListeners = {
   login: loginHandler,
   anableUI: anableUIHandler,
-  disableUI: disableUIHandler
-}
+  disableUI: disableUIHandler,
+};
 
-const gameHandlerOptions =
-{
+const gameHandlerOptions = {
   book,
   customEventListeners,
 
   className: [style.game],
   text: '',
-  items: 
-  [
-    wrapperFormElem,
-    book
-  ],
-}
+  items: [wrapperFormElem, book],
+};
 
 const gameHandler = new GameHandler(gameHandlerOptions);
 

@@ -1,5 +1,4 @@
-.scull
-{
+.scull {
   position: relative;
 
   display: flex;
@@ -9,8 +8,7 @@
   width: var(--scull-width);
 }
 
-.scull-top
-{
+.scull-top {
   width: 100%;
   height: calc(var(--scull-width) * var(--scull-top-height-ratio));
 
@@ -19,8 +17,7 @@
   background-size: cover;
 }
 
-.scull-bottom
-{
+.scull-bottom {
   width: calc(var(--scull-width) * var(--scull-bottom-width-ratio));
   height: calc(var(--scull-width) * var(--scull-bottom-height-ratio));
 
@@ -32,8 +29,7 @@
   transition: 1s;
 }
 
-.eye
-{
+.eye {
   position: absolute;
   content: '';
 
@@ -52,56 +48,91 @@
   transition-duration: 3s;
 }
 
-.left-eye
-{
+.left-eye {
   top: 35%;
   left: 25%;
 }
 
-.right-eye
-{
+.right-eye {
   top: 35%;
   right: 25%;
 }
 
-.scull-laugh .eye
-{
-  animation: wakingEyes 3s linear, blinkingEyes 3s linear 3s;
+.scull-laugh .eye {
+  animation:
+    wakingEyes 3s linear,
+    blinkingEyes 3s linear 3s;
 }
 
-.scull-laugh .scull-bottom
-{
+.scull-laugh .scull-bottom {
   animation: laughingJaw 3s linear 3s;
 }
 
-@keyframes wakingEyes
-{
-  from{ opacity: 0; }
-  30% { opacity: 0.5; }
-  40% { opacity: 0.2; }
-  70% { opacity: 0.7; }
-  80% { opacity: 0.4; }
-  to { opacity: 0; }
+@keyframes wakingEyes {
+  from {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.5;
+  }
+  40% {
+    opacity: 0.2;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
-@keyframes blinkingEyes
-{
-  from{ opacity: 0; }
-  10% { opacity: 1; }
-  20% { opacity: 0; }
-  30% { opacity: 1; }
-  40% { opacity: 0; }
-  90% { opacity: 1; }
-  to { opacity: 0; }
+@keyframes blinkingEyes {
+  from {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
-@keyframes laughingJaw
-{
-  from{ transform: translateY(-40%); }
-  10% { transform: translateY(-20%); }
-  20% { transform: translateY(-40%); }
-  30% { transform: translateY(-20%); }
-  40% { transform: translateY(-40%); }
-  90% { transform: translateY(-20%); }
-  to { transform: translateY(-40%); }
+@keyframes laughingJaw {
+  from {
+    transform: translateY(-40%);
+  }
+  10% {
+    transform: translateY(-20%);
+  }
+  20% {
+    transform: translateY(-40%);
+  }
+  30% {
+    transform: translateY(-20%);
+  }
+  40% {
+    transform: translateY(-40%);
+  }
+  90% {
+    transform: translateY(-20%);
+  }
+  to {
+    transform: translateY(-40%);
+  }
 }

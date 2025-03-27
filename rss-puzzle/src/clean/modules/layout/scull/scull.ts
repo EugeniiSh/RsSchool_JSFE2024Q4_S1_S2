@@ -1,7 +1,6 @@
 import { Component } from '../common/component';
 
-export interface IScullOption
-{
+export interface IScullOption {
   className: string[];
   text: string;
   items: Component[];
@@ -12,8 +11,7 @@ export interface IScullOption
   scullLaugh: () => void;
 }
 
-export class Scull extends Component
-{
+export class Scull extends Component {
   protected scullTop: Component;
 
   protected scullBottom: Component;
@@ -23,21 +21,17 @@ export class Scull extends Component
   protected rightEye: Component;
 
   public scullLaugh: () => void;
-  
-  constructor
-  (
-    {
-      className,
-      text,
-      items,
-      scullTop,
-      scullBottom,
-      leftEye,
-      rightEye,
-      scullLaugh,
-    }: IScullOption
-  )
-  {
+
+  constructor({
+    className,
+    text,
+    items,
+    scullTop,
+    scullBottom,
+    leftEye,
+    rightEye,
+    scullLaugh,
+  }: IScullOption) {
     super({ tag: 'div', className, text });
     this.appendChildren(items);
     this.scullTop = scullTop;

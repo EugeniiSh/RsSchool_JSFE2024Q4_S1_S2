@@ -9,6 +9,7 @@ import gameHandler from './components/game-handler/game-handler';
 //   if(code === 'Tab') console.log(event);
 // });
 
+
 class PuzzleGame
 {
   constructor
