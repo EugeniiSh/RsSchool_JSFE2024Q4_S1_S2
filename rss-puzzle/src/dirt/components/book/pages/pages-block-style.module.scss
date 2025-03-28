@@ -63,7 +63,7 @@
 
 .content
 {
-  border: 1rem solid black;
+  border: 1rem solid var(--main-black);
 }
 
 .content::first-letter
@@ -75,8 +75,8 @@
   font-size: 2em;
   line-height: 1;
 
-  color: rgb(199, 0, 0);
-  text-shadow: 0rem 0rem 3rem black;
+  color: var(--first-letter-red);
+  text-shadow: 0rem 0rem 3rem var(--main-black);
 
   float: left;
 }

@@ -8,5 +8,5 @@
   transform-style: preserve-3d;
   transform: rotateX(10deg) translateX(50%);
 
-  box-shadow: -5rem 5rem 20rem 1rem black, inset -1rem 1rem 30rem 1rem black;
+  box-shadow: -5rem 5rem 20rem 1rem var(--main-black), inset -1rem 1rem 30rem 1rem var(--main-black);
 }
