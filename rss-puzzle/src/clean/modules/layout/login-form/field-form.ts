@@ -1,5 +1,5 @@
 import * as comp from '../common/component';
-import { InputText } from './input/input-text';
+import { InputText, IInputTextValues } from './input/input-text';
 import { HintsBlock } from '../hint/hintsBlock';
 
 export interface IFieldFormOptions {
@@ -41,12 +41,16 @@ export class FieldForm extends comp.Component {
     this.addListener('input', this.onInput);
   }
 
-  protected setFieldValid(validationResult: boolean[]) {
+  protected setFieldValid(validationResult: boolean[]): void {
     this.isValid = validationResult.every((item) => item);
   }
 
   public isFieldValid(): boolean {
     return this.isValid;
+  }
+
+  public getFieldValue(): IInputTextValues {
+    return this.validateItem.getValue();
   }
 
   destroy() {

@@ -4,13 +4,14 @@ import { Label } from '../../../modules/layout/login-form/label';
 import {
   InputText,
   IInputTextOptions,
+  TInputTextNames,
 } from '../../../modules/layout/login-form/input/input-text';
 import {
   firstNamefieldCheckers,
   firstNameHintsBlock,
 } from './field-hints/firsNameHints';
 
-const inputFirstNameId = 'fname';
+const inputFirstNameId: TInputTextNames = 'fname';
 const firstNameLabel = 'first name *';
 
 const firstNamelabelOptions = {
@@ -32,6 +33,7 @@ function firstNameInputListener(this: InputText, event: Event) {
 
   const text: string = event.target.value;
 
+  this.setValue(text);
   this.setValid(text);
 }
 
@@ -44,6 +46,7 @@ const firsNameInputOptions: IInputTextOptions = {
     ['value', ''],
     ['required', ''],
   ],
+  inputName: inputFirstNameId,
   fieldCheckers: firstNamefieldCheckers,
   inputListener: firstNameInputListener,
 };
@@ -81,6 +84,7 @@ const FieldFormFirstNameOptions = {
 };
 
 const firstName = new FieldForm(FieldFormFirstNameOptions);
+
 export {
   firstName,
   fieldCheckersName,

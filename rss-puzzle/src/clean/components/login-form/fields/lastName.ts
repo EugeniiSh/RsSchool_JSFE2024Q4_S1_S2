@@ -4,6 +4,7 @@ import { Label } from '../../../modules/layout/login-form/label';
 import {
   InputText,
   IInputTextOptions,
+  TInputTextNames,
 } from '../../../modules/layout/login-form/input/input-text';
 import {
   lastNamefieldCheckers,
@@ -15,7 +16,7 @@ import {
   fieldCheckersName,
 } from './firstName';
 
-const inputLastnameId = 'lname';
+const inputLastnameId: TInputTextNames = 'lname';
 const lastnameLabel = 'last name *';
 
 const lastNamelabelOptions = {
@@ -33,6 +34,7 @@ const lastNameInputOptions: IInputTextOptions = {
     ['value', ''],
     ['required', ''],
   ],
+  inputName: inputLastnameId,
   fieldCheckers: lastNamefieldCheckers,
   inputListener: firstNameInputListener,
 };

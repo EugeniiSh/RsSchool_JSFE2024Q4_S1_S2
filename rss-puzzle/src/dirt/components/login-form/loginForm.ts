@@ -7,6 +7,8 @@ import { firstName } from './fields/firstName';
 import { lastName } from './fields/lastName';
 import loginButton from './buttons/login/loginButton';
 
+import storage from '../storage/local';
+
 function loginFormInputListener(this: Form)
 {
   this.setFormValid();
@@ -54,12 +56,17 @@ const loginFormRequired = new comp.Component
 
 function wrapperFormLoginListener(this: WrapperForm)
 {
+  const userData = { ...this.form.getFormValue(), isNew: false };
+  this.storage.setValue(userData);
+
   this.toggleClass(style['wrapper-hidden'], true);
   this.setAttribute('tabindex', '-1');
 }
 
 const WrapperFormOptions: IWrapperForm =
 {
+  storage,
+
   className: [style.wrapper],
   text: '',
   items:
@@ -68,6 +75,7 @@ const WrapperFormOptions: IWrapperForm =
     loginForm,
     loginFormRequired
   ],
+  form: loginForm,
   loginListener: wrapperFormLoginListener
 }
   

@@ -1,6 +1,9 @@
 import * as comp from '../common/component';
 import { FieldForm } from './field-form';
 import { InputButton } from './input/input-button';
+import { TInputTextNames } from './input/input-text';
+
+export type TFieldsValue = Record<TInputTextNames, string>;
 
 export type TFormAttributes =
   | 'accept-charset'
@@ -60,6 +63,17 @@ export class Form extends comp.Component {
 
   public isFormValid(): boolean {
     return this.isValid;
+  }
+
+  public getFormValue(): TFieldsValue {
+    const result = {} as TFieldsValue;
+    this.fields.forEach((field) => {
+      const fieldValue = field.getFieldValue();
+      const { type, value } = fieldValue;
+      result[type] = value;
+    });
+
+    return result;
   }
 
   destroy() {
