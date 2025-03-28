@@ -1,66 +1,55 @@
 import * as style from './fields-style.module.scss';
 import { FieldForm } from '../../../modules/layout/login-form/field-form';
 import { Label } from '../../../modules/layout/login-form/label';
-import { InputText, IInputTextOptions } from '../../../modules/layout/login-form/input/input-text';
-import { lastNamefieldCheckers, lastNameHintsBlock } from './field-hints/lastNameHints';
-import 
-{ 
-  firstNameInputListener, 
+import {
+  InputText,
+  IInputTextOptions,
+  TInputTextNames,
+} from '../../../modules/layout/login-form/input/input-text';
+import {
+  lastNamefieldCheckers,
+  lastNameHintsBlock,
+} from './field-hints/lastNameHints';
+import {
+  firstNameInputListener,
   fieldFirstNameInputListener,
-  fieldCheckersName
+  fieldCheckersName,
 } from './firstName';
 
-
-const inputLastnameId = 'lname';
+const inputLastnameId: TInputTextNames = 'lname';
 const lastnameLabel = 'last name *';
 
-const lastNamelabelOptions =
-{
+const lastNamelabelOptions = {
   className: [style.lable],
   text: lastnameLabel,
   forAttribute: inputLastnameId,
-}
+};
 
-
-
-
-
-const lastNameInputOptions: IInputTextOptions =
-{
+const lastNameInputOptions: IInputTextOptions = {
   className: [style.input],
   text: '',
-  attributes: 
-  [
+  attributes: [
     ['id', inputLastnameId],
     ['name', inputLastnameId],
     ['value', ''],
     ['required', ''],
   ],
+  inputName: inputLastnameId,
   fieldCheckers: lastNamefieldCheckers,
-  inputListener: firstNameInputListener
-}
+  inputListener: firstNameInputListener,
+};
 
 const lastNameInput = new InputText(lastNameInputOptions);
 
-
-
-
-
-const FieldFormLastNameOptions =
-{
+const FieldFormLastNameOptions = {
   className: [style.wrapper],
   text: '',
-  items: 
-  [
-    new Label(lastNamelabelOptions),
-    lastNameInput,
-    lastNameHintsBlock
-  ],
+  items: [new Label(lastNamelabelOptions), lastNameInput, lastNameHintsBlock],
   validateItem: lastNameInput,
   checkFieldFor: fieldCheckersName,
   hintsBlock: lastNameHintsBlock,
-  inputListener: fieldFirstNameInputListener
-}
+  inputListener: fieldFirstNameInputListener,
+};
 
 const lastName = new FieldForm(FieldFormLastNameOptions);
 export { lastName, lastNamefieldCheckers };

@@ -1,5 +1,4 @@
-:root
-{
+:root {
   --cover-height: 80vh;
   --cover-width-ratio: 0.78;
 
@@ -15,32 +14,37 @@
 
   --login-form-left-1-percent: calc((192 - 9) / 100);
   --adaptable-width-1-percent: calc((1920 - 320) / 100);
-  --current-adaptable-width-percent: calc((min(100vw, 1920rem) - 320rem) / var(--adaptable-width-1-percent));
-  --current-login-form-left: calc((var(--current-adaptable-width-percent) * var(--login-form-left-1-percent)) + 9rem);
+  --current-adaptable-width-percent: calc(
+    (min(100vw, 1920rem) - 320rem) / var(--adaptable-width-1-percent)
+  );
+  --current-login-form-left: calc(
+    (
+        var(--current-adaptable-width-percent) *
+          var(--login-form-left-1-percent)
+      ) +
+      9rem
+  );
 }
 
-*
-{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html
-{
+html {
   font-size: 1px;
 }
 
-@font-face 
-{
-  font-family: "Magic Spell Jf";
-  src: url(../assets/fonts/magic-spell-jf.otf) format("otf"),
-    url(../assets/fonts/magic-spell-jf.ttf) format("ttf"),
-    url(../assets/fonts/magic-spell-jf.woff) format("woff"),
-    url(../assets/fonts/magic-spell-jf.woff2) format("woff2"),;
+@font-face {
+  font-family: 'Magic Spell Jf';
+  src:
+    url(../assets/fonts/magic-spell-jf.otf) format('otf'),
+    url(../assets/fonts/magic-spell-jf.ttf) format('ttf'),
+    url(../assets/fonts/magic-spell-jf.woff) format('woff'),
+    url(../assets/fonts/magic-spell-jf.woff2) format('woff2');
 }
 
-body
-{
+body {
   font-size: 32rem;
 }

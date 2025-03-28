@@ -1,38 +1,31 @@
 import { Component } from '../common/component';
 
-export interface IHintField
-{
+export interface IHintField {
   className: string[];
   text: string;
   hintName: string;
   hintComponents: Component[];
-  setState: (state: boolean) => void
+  setState: (state: boolean) => void;
 }
 
-export class HintField extends Component
-{
+export class HintField extends Component {
   private hintName: string;
 
-  public setState: (state: boolean) => void
+  public setState: (state: boolean) => void;
 
-  constructor
-  (
-    { 
-      className,
-      text, 
-      hintName,
-      hintComponents,
-      setState
-    }: IHintField
-  )
-  {
+  constructor({
+    className,
+    text,
+    hintName,
+    hintComponents,
+    setState,
+  }: IHintField) {
     super({ tag: 'div', className, text }, ...hintComponents);
     this.hintName = hintName;
     this.setState = setState;
   }
 
-  public getHintName(): string
-  {
+  public getHintName(): string {
     return this.hintName;
   }
 }

@@ -1,7 +1,7 @@
 import * as style from './fields-style.module.scss';
 import { FieldForm } from '../../../modules/layout/login-form/field-form';
 import { Label } from '../../../modules/layout/login-form/label';
-import { InputText, IInputTextOptions } from '../../../modules/layout/login-form/input/input-text';
+import { InputText, IInputTextOptions, TInputTextNames } from '../../../modules/layout/login-form/input/input-text';
 import { lastNamefieldCheckers, lastNameHintsBlock } from './field-hints/lastNameHints';
 import 
 { 
@@ -11,7 +11,7 @@ import
 } from './firstName';
 
 
-const inputLastnameId = 'lname';
+const inputLastnameId: TInputTextNames = 'lname';
 const lastnameLabel = 'last name *';
 
 const lastNamelabelOptions =
@@ -36,6 +36,7 @@ const lastNameInputOptions: IInputTextOptions =
     ['value', ''],
     ['required', ''],
   ],
+  inputName: inputLastnameId,
   fieldCheckers: lastNamefieldCheckers,
   inputListener: firstNameInputListener
 }

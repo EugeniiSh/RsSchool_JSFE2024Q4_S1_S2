@@ -1,12 +1,11 @@
-.pages-block
-{
+.pages-block {
   position: absolute;
   top: 1.5%;
 
   height: calc(var(--cover-height) - 5%);
   width: calc(var(--cover-height) * var(--cover-width-ratio) - 5%);
 
-  font-family: "Lora", serif;
+  font-family: 'Lora', serif;
   font-optical-sizing: auto;
   /* font-weight: <weight>; */
   font-style: italic;
@@ -14,8 +13,7 @@
   transform-style: preserve-3d;
 }
 
-.page
-{
+.page {
   position: absolute;
 
   width: 100%;
@@ -24,12 +22,10 @@
   transform-style: preserve-3d;
   transform-origin: left center;
 
-
   transition: 5s;
 }
 
-.side
-{
+.side {
   position: absolute;
 
   display: flex;
@@ -49,25 +45,21 @@
   overflow: hidden;
   backface-visibility: hidden;
 
-  &-front
-  {
+  &-front {
     background-image: url(../../../../assets/images/page-right.png);
   }
 
-  &-back
-  {
+  &-back {
     background-image: url(../../../../assets/images/page-left.png);
-    transform: rotateY(-180deg)
+    transform: rotateY(-180deg);
   }
 }
 
-.content
-{
+.content {
   border: 1rem solid black;
 }
 
-.content::first-letter
-{
+.content::first-letter {
   padding: 5rem;
 
   font-family: Magic Spell Jf;
@@ -81,7 +73,6 @@
   float: left;
 }
 
-.item
-{
+.item {
   background-color: aquamarine;
 }

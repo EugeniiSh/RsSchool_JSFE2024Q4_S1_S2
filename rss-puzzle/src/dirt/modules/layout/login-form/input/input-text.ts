@@ -2,10 +2,18 @@ import * as input from './input';
 
 export type TInputTextAttributes = Exclude<input.TInputAttributes, 'type'>;
 export type TInputTextFieldsCheckers = Map<string, { func: (value: string) => boolean, text: string }>;
+export type TInputTextNames = 'fname' | 'lname';
+
+export interface IInputTextValues
+{
+  type: TInputTextNames,
+  value: string
+}
 
 export interface IInputTextOptions extends input.IInputOptions
 {
   attributes: [TInputTextAttributes, string][];
+  inputName: TInputTextNames;
   fieldCheckers: TInputTextFieldsCheckers;
   inputListener: EventListener,
 }
@@ -18,12 +26,17 @@ export class InputText extends input.Input
 
   private onInput: EventListener;
 
+  protected inputName: TInputTextNames;
+
+  protected inputValue: IInputTextValues;
+
   constructor
   (
     { 
       className, 
       text, 
       attributes,
+      inputName,
       fieldCheckers,
       inputListener,
     }: IInputTextOptions
@@ -34,7 +47,19 @@ export class InputText extends input.Input
     this.onInput = inputListener.bind(this);
     this.addListener('input', this.onInput);
     this.fieldCheckers = fieldCheckers;
-    this.fieldCheckers.forEach((value, key) => this.validList.set(key, false))
+    this.fieldCheckers.forEach((value, key) => this.validList.set(key, false));
+    this.inputName = inputName;
+    this.inputValue = { type: this.inputName, value: '' };
+  }
+
+  protected setValue(value: string)
+  {
+    this.inputValue.value = value;
+  }
+
+  public getValue()
+  {
+    return this.inputValue;
   }
 
   protected setValid(inputValue: string)

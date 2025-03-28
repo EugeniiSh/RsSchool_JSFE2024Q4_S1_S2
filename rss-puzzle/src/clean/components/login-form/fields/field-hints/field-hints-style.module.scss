@@ -1,5 +1,4 @@
-.block
-{
+.block {
   display: flex;
   flex-direction: column;
   gap: 6rem;
@@ -9,14 +8,12 @@
   font-size: 16rem;
 }
 
-.field
-{
+.field {
   display: flex;
   gap: 6rem;
 }
 
-.tick
-{
+.tick {
   position: relative;
 
   flex-shrink: 0;
@@ -26,8 +23,7 @@
 
   border: 1rem solid black;
 
-  &::after
-  {
+  &::after {
     position: absolute;
     top: 50%;
     left: -40%;
@@ -42,8 +38,7 @@
     transform: rotate(45deg);
   }
 
-  &::before
-  {
+  &::before {
     position: absolute;
     top: 30%;
     left: 10%;
@@ -59,18 +54,14 @@
   }
 }
 
-
-.string.error
-{
+.string.error {
   text-decoration: underline wavy red;
 }
 
-.tick.error::after
-{
+.tick.error::after {
   background-color: transparent;
 }
 
-.tick.error::before
-{
+.tick.error::before {
   background-color: transparent;
 }
