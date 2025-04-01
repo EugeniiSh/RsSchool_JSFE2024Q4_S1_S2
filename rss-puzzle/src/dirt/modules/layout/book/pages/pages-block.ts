@@ -1,6 +1,6 @@
 import { Component } from '../../common/component';
 import { Page } from './page/page';
-import { TCustomEventsUI } from '../../../events/custom';
+import { TCustomEventUI } from '../../../events/custom';
 
 interface ISimpleTurn
 {
@@ -23,7 +23,7 @@ export interface IPagesBlockOption
   text: string,
   items: Page[],
   pageCreator: (count: number) => Page[],
-  customEventsUI: TCustomEventsUI
+  customEventUI: TCustomEventUI
 }
 
 export class PagesBlock extends Component
@@ -32,7 +32,7 @@ export class PagesBlock extends Component
 
   protected createPage: (count: number) => Page[];
 
-  protected customEventsUI: TCustomEventsUI;
+  protected customEventUI: TCustomEventUI;
 
   constructor
   (
@@ -41,14 +41,14 @@ export class PagesBlock extends Component
       text,
       items,
       pageCreator,
-      customEventsUI
+      customEventUI
     }: IPagesBlockOption
   )
   {
     super({ tag: 'div', className, text });
     this.prependChildren(items); // Реверс элементов для правильного отображения (наложения друг на друга)
     this.createPage = pageCreator;
-    this.customEventsUI = customEventsUI;
+    this.customEventUI = customEventUI;
   }
 
   protected getAndUpZindex(): number
@@ -70,7 +70,7 @@ export class PagesBlock extends Component
       {
         page.getNode().style.zIndex = zIndexPage;
         page.removeListener('transitionend', func);
-        page.dispatchSomeEvent(this.customEventsUI.anableUI);
+        page.dispatchSomeEvent(this.customEventUI.anableUI());
       }
 
       return func;
@@ -84,7 +84,7 @@ export class PagesBlock extends Component
 
       destroyPage.destroy();
       this.prepend(this.createPage(1)[0]);
-      page.dispatchSomeEvent(this.customEventsUI.anableUI);
+      page.dispatchSomeEvent(this.customEventUI.anableUI());
     }
 
     return func;
@@ -99,7 +99,7 @@ export class PagesBlock extends Component
     {
       this.getNode().style.zIndex = zIndexBlock;
     }, 10);
-    
+
     for(let i = 1; i < 3; i += 1)
     {
       const upperPage = pages[pages.length - i];
@@ -108,7 +108,7 @@ export class PagesBlock extends Component
       {
         const turnOffFunc = this.getTurnOffFunc({ type: 'simple-turn', turnPage: upperPage });
 
-        upperPage.dispatchSomeEvent(this.customEventsUI.disableUI);
+        upperPage.dispatchSomeEvent(this.customEventUI.disableUI());
         upperPage.toggleClass(turnOverClass, true);
         upperPage.addListener('transitionend', turnOffFunc);
       }, turnOverDelay * (i * i));
@@ -136,7 +136,7 @@ export class PagesBlock extends Component
       }
     ); 
 
-    preLastPage.dispatchSomeEvent(this.customEventsUI.disableUI);
+    preLastPage.dispatchSomeEvent(this.customEventUI.disableUI());
 
     lastPage.getPageFront().append(rightPageContent);
     preLastPage.getPageBack().append(leftPageContent);

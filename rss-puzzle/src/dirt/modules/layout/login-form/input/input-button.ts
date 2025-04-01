@@ -1,11 +1,12 @@
 import * as input from './input';
+import { TCustomEventValues } from '../../../events/custom';
 
 export type TInputButtonAttributes = Exclude<input.TInputAttributes, 'type'| 'name' | 'required'>;
 
 export interface IInputButtonOptions extends input.IInputOptions
 {
   attributes: [TInputButtonAttributes, string][];
-  loginCustomEvent: CustomEvent<unknown>,
+  loginCustomEvent: TCustomEventValues,
   clickListener: EventListener,
   changeStatus: (status: boolean) => void,
 }
@@ -16,7 +17,7 @@ export class InputButton extends input.Input
 
   public changeStatus: (status: boolean) => void;
 
-  protected loginCustomEvent: CustomEvent<unknown>;
+  protected loginCustomEvent: TCustomEventValues;
 
   constructor
   (

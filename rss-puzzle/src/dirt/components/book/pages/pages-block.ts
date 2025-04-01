@@ -113,12 +113,13 @@ for(let i = 0; i < 4; i += 1)
 
 const pagesBlockOption =
 {
-  customEventsUI,
+  
 
   className: [style['pages-block']], 
   text: '',
   items: createStandartPages(4),
   pageCreator: createStandartPages,
+  customEventUI: customEventsUI,
 }
 
 const pagesBlock = new PagesBlock(pagesBlockOption);

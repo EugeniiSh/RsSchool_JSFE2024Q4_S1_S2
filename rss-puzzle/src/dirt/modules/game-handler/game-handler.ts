@@ -1,8 +1,10 @@
 import * as comp from '../layout/common/component';
 import { TCustomEventNames } from '../events/custom';
 import { Book } from '../layout/book/book';
+import { ModalWindow } from '../layout/modal-window/modal-window';
 
 export type TCustomEventListeners = Record<TCustomEventNames, EventListener>;
+export type TElementStatusUI = 'disable' | 'anable';
 
 export interface IGameHandlerOptions
 {
@@ -10,6 +12,7 @@ export interface IGameHandlerOptions
   text: string;
   items: comp.Component[];
   book: Book;
+  modalWindow: ModalWindow;
   customEventListeners: TCustomEventListeners;
 }
 
@@ -17,9 +20,13 @@ export class GameHandler extends comp.Component
 {
   private forCustomEventListeners: { [key: string]: EventListener } = {};
 
+  protected itemStatusUI: Map<comp.Component, TElementStatusUI>;
+
   protected disableUICount = 0;
 
-  protected book: Book
+  protected book: Book;
+
+  protected modalWindow: ModalWindow;
 
   constructor
   (
@@ -28,6 +35,7 @@ export class GameHandler extends comp.Component
       text, 
       items,
       book,
+      modalWindow,
       customEventListeners
     }: IGameHandlerOptions
   )
@@ -35,6 +43,7 @@ export class GameHandler extends comp.Component
     super({ tag: 'div', className, text });
     this.appendChildren(items);
     this.book = book;
+    this.modalWindow = modalWindow;
 
     const keys = Object.keys(customEventListeners) as TCustomEventNames[]
     keys.forEach((key) =>
@@ -42,6 +51,13 @@ export class GameHandler extends comp.Component
       const handlerName = `on${key[0].toUpperCase()}${key.slice(1)}`;
       this.forCustomEventListeners[handlerName] = customEventListeners[key].bind(this);
       this.addListener(key, this.forCustomEventListeners[handlerName]);
+    })
+
+    this.itemStatusUI = new Map();
+
+    this.getChildren().forEach((child) =>
+    {
+      this.itemStatusUI.set(child, 'anable')
     })
   }
 
