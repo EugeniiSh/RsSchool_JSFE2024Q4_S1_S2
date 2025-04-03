@@ -2,6 +2,8 @@ import * as comp from '../layout/common/component';
 import { TCustomEventNames } from '../events/custom';
 import { Book } from '../layout/book/book';
 import { ModalWindow } from '../layout/modal-window/modal-window';
+import { WrapperForm } from '../layout/login-form/wrapper-form';
+import { PuzzleGameStorage } from '../storage/local';
 
 export type TCustomEventListeners = Record<TCustomEventNames, EventListener>;
 export type TElementStatusUI = 'disable' | 'anable';
@@ -11,9 +13,12 @@ export interface IGameHandlerOptions
   className: string[];
   text: string;
   items: comp.Component[];
+  wrapperForm: WrapperForm;
   book: Book;
   modalWindow: ModalWindow;
   customEventListeners: TCustomEventListeners;
+  localStorage: PuzzleGameStorage;
+  loadListener: EventListener;
 }
 
 export class GameHandler extends comp.Component
@@ -24,9 +29,15 @@ export class GameHandler extends comp.Component
 
   protected disableUICount = 0;
 
+  protected wrapperForm: WrapperForm;
+
   protected book: Book;
 
   protected modalWindow: ModalWindow;
+
+  protected localStorage: PuzzleGameStorage;
+
+  protected onLoad: EventListener;
 
   constructor
   (
@@ -34,16 +45,23 @@ export class GameHandler extends comp.Component
       className, 
       text, 
       items,
+      wrapperForm,
       book,
       modalWindow,
-      customEventListeners
+      customEventListeners,
+      localStorage,
+      loadListener
     }: IGameHandlerOptions
   )
   {
     super({ tag: 'div', className, text });
     this.appendChildren(items);
+    this.wrapperForm = wrapperForm;
     this.book = book;
     this.modalWindow = modalWindow;
+    this.localStorage = localStorage;
+    this.onLoad = loadListener.bind(this);
+    window.addEventListener('load', this.onLoad);
 
     const keys = Object.keys(customEventListeners) as TCustomEventNames[]
     keys.forEach((key) =>
@@ -75,6 +93,8 @@ export class GameHandler extends comp.Component
       const handlerName = `${key[2].toLowerCase()}${key.slice(3)}`;
       this.removeListener(handlerName, this.forCustomEventListeners[key]);
     });
+
+    window.removeEventListener('load', this.onLoad);
 
     super.destroy();
   }

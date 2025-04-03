@@ -37,6 +37,7 @@ const customEventList: TCustomEventList =
   preLogout: getCustomEvent.bind(null, 'preLogout'),
   logout: getCustomEvent.bind(null, 'logout'),
   hideModal: getCustomEvent.bind(null, 'hideModal'),
+  bookClose: getCustomEvent.bind(null, 'bookClose'),
   anableUI: getCustomEvent.bind(null, 'anableUI'),
   disableUI: getCustomEvent.bind(null, 'disableUI'),
 };

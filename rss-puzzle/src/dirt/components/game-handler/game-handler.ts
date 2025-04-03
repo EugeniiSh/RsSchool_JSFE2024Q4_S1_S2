@@ -1,12 +1,12 @@
 import * as style from './game-handler-style.module.scss';
 // import { Component } from '../../modules/layout/common/component';
 import { GameHandler, TCustomEventListeners } from '../../modules/game-handler/game-handler';
+
 import wrapperFormElem from '../login-form/loginForm';
 import book from '../book/book';
 import modalWindow from '../pop-up/modal-window/modal-window';
-import preLogoutBlock from '../pop-up/pre-logout/pre-logout';
-
-modalWindow.showModal(preLogoutBlock);
+import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
+import storageLocal from '../storage/local';
 
 // function createContent(text: string)
 // {
@@ -35,17 +35,24 @@ function loginHandler(this: GameHandler)
 
 function preLogoutHandler(this: GameHandler)
 {
-  console.log('prelogout');
+  this.modalWindow.showModal(preLogoutMessage);
 }
 
 function logoutHandler(this: GameHandler)
 {
-  console.log('logout');
+  this.localStorage.resetValue();
+  this.modalWindow.hideModal();
+  this.book.closeCover(style['turn-over']);
 }
 
 function hideModalHandler(this: GameHandler)
 {
-  console.log('hideModal');
+  this.modalWindow.hideModal();
+}
+
+function bookCloseHandler(this: GameHandler)
+{
+  this.wrapperForm.changeVisibility(false);
 }
 
 function disableUIHandler(this: GameHandler)
@@ -70,12 +77,23 @@ function anableUIHandler(this: GameHandler)
   }
 }
 
+function loadHandler(this: GameHandler)
+{
+  const userData = this.localStorage.getValue();
+  if(!userData.isNew)
+  {
+    this.wrapperForm.changeVisibility(true);
+    this.book.openCover(style['turn-over']);
+  }
+}
+
 const customEventListeners: TCustomEventListeners =
 {
   login: loginHandler,
   preLogout: preLogoutHandler,
   logout: logoutHandler,
   hideModal: hideModalHandler,
+  bookClose: bookCloseHandler,
   anableUI: anableUIHandler,
   disableUI: disableUIHandler
 }
@@ -94,6 +112,9 @@ const gameHandlerOptions =
     book,
     modalWindow
   ],
+  wrapperForm: wrapperFormElem,
+  localStorage: storageLocal,
+  loadListener: loadHandler,
 }
 
 const gameHandler = new GameHandler(gameHandlerOptions);

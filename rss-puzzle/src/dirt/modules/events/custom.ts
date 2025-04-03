@@ -5,6 +5,7 @@ export type TCustomEventNames =
 | 'preLogout' 
 | 'logout'
 | 'hideModal'
+| 'bookClose'
 | 'anableUI' 
 | 'disableUI';
 // export type TCustomEventValues = (detail: TDetailOption) => CustomEvent<TDetailOption>;

@@ -40,9 +40,9 @@ export class Book extends Component
     this.customEventsUI = customEventsUI;
   }
 
-  protected openCoverEnd = () =>
+  protected actionCoverEnd = () =>
   {
-    this.coverTop.removeListener('transitionend', this.openCoverEnd);
+    this.coverTop.removeListener('transitionend', this.actionCoverEnd);
     this.coverTop.dispatchSomeEvent(this.customEventsUI.anableUI());
   }
 
@@ -60,10 +60,22 @@ export class Book extends Component
     setTimeout(() =>
     {
       this.coverTop.toggleClass(turnOverClass, true);
-      this.coverTop.addListener('transitionend', this.openCoverEnd);
+      this.coverTop.addListener('transitionend', this.actionCoverEnd);
 
       this.pagesBlock.firstTurnOverPages(turnOverClass, 400);
     }, 5000);
+  }
+
+  public closeCover(turnOverClass: string): void
+  {
+    this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI());
+    this.pagesBlock.backTurnOverPages(turnOverClass, 600);
+
+    setTimeout(() =>
+    {
+      this.coverTop.toggleClass(turnOverClass, false);
+      this.coverTop.addListener('transitionend', this.actionCoverEnd);
+    }, 1200);
   }
 
   public turnPage
