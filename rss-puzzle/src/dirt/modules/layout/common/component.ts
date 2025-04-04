@@ -64,7 +64,7 @@ export class Component {
     this.node.append(child.getNode());
   }
 
-  protected prepend(child: Component)
+  prepend(child: Component)
   {
     this.children.unshift(child);
     this.node.prepend(child.getNode());
@@ -82,7 +82,7 @@ export class Component {
     });
   }
 
-  protected prependChildren(children: Component[]) 
+  prependChildren(children: Component[]) 
   {
     children.forEach((el) => 
     {
@@ -192,5 +192,11 @@ export class Component {
   {
     this.destroyChildren();
     this.node.remove();
+  }
+
+  cleanInnerHTML()
+  {
+    this.node.innerHTML = '';
+    this.children.length = 0;
   }
 }

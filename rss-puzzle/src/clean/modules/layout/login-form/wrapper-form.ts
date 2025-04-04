@@ -9,6 +9,7 @@ export interface IWrapperForm {
   form: Form;
   storage: PuzzleGameStorage;
   loginListener: EventListener;
+  changeVisibility: (isHiden: boolean) => void;
 }
 
 export class WrapperForm extends comp.Component {
@@ -18,6 +19,8 @@ export class WrapperForm extends comp.Component {
 
   protected form: Form;
 
+  public changeVisibility: (isHiden: boolean) => void;
+
   constructor({
     className,
     text,
@@ -25,6 +28,7 @@ export class WrapperForm extends comp.Component {
     form,
     storage,
     loginListener,
+    changeVisibility,
   }: IWrapperForm) {
     super({ tag: 'div', className, text });
     this.appendChildren(items);
@@ -32,6 +36,7 @@ export class WrapperForm extends comp.Component {
     this.storage = storage;
     this.onLogin = loginListener.bind(this);
     this.addListener('login', this.onLogin);
+    this.changeVisibility = changeVisibility;
   }
 
   destroy() {

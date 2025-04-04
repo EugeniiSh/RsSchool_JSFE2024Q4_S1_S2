@@ -10,6 +10,7 @@ import gameHandler from './components/game-handler/game-handler';
 // });
 
 
+
 class PuzzleGame
 {
   constructor

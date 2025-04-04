@@ -5,12 +5,14 @@ import {
   HintsBlock,
   IHintsBlock,
 } from '../../../../modules/layout/hint/hintsBlock';
+import { TInputTextFieldsCheckers } from '../../../../modules/layout/login-form/input/input-text';
 import {
   firstNamefieldCheckers,
   setStateHintField,
   setStateHintFieldComponent,
+  setInitialStateHintField,
+  setInitialStateHintFieldComponent,
 } from './firsNameHints';
-import { TInputTextFieldsCheckers } from '../../../../modules/layout/login-form/input/input-text';
 
 const lastNamefieldCheckers: TInputTextFieldsCheckers = new Map();
 lastNamefieldCheckers.set('size', {
@@ -43,6 +45,7 @@ lastNamefieldCheckers.forEach((value, checkFor) => {
     hintName: checkFor,
     hintComponents: [firstHint, secondHint],
     setState: setStateHintFieldComponent,
+    setInitialState: setInitialStateHintFieldComponent,
   });
 
   hintFieldsMap.set(checkFor, hintField);
@@ -53,6 +56,7 @@ const hintBlockOptions: IHintsBlock = {
   text: '',
   hintFields: hintFieldsMap,
   setState: setStateHintField,
+  setInitialState: setInitialStateHintField,
 };
 
 const lastNameHintsBlock = new HintsBlock(hintBlockOptions);

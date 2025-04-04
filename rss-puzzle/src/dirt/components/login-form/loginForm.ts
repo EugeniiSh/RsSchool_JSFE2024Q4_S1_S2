@@ -54,13 +54,26 @@ const loginFormRequired = new comp.Component
   }
 );
 
+function wrapperFormSetVisibilityStatus(this: WrapperForm, isHiden: boolean)
+{
+  if(isHiden)
+  {
+    this.toggleClass(style['wrapper-hidden'], isHiden);
+    this.setAttribute('tabindex', '-1');
+
+    return;
+  }
+
+  this.toggleClass(style['wrapper-hidden'], isHiden);
+  this.setAttribute('tabindex', '0');
+}
+
 function wrapperFormLoginListener(this: WrapperForm)
 {
   const userData = { ...this.form.getFormValue(), isNew: false };
   this.storage.setValue(userData);
-
-  this.toggleClass(style['wrapper-hidden'], true);
-  this.setAttribute('tabindex', '-1');
+  this.form.setFormValue('');
+  this.changeVisibility(true);
 }
 
 const WrapperFormOptions: IWrapperForm =
@@ -76,7 +89,8 @@ const WrapperFormOptions: IWrapperForm =
     loginFormRequired
   ],
   form: loginForm,
-  loginListener: wrapperFormLoginListener
+  loginListener: wrapperFormLoginListener,
+  changeVisibility: wrapperFormSetVisibilityStatus,
 }
   
 const wrapperFormElem = new WrapperForm(WrapperFormOptions);

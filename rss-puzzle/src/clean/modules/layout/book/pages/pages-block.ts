@@ -1,6 +1,6 @@
 import { Component } from '../../common/component';
 import { Page } from './page/page';
-import { TCustomEventsUI } from '../../../events/custom';
+import { TCustomEventList } from '../../../events/custom';
 
 interface ISimpleTurn {
   type: 'simple-turn';
@@ -13,14 +13,20 @@ interface ITurnAndCreate {
   destroyPage: Page;
 }
 
-export type TTurnPageOption = ISimpleTurn | ITurnAndCreate;
+interface IBackTurn {
+  type: 'back-turn';
+  turnPage: Page;
+  isLastPage: boolean;
+}
+
+export type TTurnPageOption = ISimpleTurn | ITurnAndCreate | IBackTurn;
 
 export interface IPagesBlockOption {
   className: string[];
   text: string;
   items: Page[];
   pageCreator: (count: number) => Page[];
-  customEventsUI: TCustomEventsUI;
+  customEventList: TCustomEventList;
 }
 
 export class PagesBlock extends Component {
@@ -28,19 +34,19 @@ export class PagesBlock extends Component {
 
   protected createPage: (count: number) => Page[];
 
-  protected customEventsUI: TCustomEventsUI;
+  protected customEventList: TCustomEventList;
 
   constructor({
     className,
     text,
     items,
     pageCreator,
-    customEventsUI,
+    customEventList,
   }: IPagesBlockOption) {
     super({ tag: 'div', className, text });
     this.prependChildren(items); // Реверс элементов для правильного отображения (наложения друг на друга)
     this.createPage = pageCreator;
-    this.customEventsUI = customEventsUI;
+    this.customEventList = customEventList;
   }
 
   protected getAndUpZindex(): number {
@@ -58,7 +64,22 @@ export class PagesBlock extends Component {
       const func = () => {
         page.getNode().style.zIndex = zIndexPage;
         page.removeListener('transitionend', func);
-        page.dispatchSomeEvent(this.customEventsUI.anableUI);
+        page.dispatchSomeEvent(this.customEventList.anableUI());
+      };
+
+      return func;
+    }
+
+    if (option.type === 'back-turn') {
+      const func = () => {
+        page.getNode().style.zIndex = '';
+        page.removeListener('transitionend', func);
+        page.dispatchSomeEvent(this.customEventList.anableUI());
+
+        if (option.isLastPage) {
+          this.zIndex = 1;
+          page.dispatchSomeEvent(this.customEventList.bookClose());
+        }
       };
 
       return func;
@@ -71,7 +92,7 @@ export class PagesBlock extends Component {
 
       destroyPage.destroy();
       this.prepend(this.createPage(1)[0]);
-      page.dispatchSomeEvent(this.customEventsUI.anableUI);
+      page.dispatchSomeEvent(this.customEventList.anableUI());
     };
 
     return func;
@@ -98,12 +119,37 @@ export class PagesBlock extends Component {
             turnPage: upperPage,
           });
 
-          upperPage.dispatchSomeEvent(this.customEventsUI.disableUI);
+          upperPage.dispatchSomeEvent(this.customEventList.disableUI());
           upperPage.toggleClass(turnOverClass, true);
           upperPage.addListener('transitionend', turnOffFunc);
         },
         turnOverDelay * (i * i),
       );
+    }
+  }
+
+  public backTurnOverPages(turnOverClass: string, turnOverDelay: number): void {
+    const pages = this.getChildren() as Page[];
+
+    setTimeout(() => {
+      this.getNode().style.zIndex = '';
+    }, 1000);
+
+    for (let i = 0; i < 2; i += 1) {
+      const upperPage = pages[pages.length - 2 + i];
+      const isLast = i === 1;
+
+      setTimeout(() => {
+        const turnOffFunc = this.getTurnOffFunc({
+          type: 'back-turn',
+          turnPage: upperPage,
+          isLastPage: isLast,
+        });
+
+        upperPage.dispatchSomeEvent(this.customEventList.disableUI());
+        upperPage.toggleClass(turnOverClass, false);
+        upperPage.addListener('transitionend', turnOffFunc);
+      }, turnOverDelay * i);
     }
   }
 
@@ -122,7 +168,7 @@ export class PagesBlock extends Component {
       destroyPage: secondPage,
     });
 
-    preLastPage.dispatchSomeEvent(this.customEventsUI.disableUI);
+    preLastPage.dispatchSomeEvent(this.customEventList.disableUI());
 
     lastPage.getPageFront().append(rightPageContent);
     preLastPage.getPageBack().append(leftPageContent);

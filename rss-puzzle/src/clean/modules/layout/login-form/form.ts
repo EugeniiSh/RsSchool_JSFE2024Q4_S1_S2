@@ -76,6 +76,12 @@ export class Form extends comp.Component {
     return result;
   }
 
+  public setFormValue(value: string): void {
+    this.fields.forEach((field) => {
+      field.setFieldValue(value);
+    });
+  }
+
   destroy() {
     this.removeListener('input', this.onInput);
     super.destroy();

@@ -10,6 +10,7 @@ export interface IWrapperForm
   form: Form;
   storage: PuzzleGameStorage;
   loginListener: EventListener;
+  changeVisibility: (isHiden: boolean) => void
 }
 
 export class WrapperForm extends comp.Component
@@ -20,6 +21,8 @@ export class WrapperForm extends comp.Component
 
   protected form: Form;
 
+  public changeVisibility: (isHiden: boolean) => void
+
   constructor
   (
     {
@@ -28,7 +31,8 @@ export class WrapperForm extends comp.Component
       items,
       form,
       storage,
-      loginListener
+      loginListener,
+      changeVisibility
     }: IWrapperForm
   )
   {
@@ -38,6 +42,7 @@ export class WrapperForm extends comp.Component
     this.storage = storage;
     this.onLogin = loginListener.bind(this);
     this.addListener('login', this.onLogin);
+    this.changeVisibility = changeVisibility;
   }
 
   destroy() 

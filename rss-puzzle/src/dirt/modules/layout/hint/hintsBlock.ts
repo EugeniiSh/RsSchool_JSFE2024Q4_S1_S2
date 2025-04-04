@@ -6,7 +6,8 @@ export interface IHintsBlock
   className: string[];
   text: string;
   hintFields: Map<string, HintField>;
-  setState: (state: boolean, checkFor: string) => void
+  setState: (state: boolean, checkFor: string) => void;
+  setInitialState: () => void;
 }
 
 export class HintsBlock extends Component
@@ -15,13 +16,16 @@ export class HintsBlock extends Component
 
   public setState: (state: boolean, checkFor: string) => void
 
+  public setInitialState: () => void;
+
   constructor
   (
     { 
       className,
       text, 
       hintFields,
-      setState
+      setState,
+      setInitialState
     }: IHintsBlock
   )
   {
@@ -29,5 +33,6 @@ export class HintsBlock extends Component
     this.hintFields = hintFields;
     hintFields.forEach((field) => this.append(field), this);
     this.setState = setState;
+    this.setInitialState = setInitialState;
   }
 }

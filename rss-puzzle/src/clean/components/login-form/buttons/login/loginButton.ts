@@ -9,7 +9,7 @@ const loginEvent = customEventList.login;
 
 function loginButtonClickListener(this: InputButton) {
   this.changeStatus(false);
-  this.getNode().dispatchEvent(this.loginCustomEvent);
+  this.getNode().dispatchEvent(this.loginCustomEvent());
 }
 
 function loginButtonChangeStatus(this: InputButton, status: boolean) {

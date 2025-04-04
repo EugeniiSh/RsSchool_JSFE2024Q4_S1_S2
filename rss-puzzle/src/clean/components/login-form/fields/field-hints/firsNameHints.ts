@@ -47,6 +47,11 @@ function setStateHintFieldComponent(this: HintField, state: boolean) {
   });
 }
 
+function setInitialStateHintFieldComponent(this: HintField) {
+  this.getChildren()[0].toggleClass(style.error, true);
+  this.getChildren()[1].toggleClass(style.error, false);
+}
+
 firstNamefieldCheckers.forEach((value, checkFor) => {
   const firstHint = new Component({
     tag: 'div',
@@ -64,6 +69,7 @@ firstNamefieldCheckers.forEach((value, checkFor) => {
     hintName: checkFor,
     hintComponents: [firstHint, secondHint],
     setState: setStateHintFieldComponent,
+    setInitialState: setInitialStateHintFieldComponent,
   });
 
   hintFieldsMap.set(checkFor, hintField);
@@ -83,11 +89,16 @@ function setStateHintField(
   }
 }
 
+function setInitialStateHintField(this: HintsBlock) {
+  this.hintFields.forEach((field) => field.setInitialState());
+}
+
 const hintBlockOptions: IHintsBlock = {
   className: [style.block],
   text: '',
   hintFields: hintFieldsMap,
   setState: setStateHintField,
+  setInitialState: setInitialStateHintField,
 };
 
 const firstNameHintsBlock = new HintsBlock(hintBlockOptions);
@@ -96,4 +107,6 @@ export {
   firstNameHintsBlock,
   setStateHintFieldComponent,
   setStateHintField,
+  setInitialStateHintFieldComponent,
+  setInitialStateHintField,
 };

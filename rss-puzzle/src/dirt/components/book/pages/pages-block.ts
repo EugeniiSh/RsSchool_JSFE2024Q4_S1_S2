@@ -4,7 +4,9 @@ import { PageContent } from '../../../modules/layout/book/pages/page/page-conten
 import { PageSide } from '../../../modules/layout/book/pages/page/page-side';
 import { Page } from '../../../modules/layout/book/pages/page/page';
 import { PagesBlock } from '../../../modules/layout/book/pages/pages-block';
-import { customEventsUI } from '../../events/custom';
+import { customEventList } from '../../events/custom';
+
+import startMenu from '../../start-menu/start-menu';
 
 // const orderName =
 // [
@@ -75,11 +77,13 @@ for(let i = 0; i < 4; i += 1)
   {
     const side = j === 0 ? 'front' : 'back';
 
+    const isStartMenuSide = i === 2 && j === 0;
+
     const contentOption =
     {
       className: [style.content], 
       text: '',
-      content: new Component
+      content: isStartMenuSide ? startMenu : new Component
       (
         { 
           tag: 'div', 
@@ -113,11 +117,12 @@ for(let i = 0; i < 4; i += 1)
 
 const pagesBlockOption =
 {
-  customEventsUI,
+  customEventList,
 
   className: [style['pages-block']], 
   text: '',
-  items: createStandartPages(4),
+  // items: createStandartPages(4),
+  items: pages,
   pageCreator: createStandartPages,
 }
 

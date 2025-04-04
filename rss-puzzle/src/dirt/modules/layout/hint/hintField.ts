@@ -6,14 +6,17 @@ export interface IHintField
   text: string;
   hintName: string;
   hintComponents: Component[];
-  setState: (state: boolean) => void
+  setState: (state: boolean) => void,
+  setInitialState: () => void
 }
 
 export class HintField extends Component
 {
   private hintName: string;
 
-  public setState: (state: boolean) => void
+  public setState: (state: boolean) => void;
+
+  public setInitialState: () => void;
 
   constructor
   (
@@ -22,13 +25,15 @@ export class HintField extends Component
       text, 
       hintName,
       hintComponents,
-      setState
+      setState,
+      setInitialState
     }: IHintField
   )
   {
     super({ tag: 'div', className, text }, ...hintComponents);
     this.hintName = hintName;
     this.setState = setState;
+    this.setInitialState = setInitialState;
   }
 
   public getHintName(): string

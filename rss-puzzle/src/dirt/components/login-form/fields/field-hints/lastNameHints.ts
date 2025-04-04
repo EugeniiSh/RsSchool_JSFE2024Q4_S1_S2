@@ -2,8 +2,15 @@ import * as style from './field-hints-style.module.scss';
 import { Component } from '../../../../modules/layout/common/component';
 import { HintField } from '../../../../modules/layout/hint/hintField';
 import { HintsBlock, IHintsBlock } from '../../../../modules/layout/hint/hintsBlock';
-import { firstNamefieldCheckers, setStateHintField, setStateHintFieldComponent } from './firsNameHints'
 import { TInputTextFieldsCheckers } from '../../../../modules/layout/login-form/input/input-text';
+import 
+{ 
+  firstNamefieldCheckers, 
+  setStateHintField, 
+  setStateHintFieldComponent,
+  setInitialStateHintField,
+  setInitialStateHintFieldComponent
+} from './firsNameHints';
 
 
 
@@ -45,7 +52,8 @@ lastNamefieldCheckers.forEach((value, checkFor) =>
       text: '',
       hintName: checkFor,
       hintComponents: [firstHint, secondHint],
-      setState: setStateHintFieldComponent
+      setState: setStateHintFieldComponent,
+      setInitialState: setInitialStateHintFieldComponent,
     }
   )
 
@@ -57,7 +65,8 @@ const hintBlockOptions: IHintsBlock =
   className: [style.block],
   text: '',
   hintFields: hintFieldsMap,
-  setState: setStateHintField
+  setState: setStateHintField,
+  setInitialState: setInitialStateHintField,
 }
 
 const lastNameHintsBlock = new HintsBlock(hintBlockOptions);

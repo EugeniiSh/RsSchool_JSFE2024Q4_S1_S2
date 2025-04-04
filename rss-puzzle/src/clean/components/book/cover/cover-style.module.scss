@@ -7,7 +7,7 @@
   transform-style: preserve-3d;
   transform-origin: 0.5% center;
 
-  transition: 3s;
+  transition: 5s;
 }
 
 .cover-side {
@@ -19,6 +19,7 @@
   background-repeat: no-repeat;
   background-size: cover;
 
+  transform-style: inherit;
   backface-visibility: hidden;
 }
 
@@ -35,6 +36,8 @@
   line-height: 1;
 
   background-image: url(../../../../assets/images/book-cover.png);
+
+  transform-style: inherit;
 }
 
 .header {
@@ -43,10 +46,10 @@
   letter-spacing: 6rem;
 
   text-shadow:
-    2rem -2rem 3rem rgb(101, 66, 44),
-    -1rem 1rem 3rem rgb(149, 127, 116);
+    2rem -2rem 3rem var(--main-brown),
+    -1rem 1rem 3rem var(--main-brown-light);
 
-  color: rgb(44, 28, 13);
+  color: var(--text-color-dark);
 
   &-top {
     text-transform: uppercase;
@@ -81,4 +84,5 @@
   background-size: cover;
 
   transform: rotateX(180deg);
+  transform-style: inherit;
 }
