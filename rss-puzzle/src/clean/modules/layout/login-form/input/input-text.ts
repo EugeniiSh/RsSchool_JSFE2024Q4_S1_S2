@@ -52,20 +52,26 @@ export class InputText extends input.Input {
     this.inputValue.value = value;
   }
 
-  public getValue() {
-    return this.inputValue;
-  }
-
   protected setValid(inputValue: string) {
     this.fieldCheckers.forEach((value, checkFor) => {
       this.validList.set(checkFor, value.func(inputValue));
     });
   }
 
+  public getValue() {
+    return this.inputValue;
+  }
+
   public getValid(checkFor: string): boolean {
     const result = this.validList.get(checkFor);
     if (!result) return false;
     return true;
+  }
+
+  public setInputValueAttribute(value: string): void {
+    const inputElem = this.getNode() as HTMLInputElement;
+    inputElem.value = value;
+    this.setValue(value);
   }
 
   destroy() {

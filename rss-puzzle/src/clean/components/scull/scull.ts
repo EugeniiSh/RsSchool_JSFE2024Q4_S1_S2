@@ -24,7 +24,8 @@ const rightEye = new Component({
 });
 
 function scullLaugh(this: Scull) {
-  this.toggleClass(style['scull-laugh'], true);
+  this.toggleClass(style['scull-laugh'], false);
+  setTimeout(() => this.toggleClass(style['scull-laugh'], true), 10);
 }
 
 const scullOption = {

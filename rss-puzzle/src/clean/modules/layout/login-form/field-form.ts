@@ -45,12 +45,23 @@ export class FieldForm extends comp.Component {
     this.isValid = validationResult.every((item) => item);
   }
 
+  protected resetHints(): void {
+    this.setFieldValid([false]);
+    this.hintsBlock.setInitialState();
+  }
+
   public isFieldValid(): boolean {
     return this.isValid;
   }
 
   public getFieldValue(): IInputTextValues {
     return this.validateItem.getValue();
+  }
+
+  public setFieldValue(value: string): void {
+    this.validateItem.setInputValueAttribute(value);
+
+    if (value === '') this.resetHints();
   }
 
   destroy() {

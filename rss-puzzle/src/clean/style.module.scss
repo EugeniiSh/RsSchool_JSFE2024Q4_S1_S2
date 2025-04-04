@@ -24,6 +24,20 @@
       ) +
       9rem
   );
+
+  --main-black: rgb(0, 0, 0);
+  --main-black-opacity05: rgba(0, 0, 0, 0.5);
+
+  --main-brown: rgb(101, 66, 44);
+  --main-brown-middle: rgb(140, 93, 65);
+  --main-brown-light: rgb(149, 127, 116);
+
+  --main-red: rgb(255, 0, 0);
+
+  --text-color-dark: rgb(44, 28, 13);
+  --first-letter-red: rgb(199, 0, 0);
+  --pupil-eye: rgb(240, 248, 255);
+  --iris-eye: rgb(0, 255, 208);
 }
 
 * {

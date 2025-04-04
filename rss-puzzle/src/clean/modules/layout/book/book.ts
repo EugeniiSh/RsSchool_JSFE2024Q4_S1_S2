@@ -1,7 +1,7 @@
 import { Component } from '../common/component';
 import { CoverTop } from './cover/cover-top';
 import { PagesBlock } from './pages/pages-block';
-import { TCustomEventsUI } from '../../events/custom';
+import { TCustomEventUI } from '../../events/custom';
 
 export interface IBook {
   className: string[];
@@ -9,7 +9,7 @@ export interface IBook {
   items: [CoverTop, PagesBlock, Component];
   coverTop: CoverTop;
   pagesBlock: PagesBlock;
-  customEventsUI: TCustomEventsUI;
+  customEventsUI: TCustomEventUI;
 }
 
 export class Book extends Component {
@@ -17,7 +17,7 @@ export class Book extends Component {
 
   private pagesBlock: PagesBlock;
 
-  protected customEventsUI: TCustomEventsUI;
+  protected customEventsUI: TCustomEventUI;
 
   constructor({
     className,
@@ -34,13 +34,13 @@ export class Book extends Component {
     this.customEventsUI = customEventsUI;
   }
 
-  protected openCoverEnd = () => {
-    this.coverTop.removeListener('transitionend', this.openCoverEnd);
-    this.coverTop.dispatchSomeEvent(this.customEventsUI.anableUI);
+  protected actionCoverEnd = () => {
+    this.coverTop.removeListener('transitionend', this.actionCoverEnd);
+    this.coverTop.dispatchSomeEvent(this.customEventsUI.anableUI());
   };
 
   public openCover(turnOverClass: string): void {
-    this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI);
+    this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI());
 
     // this.coverTop.toggleClass(turnOverClass, true);
     // this.coverTop.addListener('transitionend', this.openCoverEnd);
@@ -51,10 +51,20 @@ export class Book extends Component {
 
     setTimeout(() => {
       this.coverTop.toggleClass(turnOverClass, true);
-      this.coverTop.addListener('transitionend', this.openCoverEnd);
+      this.coverTop.addListener('transitionend', this.actionCoverEnd);
 
       this.pagesBlock.firstTurnOverPages(turnOverClass, 400);
     }, 5000);
+  }
+
+  public closeCover(turnOverClass: string): void {
+    this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI());
+    this.pagesBlock.backTurnOverPages(turnOverClass, 600);
+
+    setTimeout(() => {
+      this.coverTop.toggleClass(turnOverClass, false);
+      this.coverTop.addListener('transitionend', this.actionCoverEnd);
+    }, 1200);
   }
 
   public turnPage(

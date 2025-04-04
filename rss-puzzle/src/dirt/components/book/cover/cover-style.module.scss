@@ -21,6 +21,7 @@
   background-repeat: no-repeat;
   background-size: cover;
 
+  transform-style: inherit;
   backface-visibility: hidden;
 }
 
@@ -38,6 +39,8 @@
   line-height: 1;
 
   background-image: url(../../../../assets/images/book-cover.png);
+
+  transform-style: inherit;
 }
 
 .header
@@ -88,4 +91,5 @@
   background-size: cover;
 
   transform: rotateX(180deg);
+  transform-style: inherit;
 }

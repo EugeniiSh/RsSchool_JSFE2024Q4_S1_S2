@@ -4,8 +4,12 @@ import {
   GameHandler,
   TCustomEventListeners,
 } from '../../modules/game-handler/game-handler';
+
 import wrapperFormElem from '../login-form/loginForm';
 import book from '../book/book';
+import modalWindow from '../pop-up/modal-window/modal-window';
+import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
+import storageLocal from '../storage/local';
 
 // function createContent(text: string)
 // {
@@ -31,6 +35,24 @@ function loginHandler(this: GameHandler) {
   // }
 }
 
+function preLogoutHandler(this: GameHandler) {
+  this.modalWindow.showModal(preLogoutMessage);
+}
+
+function logoutHandler(this: GameHandler) {
+  this.localStorage.resetValue();
+  this.modalWindow.hideModal();
+  this.book.closeCover(style['turn-over']);
+}
+
+function hideModalHandler(this: GameHandler) {
+  this.modalWindow.hideModal();
+}
+
+function bookCloseHandler(this: GameHandler) {
+  this.wrapperForm.changeVisibility(false);
+}
+
 function disableUIHandler(this: GameHandler) {
   this.disableUICount += 1;
 
@@ -49,19 +71,35 @@ function anableUIHandler(this: GameHandler) {
   }
 }
 
+function loadHandler(this: GameHandler) {
+  const userData = this.localStorage.getValue();
+  if (!userData.isNew) {
+    this.wrapperForm.changeVisibility(true);
+    this.book.openCover(style['turn-over']);
+  }
+}
+
 const customEventListeners: TCustomEventListeners = {
   login: loginHandler,
+  preLogout: preLogoutHandler,
+  logout: logoutHandler,
+  hideModal: hideModalHandler,
+  bookClose: bookCloseHandler,
   anableUI: anableUIHandler,
   disableUI: disableUIHandler,
 };
 
 const gameHandlerOptions = {
   book,
+  modalWindow,
   customEventListeners,
 
   className: [style.game],
   text: '',
-  items: [wrapperFormElem, book],
+  items: [wrapperFormElem, book, modalWindow],
+  wrapperForm: wrapperFormElem,
+  localStorage: storageLocal,
+  loadListener: loadHandler,
 };
 
 const gameHandler = new GameHandler(gameHandlerOptions);
