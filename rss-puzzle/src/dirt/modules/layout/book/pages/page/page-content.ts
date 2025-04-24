@@ -25,9 +25,9 @@ export class PageContent extends Component
     this.content = content;
   }
 
-  append(child: Component): void 
-  {
-    this.destroyChildren();
-    super.append(child);
-  }
+  // append(child: Component): void 
+  // {
+  //   this.destroyChildren();
+  //   super.append(child);
+  // }
 }

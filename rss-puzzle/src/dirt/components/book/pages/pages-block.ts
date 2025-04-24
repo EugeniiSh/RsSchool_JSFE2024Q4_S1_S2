@@ -7,6 +7,9 @@ import { PagesBlock } from '../../../modules/layout/book/pages/pages-block';
 import { customEventList } from '../../events/custom';
 
 import startMenu from '../../start-menu/start-menu';
+import firstPageFiller from '../bookStartContent/startContent';
+
+const firstPageContent: Component[] = [...firstPageFiller, startMenu];
 
 // const orderName =
 // [
@@ -123,6 +126,7 @@ const pagesBlockOption =
   text: '',
   // items: createStandartPages(4),
   items: pages,
+  startContent: firstPageContent, 
   pageCreator: createStandartPages,
 }
 
