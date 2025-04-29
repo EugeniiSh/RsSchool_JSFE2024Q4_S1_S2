@@ -22,7 +22,9 @@
   transform-style: inherit;
   transform-origin: left center;
 
-  transition: 5s;
+  // transition: 5s;
+  transition-property: transform;
+  transition-duration: 5s;
 }
 
 .side {
@@ -35,7 +37,7 @@
   width: 100%;
   height: 100%;
 
-  font-size: 32rem;
+  // font-size: 32rem;
 
   background-repeat: no-repeat;
   background-size: cover;
@@ -63,19 +65,20 @@
   transform-style: inherit;
 }
 
-.content::first-letter {
-  padding: 5rem;
+// .content::first-letter
+// {
+//   padding: 5rem;
 
-  font-family: Magic Spell Jf;
-  font-style: normal;
-  font-size: 2em;
-  line-height: 1;
+//   font-family: Magic Spell Jf;
+//   font-style: normal;
+//   font-size: 2em;
+//   line-height: 1;
 
-  color: var(--first-letter-red);
-  text-shadow: 0rem 0rem 3rem var(--main-black);
+//   color: var(--first-letter-red);
+//   text-shadow: 0rem 0rem 3rem var(--main-black);
 
-  float: left;
-}
+//   float: left;
+// }
 
 .item {
   background-color: aquamarine;

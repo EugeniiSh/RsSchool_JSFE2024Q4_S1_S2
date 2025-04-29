@@ -26,6 +26,7 @@ export class PageSide extends Component
 
   append(child: Component): void 
   {
+    this.content.cleanInnerHTML()
     this.content.append(child);
   }
 }

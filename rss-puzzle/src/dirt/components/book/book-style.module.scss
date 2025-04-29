@@ -5,6 +5,8 @@
   height: var(--cover-height);
   width: calc(var(--cover-height) * var(--cover-width-ratio));
 
+  font-size: calc(var(--cover-height) * 0.13);
+
   transform-style: inherit;
   transform: rotateX(10deg) translateX(50%);
 

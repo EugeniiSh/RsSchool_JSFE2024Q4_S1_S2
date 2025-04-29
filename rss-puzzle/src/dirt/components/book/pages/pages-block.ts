@@ -7,6 +7,9 @@ import { PagesBlock } from '../../../modules/layout/book/pages/pages-block';
 import { customEventList } from '../../events/custom';
 
 import startMenu from '../../start-menu/start-menu';
+import firstPageFiller from '../bookStartContent/startContent';
+
+const firstPageContent: Component[] = [...firstPageFiller, startMenu];
 
 // const orderName =
 // [
@@ -37,7 +40,8 @@ function createStandartPages(count: number): Page[]
           { 
             tag: 'div', 
             className: [style.item], 
-            text: `Content ${ side.toUpperCase() } Item #-${i}`, 
+            // text: `Content ${ side.toUpperCase() } Item #-${i}`, 
+            text: '',
           }
         ) 
       }
@@ -121,8 +125,9 @@ const pagesBlockOption =
 
   className: [style['pages-block']], 
   text: '',
-  // items: createStandartPages(4),
-  items: pages,
+  items: createStandartPages(4),
+  // items: pages,
+  startContent: firstPageContent, 
   pageCreator: createStandartPages,
 }
 
