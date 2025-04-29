@@ -25,6 +25,7 @@ export interface IPagesBlockOption {
   className: string[];
   text: string;
   items: Page[];
+  startContent: Component[];
   pageCreator: (count: number) => Page[];
   customEventList: TCustomEventList;
 }
@@ -36,10 +37,13 @@ export class PagesBlock extends Component {
 
   protected customEventList: TCustomEventList;
 
+  protected startContent: Component[];
+
   constructor({
     className,
     text,
     items,
+    startContent,
     pageCreator,
     customEventList,
   }: IPagesBlockOption) {
@@ -47,6 +51,7 @@ export class PagesBlock extends Component {
     this.prependChildren(items); // Реверс элементов для правильного отображения (наложения друг на друга)
     this.createPage = pageCreator;
     this.customEventList = customEventList;
+    this.startContent = startContent;
   }
 
   protected getAndUpZindex(): number {
@@ -98,6 +103,28 @@ export class PagesBlock extends Component {
     return func;
   }
 
+  protected setStartPageContent(status: 'open' | 'closed') {
+    const pages = this.getChildren() as Page[];
+    const statusCount = status === 'open' ? 4 : 3;
+    let count = 0;
+
+    for (let i = 1; i < statusCount; i += 1) {
+      const upperPage = pages[pages.length - i];
+      const front = upperPage.getPageFront();
+      const back = upperPage.getPageBack();
+
+      if (i !== statusCount - 1) {
+        front.append(this.startContent[count]);
+        count += 1;
+        back.append(this.startContent[count]);
+        count += 1;
+      } else {
+        front.append(this.startContent[count]);
+        count += 1;
+      }
+    }
+  }
+
   public firstTurnOverPages(
     turnOverClass: string,
     turnOverDelay: number,
@@ -105,11 +132,14 @@ export class PagesBlock extends Component {
     const pages = this.getChildren() as Page[];
     const zIndexBlock = this.getAndUpZindex().toString();
 
+    this.setStartPageContent('open');
+
     setTimeout(() => {
       this.getNode().style.zIndex = zIndexBlock;
     }, 10);
 
-    for (let i = 1; i < 3; i += 1) {
+    for (let i = 1; i < 3; i += 1) // for(let i = 1; i < 2; i += 1)
+    {
       const upperPage = pages[pages.length - i];
 
       setTimeout(
@@ -130,6 +160,8 @@ export class PagesBlock extends Component {
 
   public backTurnOverPages(turnOverClass: string, turnOverDelay: number): void {
     const pages = this.getChildren() as Page[];
+
+    this.setStartPageContent('closed');
 
     setTimeout(() => {
       this.getNode().style.zIndex = '';

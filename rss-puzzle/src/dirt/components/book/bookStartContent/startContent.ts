@@ -7,7 +7,7 @@ const content =
   (
     {
       tag: 'div',
-      className: [style['first-side']],
+      className: [style.side, style['first-side']],
       text: ''
     },
     new Component({ tag: 'span',className: [style.span, style['first-side__word']],text: 'rolling' }),
@@ -21,7 +21,7 @@ const content =
   (
     {
       tag: 'div',
-      className: [style['second-side']],
+      className: [style.side, style['second-side']],
       text: ''
     },
 
@@ -50,7 +50,7 @@ const content =
   (
     {
       tag: 'div',
-      className: [style['third-side']],
+      className: [style.side, style['third-side']],
       text: ''
     },
 
@@ -59,7 +59,7 @@ const content =
       { 
         tag: 'ul',
         className: [style.ul, style.stack],
-        text: 'used stack.' 
+        text: 'used stack:' 
       },
       new Component({ tag: 'li',className: [style.li],text: 'typescript' }),
       new Component({ tag: 'li',className: [style.li],text: 'scss' }),
@@ -74,7 +74,7 @@ const content =
   (
     { 
       tag: 'div',
-      className: [style['fourth-side']],
+      className: [style.side, style['fourth-side']],
       text: '' 
     },
     new Component({ tag: 'div',className: [style.h3], text: 'rules' }),

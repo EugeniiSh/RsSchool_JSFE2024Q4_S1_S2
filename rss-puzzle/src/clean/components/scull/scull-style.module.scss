@@ -26,20 +26,22 @@
   background-size: cover;
 
   transform: translateY(-40%);
-  transition: 1s;
+  transition-property: translateY;
+  transition-duration: 1s;
 }
 
 .eye {
   position: absolute;
   content: '';
 
-  width: 5rem;
-  height: 5rem;
+  width: var(--scull-eye-size);
+  height: var(--scull-eye-size);
 
   border-radius: 50%;
 
   background-color: var(--pupil-eye);
-  box-shadow: 0rem 0rem 5rem 5rem var(--iris-eye);
+  box-shadow: 0rem 0rem var(--scull-eye-size) var(--scull-eye-size)
+    var(--iris-eye);
 
   opacity: 0;
 

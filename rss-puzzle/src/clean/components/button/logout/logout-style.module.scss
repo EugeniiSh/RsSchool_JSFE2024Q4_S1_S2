@@ -1,7 +1,7 @@
 .button {
   position: relative;
 
-  padding: 8rem 16rem;
+  padding: 1% 2%;
 
   background-image: url(../../../../assets/images/border-1.png);
   background-repeat: no-repeat;
@@ -11,12 +11,11 @@
   background-color: transparent;
   border: none;
   border-radius: 5%;
-  box-shadow: -2rem 3rem 3rem 3rem var(--main-brown-middle);
+  box-shadow: 0rem 3rem 3rem 3rem var(--main-brown-middle);
 
-  font-size: 32rem;
+  font-size: 0.4em;
   font-family: 'Lora', serif;
   font-optical-sizing: auto;
-  // font-style: italic;
 
   letter-spacing: 2rem;
   text-transform: capitalize;
@@ -30,12 +29,12 @@
 
 @media (hover: hover) {
   .button:hover {
-    box-shadow: -3rem 3rem 9rem 3rem var(--iris-eye);
+    box-shadow: 0rem 3rem 9rem 3rem var(--iris-eye);
   }
 }
 
 .button:active {
-  transform: translate(-1.5%, 5%);
+  transform: translate(-1%, 5%);
   box-shadow: 0rem 0rem 3rem 1rem var(--main-brown-middle);
 }
 
@@ -46,8 +45,8 @@
 
   font-family: Magic Spell Jf;
   font-style: normal;
-  font-size: 1.7em;
-  line-height: 1;
+  font-size: 1.4em;
+  line-height: 1.3;
 
   color: var(--first-letter-red);
   text-shadow: 0rem 0rem 3rem var(--main-black);

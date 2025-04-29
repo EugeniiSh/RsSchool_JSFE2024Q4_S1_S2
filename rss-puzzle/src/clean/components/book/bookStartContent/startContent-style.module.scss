@@ -1,5 +1,4 @@
-.h3
-{
+.h3 {
   font-family: Magic Spell Jf;
   font-style: normal;
   font-size: 0.5em;
@@ -10,18 +9,15 @@
   text-shadow: 0rem 0rem 1rem var(--main-black);
 }
 
-.p 
-{
+.p {
   font-size: 0.3em;
 }
 
-.span
-{
+.span {
   box-shadow: none;
 }
 
-.ul
-{
+.ul {
   font-family: Magic Spell Jf;
   font-style: normal;
   font-size: 0.5em;
@@ -32,9 +28,8 @@
   text-shadow: 0rem 0rem 1rem var(--main-black);
 }
 
-.li
-{
-  font-family: "Lora", serif;
+.li {
+  font-family: 'Lora', serif;
   font-style: italic;
 
   text-transform: none;
@@ -42,8 +37,7 @@
   list-style-type: none;
 }
 
-.side
-{
+.side {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -54,13 +48,11 @@
   height: 100%;
 }
 
-.first-side
-{
+.first-side {
   border: none;
 }
 
-.first-side__word
-{
+.first-side__word {
   display: block;
 
   font-family: Magic Spell Jf;
@@ -74,8 +66,7 @@
   color: var(--text-color-dark);
 }
 
-.first-side__word::first-letter
-{
+.first-side__word::first-letter {
   padding: 5rem;
 
   font-family: Magic Spell Jf;
@@ -91,38 +82,30 @@
   float: left;
 }
 
-.second-side
-{
+.second-side {
   border: none;
 }
 
-.third-side
-{
+.third-side {
   border: none;
 }
 
-.fourth-side
-{
+.fourth-side {
   padding: 5% 10%;
 }
 
-.develop
-{
+.develop {
   border: none;
 }
 
-.implement
-{
+.implement {
   border: none;
 }
 
-.stack
-{
+.stack {
   border: none;
 }
 
-.description
-{
+.description {
   border: none;
 }
-
