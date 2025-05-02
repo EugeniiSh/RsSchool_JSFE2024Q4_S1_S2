@@ -1,9 +1,9 @@
 import * as style from './game-handler-style.module.scss';
-// import { Component } from '../../modules/layout/common/component';
 import {
   GameHandler,
   TCustomEventListeners,
 } from '../../modules/game-handler/game-handler';
+import { playerGreetings } from '../start-menu/start-menu';
 
 import wrapperFormElem from '../login-form/loginForm';
 import book from '../book/book';
@@ -11,28 +11,12 @@ import modalWindow from '../pop-up/modal-window/modal-window';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
 
-// function createContent(text: string)
-// {
-//   const option =
-//   {
-//     tag: 'div',
-//     className: [style['new-content']],
-//     text: `New content with ${text}`
-//   }
-
-//   return new Component(option);
-// }
-
 function loginHandler(this: GameHandler) {
-  this.book.openCover(style['turn-over']);
+  const player = storageLocal.getValue();
+  const playerInitials = `${player.fname} ${player.lname}`;
+  playerGreetings.setPlayerName(playerInitials);
 
-  // for(let i = 1; i < 5; i += 1)
-  // {
-  //   setTimeout(() =>
-  //   {
-  //     this.book.turnPage(style['turn-over'], createContent(i.toString()), createContent(i.toString()))
-  //   }, i * 4000);
-  // }
+  this.book.openCover(style['turn-over']);
 }
 
 function preLogoutHandler(this: GameHandler) {
