@@ -2,6 +2,7 @@ import * as style from './start-menu-style.module.scss';
 import { Component } from '../../modules/layout/common/component';
 import { Greeting } from '../../modules/layout/personalization/greeting';
 
+import startButton from '../button/start/start';
 import logoutButton from '../button/logout/logout';
 import gameLocalStorage from '../storage/local';
 
@@ -45,6 +46,7 @@ const startMenu = new Component
   },
 
   playerGreetings,
+  startButton,
   logoutButton
 )
 

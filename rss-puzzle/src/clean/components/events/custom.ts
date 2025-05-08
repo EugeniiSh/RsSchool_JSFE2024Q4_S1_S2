@@ -36,6 +36,7 @@ const customEventList: TCustomEventList = {
   bookClose: getCustomEvent.bind(null, 'bookClose'),
   anableUI: getCustomEvent.bind(null, 'anableUI'),
   disableUI: getCustomEvent.bind(null, 'disableUI'),
+  start: getCustomEvent.bind(null, 'start'),
 };
 
 const customEventsUI: TCustomEventUI = {

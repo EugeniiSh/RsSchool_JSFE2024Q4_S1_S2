@@ -229,6 +229,12 @@ export class PagesBlock extends Component
     preLastPage.getPageBack().append(leftPageContent);
 
     preLastPage.toggleClass(turnOverClass);
-    preLastPage.addListener('transitionend', turnOffFunc);
+    preLastPage.addListener('transitionend', (event) =>
+    {
+      if(event.target === preLastPage.getNode())
+      {
+        turnOffFunc();
+      }
+    });
   }
 }

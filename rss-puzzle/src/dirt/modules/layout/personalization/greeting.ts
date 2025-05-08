@@ -1,5 +1,6 @@
 import { Component } from '../common/component';
 
+
 export interface IGreeting
 {
   className: string[];

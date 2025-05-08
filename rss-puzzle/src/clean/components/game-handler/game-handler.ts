@@ -1,4 +1,5 @@
 import * as style from './game-handler-style.module.scss';
+import { Component } from '../../modules/layout/common/component';
 import {
   GameHandler,
   TCustomEventListeners,
@@ -63,6 +64,22 @@ function loadHandler(this: GameHandler) {
   }
 }
 
+function startHandler(this: GameHandler) {
+  this.book.turnPage(
+    style['turn-over'],
+    new Component({
+      tag: 'div',
+      className: [style['new-content']],
+      text: 'First Page',
+    }),
+    new Component({
+      tag: 'div',
+      className: [style['new-content']],
+      text: 'Second Page',
+    }),
+  );
+}
+
 const customEventListeners: TCustomEventListeners = {
   login: loginHandler,
   preLogout: preLogoutHandler,
@@ -71,6 +88,7 @@ const customEventListeners: TCustomEventListeners = {
   bookClose: bookCloseHandler,
   anableUI: anableUIHandler,
   disableUI: disableUIHandler,
+  start: startHandler,
 };
 
 const gameHandlerOptions = {

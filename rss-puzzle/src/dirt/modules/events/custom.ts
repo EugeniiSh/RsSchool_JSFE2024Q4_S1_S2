@@ -7,7 +7,8 @@ export type TCustomEventNames =
 | 'hideModal'
 | 'bookClose'
 | 'anableUI' 
-| 'disableUI';
+| 'disableUI'
+| 'start';
 // export type TCustomEventValues = (detail: TDetailOption) => CustomEvent<TDetailOption>;
 export type TCustomEventValues = () => CustomEvent<TDetailOption>;
 export type TCustomEventList = Record<TCustomEventNames, TCustomEventValues>;
