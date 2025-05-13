@@ -9,6 +9,10 @@ import modalWindow from '../pop-up/modal-window/modal-window';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
 
+import check from  '../gameField/mainField';
+
+check();
+
 function loginHandler(this: GameHandler)
 {
   const player = storageLocal.getValue();
