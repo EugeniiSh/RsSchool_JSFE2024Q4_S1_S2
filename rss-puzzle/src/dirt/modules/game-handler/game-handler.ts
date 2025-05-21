@@ -3,6 +3,7 @@ import { TCustomEventNames } from '../events/custom';
 import { Book } from '../layout/book/book';
 import { ModalWindow } from '../layout/modal-window/modal-window';
 import { WrapperForm } from '../layout/login-form/wrapper-form';
+import { GameFieldHandler } from '../layout/gameField/gameFieldHandler';
 import { PuzzleGameStorage } from '../storage/local';
 
 export type TCustomEventListeners = Record<TCustomEventNames, EventListener>;
@@ -16,6 +17,7 @@ export interface IGameHandlerOptions
   wrapperForm: WrapperForm;
   book: Book;
   modalWindow: ModalWindow;
+  gameFieldHandler: GameFieldHandler;
   customEventListeners: TCustomEventListeners;
   localStorage: PuzzleGameStorage;
   loadListener: EventListener;
@@ -35,6 +37,8 @@ export class GameHandler extends comp.Component
 
   protected modalWindow: ModalWindow;
 
+  protected gameFieldHandler: GameFieldHandler;
+
   protected localStorage: PuzzleGameStorage;
 
   protected onLoad: EventListener;
@@ -48,6 +52,7 @@ export class GameHandler extends comp.Component
       wrapperForm,
       book,
       modalWindow,
+      gameFieldHandler,
       customEventListeners,
       localStorage,
       loadListener
@@ -59,6 +64,7 @@ export class GameHandler extends comp.Component
     this.wrapperForm = wrapperForm;
     this.book = book;
     this.modalWindow = modalWindow;
+    this.gameFieldHandler = gameFieldHandler;
     this.localStorage = localStorage;
     this.onLoad = loadListener.bind(this);
     window.addEventListener('load', this.onLoad);

@@ -6,12 +6,27 @@ import { playerGreetings } from '../start-menu/start-menu';
 import wrapperFormElem from '../login-form/loginForm';
 import book from '../book/book';
 import modalWindow from '../pop-up/modal-window/modal-window';
+import handlerGameField from '../gameField/gameFieldHandler';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
+// import gameFieldHandler from '../gameField/gameFieldHandler';
+// import storageExternal from '../storage/external';
 
-import check from  '../gameField/mainField';
+// import { TNumberOfLevel } from '../../modules/storage/external';
 
-check();
+
+
+// async function createGameField(level: TNumberOfLevel, parentElement: Component): Promise<void>
+// {
+//   const data = await storageExternal.getData(level);
+
+//   console.log(data);
+//   console.log(storageExternal.getAudioPath(data.rounds[9].words[3]));
+//   console.log(storageExternal.getImagePath(data.rounds[9].levelData));
+// }
+
+
+
 
 function loginHandler(this: GameHandler)
 {
@@ -77,12 +92,15 @@ function loadHandler(this: GameHandler)
 }
 
 function startHandler(this: GameHandler)
-{
+{ 
+  const gameFieldInterface = this.gameFieldHandler.getGameFieldInterface();
+
   this.book.turnPage
   (
     style['turn-over'],
     new Component({ tag: 'div', className: [style['new-content']], text: 'First Page' }),
-    new Component({ tag: 'div', className: [style['new-content']], text: 'Second Page' })
+    // new Component({ tag: 'div', className: [style['new-content']], text: 'Second Page' })
+    gameFieldInterface[0]
   )
 }
 
@@ -113,6 +131,7 @@ const gameHandlerOptions =
     modalWindow
   ],
   wrapperForm: wrapperFormElem,
+  gameFieldHandler: handlerGameField,
   localStorage: storageLocal,
   loadListener: loadHandler,
 }
