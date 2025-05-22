@@ -1,11 +1,37 @@
 .result-container
 {
-  border: none;
+  width: var(--size-width-result);
+  height: var(--size-height-result);
+
+  // border: none;
+  border-image-source: url(../../../../../assets/images/border-2.png);
+  // border-image-slice: 20%;
+  // border-image-width: 12%;
+
+  // border-image-slice: 44%;
+  // border-image-width: 30%;
+  // border-image-repeat: round;
+
+  border-image-slice: 30%;
+  border-image-width: 10%;
+  border-image-repeat: round;
+  border-image-outset: 12rem;
+
+
+  // border-image-outset: 10rem;
 }
 
 .initial-container
 {
-  border: none;
+  // border-image-source: url(../../../../../assets/images/border-1.png);
+  // border-image-slice: 8% 30% 30% 30%;
+  // border-image-width: 20%;
+  // border-image-repeat: round;
+  // border-image-outset: 6rem 16rem;
+
+  // border: 4rem ridge var(--main-brown-middle);
+
+  background-color: var(--main-brown-light);
 }
 
 
@@ -13,7 +39,8 @@
 
 .guess-block
 {
-  border: none;
+  width: var(--size-width-result);
+  height: calc(var(--size-height-result) * 0.1);
 }
 
 .result-guess
@@ -23,7 +50,7 @@
 
 .initial-guess
 {
-  border: none;
+  outline: none;
 }
 
 

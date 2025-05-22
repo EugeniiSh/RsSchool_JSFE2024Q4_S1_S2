@@ -5,6 +5,8 @@ import { ResultLine } from './blocks/resultLine';
 import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
 
+import { TNumberOfLevel } from '../../../storage/external';
+
 export interface IPlayFieldStyleList
 {
   page: string,
@@ -14,6 +16,11 @@ export interface IPlayFieldStyleList
   wordContainer: string,
   wordBlock: string,
   wordBlockPiece: string,
+}
+
+export interface IFetchDataOptions
+{
+  level: TNumberOfLevel
 }
 
 export interface IPlayField
