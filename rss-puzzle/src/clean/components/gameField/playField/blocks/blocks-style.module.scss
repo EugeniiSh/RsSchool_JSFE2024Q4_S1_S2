@@ -1,5 +1,4 @@
-.result-container
-{
+.result-container {
   width: var(--size-width-result);
   height: var(--size-height-result);
 
@@ -10,16 +9,11 @@
   border-image-outset: 12rem;
 }
 
-.initial-container
-{
+.initial-container {
   background-color: var(--main-brown-light);
 }
 
-
-
-
-.guess-block
-{
+.guess-block {
   display: flex;
   justify-content: space-between;
 
@@ -27,34 +21,26 @@
   height: calc(var(--size-height-result) * 0.1);
 }
 
-.result-guess
-{
+.result-guess {
   border: none;
 }
 
-.initial-guess
-{
+.initial-guess {
   outline: none;
 }
 
-
-
-
-.word-container
-{
+.word-container {
   outline: 2rem solid white;
 
   cursor: pointer;
 }
 
-.word-block
-{
+.word-block {
   border: none;
 
   cursor: pointer;
 }
 
-.word-block__piece
-{
+.word-block__piece {
   border: none;
 }

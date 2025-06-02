@@ -38,15 +38,26 @@ export class PuzzleGameExternalStorage
 
   private userPath: string;
 
+  protected cache: Map<TNumberOfLevel, IPuzzleGameData>;
+
   constructor(user: string)
   {
     this.userPath = `${this.initialPath}${user.toLowerCase()}/`;
+    this.cache = new Map<TNumberOfLevel, IPuzzleGameData>()
   }
 
   public async getData(level: TNumberOfLevel): Promise<IPuzzleGameData>
   {
+    if(this.cache.has(level))
+    {
+      const result = this.cache.get(level);
+
+      if(result) return result;
+    }
+
     const respons = fetch(`${this.userPath}rss-puzzle-data/main/data/wordCollectionLevel${level}.json`);
     const gameData = await respons.then(res => res.json()) as IPuzzleGameData;
+    this.cache.set(level, gameData);
 
     return gameData
   }

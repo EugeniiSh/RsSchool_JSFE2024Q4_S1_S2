@@ -9,6 +9,7 @@ import { playerGreetings } from '../start-menu/start-menu';
 import wrapperFormElem from '../login-form/loginForm';
 import book from '../book/book';
 import modalWindow from '../pop-up/modal-window/modal-window';
+import handlerGameField from '../gameField/gameFieldHandler';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
 
@@ -65,6 +66,11 @@ function loadHandler(this: GameHandler) {
 }
 
 function startHandler(this: GameHandler) {
+  const userData = this.localStorage.getValue();
+  const gameFieldInterface = this.gameFieldHandler.getGameFieldInterface(
+    userData.game,
+  );
+
   this.book.turnPage(
     style['turn-over'],
     new Component({
@@ -72,11 +78,7 @@ function startHandler(this: GameHandler) {
       className: [style['new-content']],
       text: 'First Page',
     }),
-    new Component({
-      tag: 'div',
-      className: [style['new-content']],
-      text: 'Second Page',
-    }),
+    gameFieldInterface[0],
   );
 }
 
@@ -100,6 +102,7 @@ const gameHandlerOptions = {
   text: '',
   items: [wrapperFormElem, book, modalWindow],
   wrapperForm: wrapperFormElem,
+  gameFieldHandler: handlerGameField,
   localStorage: storageLocal,
   loadListener: loadHandler,
 };

@@ -15,41 +15,35 @@ import { IStorageGameProgress } from '../../storage/local';
 //   wordBlockPiece: string,
 // }
 
-export interface IGameFieldHandlerOptions
-{
-  className: string[],
-  text: string,
-  playField: PlayField,
+export interface IGameFieldHandlerOptions {
+  className: string[];
+  text: string;
+  playField: PlayField;
   // styleList: IGameFieldHandlerStyleList
 }
 
-export class GameFieldHandler extends Component
-{
+export class GameFieldHandler extends Component {
   protected className: string[];
 
   protected playField: PlayField;
 
-  constructor
-  (
-    {
-      className, 
-      text,
-      playField,
-    }: IGameFieldHandlerOptions
-  )
-  {
+  constructor({ className, text, playField }: IGameFieldHandlerOptions) {
     super({ tag: 'div', className, text });
     this.className = className;
     this.playField = playField;
   }
 
-  public getGameFieldInterface(playerProgress: IStorageGameProgress): [PlayField]
-  {
-    const playFieldInterface = this.playField.getPlayFieldInterface(playerProgress);
-    playFieldInterface.playField.renderGameFieldContent(playFieldInterface.renderInfo);
+  public getGameFieldInterface(
+    playerProgress: IStorageGameProgress,
+  ): [PlayField] {
+    const playFieldInterface =
+      this.playField.getPlayFieldInterface(playerProgress);
+    playFieldInterface.playField.renderGameFieldContent(
+      playFieldInterface.renderInfo,
+    );
     return [
       // this.playField.getPlayFieldInterface(playerProgress)
-      playFieldInterface.playField
+      playFieldInterface.playField,
     ];
   }
 }

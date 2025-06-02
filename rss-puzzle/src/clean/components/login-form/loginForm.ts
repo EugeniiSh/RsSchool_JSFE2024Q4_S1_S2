@@ -5,6 +5,7 @@ import {
   IWrapperForm,
   WrapperForm,
 } from '../../modules/layout/login-form/wrapper-form';
+import { PuzzleGameStorage } from '../../modules/storage/local';
 
 import { firstName } from './fields/firstName';
 import { lastName } from './fields/lastName';
@@ -53,7 +54,12 @@ function wrapperFormSetVisibilityStatus(this: WrapperForm, isHiden: boolean) {
 }
 
 function wrapperFormLoginListener(this: WrapperForm) {
-  const userData = { ...this.form.getFormValue(), isNew: false };
+  const userData = {
+    ...this.form.getFormValue(),
+    isNew: false,
+    game: PuzzleGameStorage.getStartGameValue(),
+  };
+
   this.storage.setValue(userData);
   this.form.setFormValue('');
   this.changeVisibility(true);

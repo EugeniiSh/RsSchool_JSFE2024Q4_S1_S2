@@ -8,8 +8,7 @@ import WC from './blocks/wordContainer';
 import WB from './blocks/wordBlock';
 import storageExternal from '../../storage/external';
 
-const playFieldStyle =
-{
+const playFieldStyle = {
   pazzleWrapper: style['play-field'],
   resultContainer: styleBlocks['result-container'],
   initialContainer: styleBlocks['initial-container'],
@@ -19,10 +18,9 @@ const playFieldStyle =
   wordContainer: styleBlocks['word-container'],
   wordBlock: styleBlocks['word-block'],
   wordBlockPiece: styleBlocks['word-block__piece'],
-}
+};
 
-const playFieldOptions =
-{
+const playFieldOptions = {
   className: [style['play-field']],
   text: '',
   style: playFieldStyle,
@@ -32,6 +30,6 @@ const playFieldOptions =
   wordContainer: WC,
   wordBlock: WB,
   externalStorage: storageExternal,
-}
+};
 
 export default new PlayField(playFieldOptions);
