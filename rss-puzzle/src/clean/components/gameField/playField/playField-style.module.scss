@@ -1,0 +1,16 @@
+// .pazzle-wrapper
+.play-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--size-height-result) * 0.1);
+
+  width: 100%;
+  height: 100%;
+
+  padding: 5% 0;
+
+  font-size: 0.2em;
+
+  border: none;
+}

@@ -34,6 +34,16 @@
   --first-letter-red: rgb(199, 0, 0);
   --pupil-eye: rgb(240, 248, 255);
   --iris-eye: rgb(0, 255, 208);
+
+
+
+  // --size-width-result: 700rem;
+  --size-width-result: calc(calc(var(--cover-height) * var(--cover-width-ratio)) * 0.85);
+  --size-height-result: calc(var(--size-width-result) * 0.65);
+  --size-circle-piece: calc(var(--size-height-result) / 10 / 2.2);
+  --size-circle-piece-half: calc(var(--size-circle-piece) / 2);
+  --size-height-word-block: calc(var(--size-height-result) / 10);
+  --size-padding-circle-piece: calc(calc(var(--size-height-word-block) / 2) - var(--size-circle-piece-half));
 }
 
 *

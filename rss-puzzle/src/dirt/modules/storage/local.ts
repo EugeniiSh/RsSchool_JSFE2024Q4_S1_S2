@@ -1,7 +1,16 @@
 import { TFieldsValue } from '../layout/login-form/form';
+import { TNumberOfLevel } from './external';
 
 
-export type TStorageValue = TFieldsValue & { isNew: boolean }
+export interface IStorageGameProgress
+{
+  last:
+  {
+    level: TNumberOfLevel
+  }
+}
+
+export type TStorageValue = TFieldsValue & { isNew: boolean, game: IStorageGameProgress };
 
 export class PuzzleGameStorage
 {
@@ -16,7 +25,18 @@ export class PuzzleGameStorage
       fname: 'new',
       lname: 'user',
       isNew: true,
+      game: PuzzleGameStorage.getStartGameValue(),
     };
+  }
+
+  static getStartGameValue(): IStorageGameProgress
+  {
+    return {
+      last:
+      {
+        level: 1
+      }
+    }
   }
 
   public getValue(): TStorageValue
