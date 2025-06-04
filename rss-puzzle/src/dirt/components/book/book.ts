@@ -7,6 +7,7 @@ import coverBottom from './cover/cover-bottom';
 import pagesBlock from './pages/pages-block';
 
 
+
 const bookOption: IBook =
 {
   coverTop,
