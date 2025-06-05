@@ -1,5 +1,8 @@
 .result-container
 {
+  // display: flex;
+  // align-items: start;
+
   width: var(--size-width-result);
   height: var(--size-height-result);
 
@@ -21,10 +24,13 @@
 .guess-block
 {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
+  justify-content: flex-start;
 
   width: var(--size-width-result);
   height: calc(var(--size-height-result) * 0.1);
+
+  background-color: var(--main-brown-light);
 }
 
 .result-guess
@@ -42,14 +48,22 @@
 
 .word-container
 {
-  outline: 2rem solid white;
+  flex: 1;
+
+  // outline: 2rem solid white;
 
   cursor: pointer;
 }
 
 .word-block
 {
-  border: none;
+  padding: 0 0.3em;
+
+  box-shadow: inset 0rem 0rem 1rem 1rem white;
+
+  line-height: 1.75;
+  text-align: center;
+  text-shadow: 0rem 0rem 6rem white;
 
   cursor: pointer;
 }
