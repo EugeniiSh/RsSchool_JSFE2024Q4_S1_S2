@@ -3,6 +3,7 @@
 
   --cover-height: max(var(--book-space), 390rem);
   --cover-width-ratio: 0.78;
+  --cover-width: calc(var(--cover-height) * var(--cover-width-ratio));
 
   --scull-width: calc(
     calc(var(--cover-height) * var(--cover-width-ratio)) * 0.2

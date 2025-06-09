@@ -3,23 +3,10 @@ import { PlayField } from './playField/playField';
 
 import { IStorageGameProgress } from '../../storage/local';
 
-// import { IPuzzleGameData } from '../../storage/external';
-
-// export interface IGameFieldHandlerStyleList
-// {
-//   pazzleWrapper: string,
-//   resultContainer: string,
-//   guessBlock: string,
-//   wordContainer: string,
-//   wordBlock: string,
-//   wordBlockPiece: string,
-// }
-
 export interface IGameFieldHandlerOptions {
   className: string[];
   text: string;
   playField: PlayField;
-  // styleList: IGameFieldHandlerStyleList
 }
 
 export class GameFieldHandler extends Component {
@@ -41,9 +28,6 @@ export class GameFieldHandler extends Component {
     playFieldInterface.playField.renderGameFieldContent(
       playFieldInterface.renderInfo,
     );
-    return [
-      // this.playField.getPlayFieldInterface(playerProgress)
-      playFieldInterface.playField,
-    ];
+    return [playFieldInterface.playField];
   }
 }

@@ -173,4 +173,13 @@ export class Component {
     this.node.innerHTML = '';
     this.children.length = 0;
   }
+
+  replaceChildren(childNum: number, newChild: Component): Component {
+    const childrenArr = this.getChildren();
+    const currentChild = childrenArr[childNum];
+    childrenArr[childNum] = newChild;
+    currentChild.getNode().replaceWith(newChild.getNode());
+
+    return currentChild;
+  }
 }

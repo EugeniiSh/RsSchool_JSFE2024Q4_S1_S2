@@ -162,12 +162,28 @@ export class PlayField extends Component
 
     contentInfo.initial.appendChildren(wordsElementArr);
     contentInfo.result.append(resultLine);
+
+    // === Get width rezult line ===
+    const resultWidth = resultLine.getNode().offsetWidth;
+    // === Set the size of the word cards ===
+    wordsElementArr.forEach((elem) =>
+    {
+      // === Take the size '.word-container' ... ===
+      const wordElem = elem.getNode();
+      const elemWidth = wordElem.offsetWidth;
+
+      // === and set it to '.word-block' ===
+      const wordElemChild = elem.getChildren()[0].getNode();
+      wordElemChild.style.width = 'calc(var(--size-width-result) * var(--size-width-ratio))';
+
+      // === add a variable for adaptability ===
+      const  wordElemWidthRatio = elemWidth / resultWidth;
+      wordElemChild.style.setProperty('--size-width-ratio', wordElemWidthRatio.toString());
+    })
   }
 
   protected handlerClickWordBlock = (event: Event) =>
   {
-    // let target = event.target;
-
     if(event.target === null) return;
     if(!(event.target instanceof HTMLElement)) return;
    
@@ -204,7 +220,8 @@ export class PlayField extends Component
       const resultNewPosition = this.resultGuessFill.indexOf(0);
       this.resultGuessFill[resultNewPosition] = 1;
 
-      this.currentLine.result.getChildren()[resultNewPosition].append(wordBlockComponent);
+      // this.currentLine.result.getChildren()[resultNewPosition].append(wordBlockComponent);
+      this.currentLine.result.replaceChildren(resultNewPosition, wordBlockComponent);
     }
   }
 
