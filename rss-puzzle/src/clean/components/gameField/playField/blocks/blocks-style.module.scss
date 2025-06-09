@@ -44,6 +44,12 @@
 }
 
 .word-block {
+  // --size-height-ratio: 0;
+  --size-width-ratio: 0;
+
+  // width: calc(var(--size-width-result) * var(--size-width-ratio));
+  height: var(--size-height-word-block);
+
   padding: 0 0.3em;
 
   box-shadow: inset 0rem 0rem 1rem 1rem white;
