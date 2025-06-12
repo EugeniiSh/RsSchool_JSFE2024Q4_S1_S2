@@ -220,8 +220,39 @@ export class PlayField extends Component
       const resultNewPosition = this.resultGuessFill.indexOf(0);
       this.resultGuessFill[resultNewPosition] = 1;
 
-      // this.currentLine.result.getChildren()[resultNewPosition].append(wordBlockComponent);
       this.currentLine.result.replaceChildren(resultNewPosition, wordBlockComponent);
+    }
+    else
+    {
+      const resultGuess = parent.closest(`.${this.style.resultGuess}`);
+      if(resultGuess !== this.currentLine.result.getNode()) return;
+
+      let position = 0;
+      
+      this.currentLine.result.getChildren().find((wordContainer, index) =>
+      {
+        if(wordContainer && wordContainer.getNode() === parent) 
+        {
+          position = index;
+          return true;
+        }
+
+        return false;
+      })
+
+      const wordBlockComponent = 
+      this.currentLine.result
+      .getChildren()[position];
+
+      this.currentLine.result
+      .replaceChildren(position, this.wordContainer.getWordContainerArr()[0]);
+
+      this.resultGuessFill[position] = 0;
+
+      const initialNewPosition = this.initialGuessFill.indexOf(0);
+      this.initialGuessFill[initialNewPosition] = 1;
+
+      this.currentLine.initial.getChildren()[initialNewPosition].append(wordBlockComponent);
     }
   }
 
