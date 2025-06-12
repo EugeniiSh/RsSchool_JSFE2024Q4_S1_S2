@@ -65,13 +65,24 @@
 
   padding: 0 0.3em;
 
-  box-shadow: inset 0rem 0rem 1rem 1rem white;
+  box-shadow: inset 0rem 0rem 1rem 1rem var(--pupil-eye);
 
   line-height: 1.75;
   text-align: center;
-  text-shadow: 0rem 0rem 6rem white;
+  text-shadow: 0rem 0rem 6rem var(--pupil-eye);
 
   cursor: pointer;
+
+  transition-property: box-shadow;
+  transition-duration: 0.3s;
+
+  @media(hover: hover)
+  {
+    &:hover
+    {
+      box-shadow: inset 0rem 0rem 1rem 1rem var(--iris-eye);
+    }
+  }
 }
 
 .word-block__piece
