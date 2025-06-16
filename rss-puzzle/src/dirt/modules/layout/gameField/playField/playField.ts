@@ -261,7 +261,6 @@ export class PlayField extends Component
     return this.wordCount;
   }
 
-
   public getPlayField(): PlayField
   {
     return new PlayField
