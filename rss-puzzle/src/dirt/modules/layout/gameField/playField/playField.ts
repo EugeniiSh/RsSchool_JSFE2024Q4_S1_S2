@@ -5,7 +5,7 @@ import { ResultLine } from './blocks/resultLine';
 import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
 
-import { PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
+import { IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
 import { IStorageGameProgress } from '../../../storage/local';
  
 export interface IPlayFieldStyleList
@@ -64,7 +64,11 @@ export class PlayField extends Component
 
   protected externalStorage: PuzzleGameExternalStorage;
 
+  protected contentData: IPuzzleGameData | null; 
+
   protected wordCount: number;
+
+  protected currentSentence: string[];
 
   protected resultGuessFill: number[];
 
@@ -97,7 +101,9 @@ export class PlayField extends Component
     this.wordBlock = wordBlock;
     this.externalStorage = externalStorage;
 
+    this.contentData = null;
     this.wordCount = 0;
+    this.currentSentence = [];
     this.resultGuessFill = [];
     this.initialGuessFill = [];
     this.currentLine =
@@ -117,9 +123,15 @@ export class PlayField extends Component
     return result;
   }
 
-  static getShuffleElementArr(elementArr: WordContainer[]): WordContainer[]
+  static getShuffleElementArr
+  (elementArr: WordContainer[]): 
+  { 
+    shuffle: WordContainer[], 
+    order: number[]
+  } 
   {
-    const result: WordContainer[] = [];
+    const shuffle: WordContainer[] = [];
+    const order: number[] = [];
     const randomNumSet: Set<number> = new Set();
 
     while(randomNumSet.size < elementArr.length)
@@ -129,44 +141,48 @@ export class PlayField extends Component
 
     randomNumSet.forEach((num) =>
     {
-      result.push(elementArr[num]);
+      shuffle.push(elementArr[num]);
+      order.push(num + 1);
     })
 
-    return result;
+    return { shuffle, order };
   }
 
 
 
   public async renderGameFieldContent(contentInfo: IRenderContentInfo): Promise<void>
   {
-    const contentData = await this.externalStorage.getData(contentInfo.playerProgress.last.level);
-    const words = contentData.rounds[0].words[0].textExample;
-    let wordsElementArr = words.split(' ')
-    .map((word) => 
-    {
-      const wordContainer = this.wordContainer.getWordContainerArr()[0];
-      wordContainer.append(this.wordBlock.getBlockWithWord(word));
-      return wordContainer;
-    });
+    this.contentData = await this.externalStorage.getData(contentInfo.playerProgress.last.level);
+    const words = this.contentData.rounds[0].words[0].textExample;
+    // let wordsElementArr = words.split(' ')
+    // .map((word) => 
+    // {
+    //   const wordContainer = this.wordContainer.getWordContainerArr()[0];
+    //   wordContainer.append(this.wordBlock.getBlockWithWord(word));
+    //   return wordContainer;
+    // });
 
-    this.wordCount = wordsElementArr.length;
-    this.resultGuessFill = new Array(this.wordCount).fill(0);
-    this.initialGuessFill = new Array(this.wordCount).fill(1);
-    wordsElementArr = PlayField.getShuffleElementArr(wordsElementArr);
+    // this.wordCount = wordsElementArr.length;
+    // this.resultGuessFill = new Array(this.wordCount).fill(0);
+    // this.initialGuessFill = new Array(this.wordCount).fill(1);
+    this.setCurrentSentence(words);
+    const sentenceLayout = this.getConvertSentenceIntoLayout(this.currentSentence)
+    const { shuffle, order } = PlayField.getShuffleElementArr(sentenceLayout);
+    this.initialGuessFill = order;
 
     const resultLine = this.resultLine.getResultLine();
-    resultLine.appendChildren(this.wordContainer.getWordContainerArr(wordsElementArr.length));
+    resultLine.appendChildren(this.wordContainer.getWordContainerArr(shuffle.length));
 
     this.currentLine.result = resultLine;
     this.currentLine.initial = contentInfo.initial;
 
-    contentInfo.initial.appendChildren(wordsElementArr);
+    contentInfo.initial.appendChildren(shuffle);
     contentInfo.result.append(resultLine);
 
     // === Get width rezult line ===
     const resultWidth = resultLine.getNode().offsetWidth;
     // === Set the size of the word cards ===
-    wordsElementArr.forEach((elem) =>
+    shuffle.forEach((elem) =>
     {
       // === Take the size '.word-container' ... ===
       const wordElem = elem.getNode();
@@ -180,6 +196,38 @@ export class PlayField extends Component
       const  wordElemWidthRatio = elemWidth / resultWidth;
       wordElemChild.style.setProperty('--size-width-ratio', wordElemWidthRatio.toString());
     })
+  }
+
+  protected getErrorsInSentence(): number[]
+  {
+    const errors: number[] = []; 
+    this.resultGuessFill.forEach((item, index) =>
+    {
+      if(item !== index + 1) errors.push(index);
+    })
+
+    return errors;
+  }
+
+  protected setCurrentSentence(rawString: string): void
+  {
+    this.currentSentence = rawString.split(' ');
+    const wordCount = this.currentSentence.length;
+    this.resultGuessFill = new Array(wordCount).fill(0);
+    this.initialGuessFill = new Array(wordCount).fill(1)
+    .map((item, index) => item + index);
+  }
+
+  protected getConvertSentenceIntoLayout(sentence: string[]): WordContainer[]
+  {
+    const result = sentence.map((word) => 
+    {
+      const wordContainer = this.wordContainer.getWordContainerArr()[0];
+      wordContainer.append(this.wordBlock.getBlockWithWord(word));
+      return wordContainer;
+    });
+
+    return result;
   }
 
   protected handlerClickWordBlock = (event: Event) =>
@@ -215,10 +263,11 @@ export class PlayField extends Component
       .getChildren()[position]
       .cleanInnerHTML();
 
+      const numberCorrectOrder = this.initialGuessFill[position];
       this.initialGuessFill[position] = 0;
 
       const resultNewPosition = this.resultGuessFill.indexOf(0);
-      this.resultGuessFill[resultNewPosition] = 1;
+      this.resultGuessFill[resultNewPosition] = numberCorrectOrder;
 
       this.currentLine.result.replaceChildren(resultNewPosition, wordBlockComponent);
     }
@@ -247,10 +296,11 @@ export class PlayField extends Component
       this.currentLine.result
       .replaceChildren(position, this.wordContainer.getWordContainerArr()[0]);
 
+      const numberCorrectOrder = this.resultGuessFill[position];
       this.resultGuessFill[position] = 0;
 
       const initialNewPosition = this.initialGuessFill.indexOf(0);
-      this.initialGuessFill[initialNewPosition] = 1;
+      this.initialGuessFill[initialNewPosition] = numberCorrectOrder;
 
       this.currentLine.initial.getChildren()[initialNewPosition].append(wordBlockComponent);
     }
