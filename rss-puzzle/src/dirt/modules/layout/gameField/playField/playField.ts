@@ -4,6 +4,7 @@ import { ResultContainer } from './blocks/resultContainer';
 import { ResultLine } from './blocks/resultLine';
 import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
+import { ButtonContainer } from './blocks/buttonContainer';
 
 import { IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
 import { IStorageGameProgress } from '../../../storage/local';
@@ -36,6 +37,7 @@ export interface IPlayField
   resultLine: ResultLine,
   wordContainer: WordContainer,
   wordBlock: WordBlock,
+  buttonContainer: ButtonContainer,
   externalStorage: PuzzleGameExternalStorage,
 }
 
@@ -62,6 +64,8 @@ export class PlayField extends Component
 
   protected wordBlock: WordBlock;
 
+  protected buttonContainer: ButtonContainer
+
   protected externalStorage: PuzzleGameExternalStorage;
 
   protected contentData: IPuzzleGameData | null; 
@@ -87,6 +91,7 @@ export class PlayField extends Component
       resultLine,
       wordContainer,
       wordBlock,
+      buttonContainer,
       externalStorage,
     }: IPlayField
   )
@@ -99,6 +104,7 @@ export class PlayField extends Component
     this.resultLine = resultLine;
     this.wordContainer = wordContainer;
     this.wordBlock = wordBlock;
+    this.buttonContainer = buttonContainer;
     this.externalStorage = externalStorage;
 
     this.contentData = null;
@@ -324,6 +330,7 @@ export class PlayField extends Component
         resultLine: this.resultLine.getResultLine(),
         wordContainer: this.wordContainer.getWordContainerArr()[0],
         wordBlock: this.wordBlock.getBlockWithWord(''),
+        buttonContainer: this.buttonContainer.getButtonContainer(),
         externalStorage: this.externalStorage,
       }
     )
@@ -334,6 +341,7 @@ export class PlayField extends Component
     const playField = this.getPlayField();
     const resultContainer = this.resultContainer.getResultContainer();
     const initialContainer = this.initialContainer.getInitialContainer();
+    const buttonContainer = this.buttonContainer.getButtonContainer();
     
     const renderInfo: IRenderContentInfo =
     {
@@ -342,8 +350,14 @@ export class PlayField extends Component
       result: resultContainer
     }
 
-    playField.appendChildren([resultContainer, initialContainer]);
+    playField.appendChildren([resultContainer, initialContainer, buttonContainer]);
 
     return {playField, renderInfo};
+  }
+
+  destroy() 
+  {
+    this.removeListener('click', this.handlerClickWordBlock);
+    super.destroy();
   }
 }

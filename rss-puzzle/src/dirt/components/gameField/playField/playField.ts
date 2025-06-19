@@ -6,6 +6,7 @@ import RC from './blocks/resultContainer';
 import RL from './blocks/resultLine';
 import WC from './blocks/wordContainer';
 import WB from './blocks/wordBlock';
+import BC from './blocks/buttonContainer';
 import storageExternal from '../../storage/external';
 
 const playFieldStyle =
@@ -31,6 +32,7 @@ const playFieldOptions =
   resultLine: RL,
   wordContainer: WC,
   wordBlock: WB,
+  buttonContainer: BC,
   externalStorage: storageExternal,
 }
 
