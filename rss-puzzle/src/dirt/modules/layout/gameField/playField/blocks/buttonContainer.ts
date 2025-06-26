@@ -45,11 +45,23 @@ export class ButtonContainer extends Component
       text: 'next',
       items: [],
       clickListener: () => { console.log('click next') },
+      changeStatus(this: CommonButton, status)
+      {
+        this.toggleClass(style.buttonNextDisabled, !status);
+      }
     }
 
     this.nextButton = new CommonButton(this.nextButtonOption);
 
     this.appendChildren([this.nextButton]);
+  }
+
+  public changeStatusNextButton(status: boolean)
+  {
+    if(this.nextButton.changeStatus)
+    {
+      this.nextButton.changeStatus(status);
+    }
   }
 
   public getButtonContainer(): ButtonContainer

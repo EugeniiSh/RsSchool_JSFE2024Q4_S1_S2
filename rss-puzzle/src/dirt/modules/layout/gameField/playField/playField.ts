@@ -6,7 +6,7 @@ import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
 
-import { IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
+import { IPuzzleWordsData ,IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
 import { IStorageGameProgress } from '../../../storage/local';
  
 export interface IPlayFieldStyleList
@@ -45,7 +45,8 @@ export interface IRenderContentInfo
 {
   playerProgress: IStorageGameProgress,
   result: ResultContainer,
-  initial: InitialContainer
+  initial: InitialContainer,
+  button: ButtonContainer,
 }
 
 export class PlayField extends Component
@@ -74,9 +75,15 @@ export class PlayField extends Component
 
   protected currentSentence: string[];
 
+  protected errorInSentence: number[];
+
   protected resultGuessFill: number[];
 
   protected initialGuessFill: number[];
+
+  protected currentResultContainer: ResultContainer;
+
+  protected currentButtonBlock: ButtonContainer;
 
   protected currentLine: { result: ResultLine, initial: InitialContainer };
 
@@ -110,8 +117,11 @@ export class PlayField extends Component
     this.contentData = null;
     this.wordCount = 0;
     this.currentSentence = [];
+    this.errorInSentence = [1]; // initial value to prevent accidental transition to a new sentence.
     this.resultGuessFill = [];
     this.initialGuessFill = [];
+    this.currentResultContainer = this.resultContainer.getResultContainer();
+    this.currentButtonBlock = this.buttonContainer.getButtonContainer();
     this.currentLine =
     {
       result: this.resultLine.getResultLine(),
@@ -154,41 +164,12 @@ export class PlayField extends Component
     return { shuffle, order };
   }
 
-
-
-  public async renderGameFieldContent(contentInfo: IRenderContentInfo): Promise<void>
+  static calculateAndSetBlockWidth(resultLine: ResultLine | InitialContainer, wordContainer: WordContainer[])
   {
-    this.contentData = await this.externalStorage.getData(contentInfo.playerProgress.last.level);
-    const words = this.contentData.rounds[0].words[0].textExample;
-    // let wordsElementArr = words.split(' ')
-    // .map((word) => 
-    // {
-    //   const wordContainer = this.wordContainer.getWordContainerArr()[0];
-    //   wordContainer.append(this.wordBlock.getBlockWithWord(word));
-    //   return wordContainer;
-    // });
-
-    // this.wordCount = wordsElementArr.length;
-    // this.resultGuessFill = new Array(this.wordCount).fill(0);
-    // this.initialGuessFill = new Array(this.wordCount).fill(1);
-    this.setCurrentSentence(words);
-    const sentenceLayout = this.getConvertSentenceIntoLayout(this.currentSentence)
-    const { shuffle, order } = PlayField.getShuffleElementArr(sentenceLayout);
-    this.initialGuessFill = order;
-
-    const resultLine = this.resultLine.getResultLine();
-    resultLine.appendChildren(this.wordContainer.getWordContainerArr(shuffle.length));
-
-    this.currentLine.result = resultLine;
-    this.currentLine.initial = contentInfo.initial;
-
-    contentInfo.initial.appendChildren(shuffle);
-    contentInfo.result.append(resultLine);
-
     // === Get width rezult line ===
     const resultWidth = resultLine.getNode().offsetWidth;
     // === Set the size of the word cards ===
-    shuffle.forEach((elem) =>
+    wordContainer.forEach((elem) =>
     {
       // === Take the size '.word-container' ... ===
       const wordElem = elem.getNode();
@@ -204,15 +185,59 @@ export class PlayField extends Component
     })
   }
 
-  protected getErrorsInSentence(): number[]
-  {
-    const errors: number[] = []; 
-    this.resultGuessFill.forEach((item, index) =>
-    {
-      if(item !== index + 1) errors.push(index);
-    })
 
-    return errors;
+
+
+  public async renderGameFieldContent(contentInfo: IRenderContentInfo): Promise<void>
+  {
+    const lastGameData = contentInfo.playerProgress.last;
+    this.contentData = await this.externalStorage.getData(lastGameData.level);
+    const lastRoundSentenceList = this.contentData.rounds[lastGameData.round].words;
+    const lastSentence = lastRoundSentenceList[lastGameData.sentense];
+    const sentenceStr = lastSentence.textExample;
+
+    this.currentResultContainer = contentInfo.result;
+    this.currentLine.initial = contentInfo.initial;
+    this.currentButtonBlock = contentInfo.button;
+    
+    this.setCurrentSentence(sentenceStr);
+    const roundSentenceGroup = this.getRoundSentenceGroup(lastRoundSentenceList, lastGameData.sentense);
+    this.renderRoundSentenceGroup(roundSentenceGroup);
+  }
+
+  protected renderCurrentSentence(currentSentence: WordContainer[])
+  {
+    const { shuffle, order } = PlayField.getShuffleElementArr(currentSentence);
+    this.initialGuessFill = order;
+    this.currentLine.initial.appendChildren(shuffle);
+
+    this.currentLine.result.appendChildren(this.wordContainer.getWordContainerArr(shuffle.length));
+    this.currentResultContainer.append(this.currentLine.result);
+
+    PlayField.calculateAndSetBlockWidth(this.currentLine.initial, shuffle);
+  }
+
+  protected renderRoundSentenceGroup(sentenceGroup: WordContainer[][])
+  {
+    const lastSentence = sentenceGroup.length - 1;
+
+    sentenceGroup.forEach((sentence, index) =>
+    {
+      const resultLine = this.resultLine.getResultLine();
+
+      if(lastSentence === index)
+      {
+        this.currentLine.result = resultLine;
+        this.renderCurrentSentence(sentence);
+      }
+      else
+      {
+        resultLine.appendChildren(sentence);
+        this.currentResultContainer.append(resultLine);
+
+        PlayField.calculateAndSetBlockWidth(resultLine, sentence);
+      }
+    })
   }
 
   protected setCurrentSentence(rawString: string): void
@@ -222,6 +247,34 @@ export class PlayField extends Component
     this.resultGuessFill = new Array(wordCount).fill(0);
     this.initialGuessFill = new Array(wordCount).fill(1)
     .map((item, index) => item + index);
+  }
+
+  protected getRoundSentenceGroup(round: IPuzzleWordsData[], currentSentence: number): WordContainer[][]
+  {
+    let count = -1;
+    const roundSentenceArr: WordContainer[][] = []
+
+    do
+    {
+      count += 1;
+
+      const sentence = round[count].textExample.split(' ');
+      roundSentenceArr.push(this.getConvertSentenceIntoLayout(sentence));
+    }
+    while(count < currentSentence)
+
+    return roundSentenceArr;
+  }
+
+  protected getErrorsInSentence(): number[]
+  {
+    const errors: number[] = []; 
+    this.resultGuessFill.forEach((item, index) =>
+    {
+      if(item !== index + 1) errors.push(index);
+    })
+
+    return errors;
   }
 
   protected getConvertSentenceIntoLayout(sentence: string[]): WordContainer[]
@@ -310,6 +363,11 @@ export class PlayField extends Component
 
       this.currentLine.initial.getChildren()[initialNewPosition].append(wordBlockComponent);
     }
+
+    this.errorInSentence = this.getErrorsInSentence();
+    this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
+
+    // console.log(this.errorInSentence);
   }
 
   public getWordCount(): number
@@ -347,7 +405,8 @@ export class PlayField extends Component
     {
       playerProgress: progressPlayer,
       initial: initialContainer,
-      result: resultContainer
+      result: resultContainer,
+      button: buttonContainer,
     }
 
     playField.appendChildren([resultContainer, initialContainer, buttonContainer]);

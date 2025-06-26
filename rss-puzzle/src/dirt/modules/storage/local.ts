@@ -1,13 +1,31 @@
 import { TFieldsValue } from '../layout/login-form/form';
 import { TNumberOfLevel } from './external';
 
+export interface IStorageRoundProgress
+{
+  isComplete: boolean,
+  completeSentence: number[]
+}
+
+export interface IStorageLevelProgress
+{
+  isComplete: boolean,
+  roundProgress: Record<number, IStorageRoundProgress>,
+  roundCount: number
+}
+
+export type TProgressData = Record<TNumberOfLevel, IStorageLevelProgress>;
 
 export interface IStorageGameProgress
 {
   last:
   {
     level: TNumberOfLevel
-  }
+    round: number,
+    sentense: number,
+  },
+
+  progress: TProgressData
 }
 
 export type TStorageValue = TFieldsValue & { isNew: boolean, game: IStorageGameProgress };
@@ -31,11 +49,36 @@ export class PuzzleGameStorage
 
   static getStartGameValue(): IStorageGameProgress
   {
+    const gameLevelCount: TNumberOfLevel[] = [1, 2, 3, 4, 5, 6];
+    const progressData: TProgressData = gameLevelCount.reduce((acc, num) =>
+    {
+      const roundProgress: IStorageRoundProgress =
+      {
+        isComplete: false,
+        completeSentence: []
+      } 
+
+      const levelProgress: IStorageLevelProgress =
+      {
+        isComplete: false,
+        roundProgress: { 0: roundProgress },
+        roundCount: 0
+      }
+
+      acc[num] = levelProgress;
+      return acc;
+
+    }, {} as TProgressData);
+
     return {
       last:
       {
-        level: 1
-      }
+        level: 1,
+        round: 0,
+        sentense: 0,
+      },
+
+      progress: progressData
     }
   }
 
