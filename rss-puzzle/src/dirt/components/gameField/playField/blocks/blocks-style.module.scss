@@ -1,8 +1,5 @@
 .result-container
 {
-  // display: flex;
-  // align-items: start;
-
   width: var(--size-width-result);
   height: var(--size-height-result);
 
@@ -24,7 +21,6 @@
 .guess-block
 {
   display: flex;
-  // justify-content: space-between;
   justify-content: flex-start;
 
   width: var(--size-width-result);
@@ -49,21 +45,16 @@
 .word-container
 {
   flex: 1;
-
-  // outline: 2rem solid white;
-
   cursor: pointer;
 }
 
 .word-block
 {
-  // --size-height-ratio: 0;
   --size-width-ratio: 0;
 
-  // width: calc(var(--size-width-result) * var(--size-width-ratio));
   height: var(--size-height-word-block);
 
-  padding: 0 0.3em;
+  padding: 0 0.2em;
 
   box-shadow: inset 0rem 0rem 1rem 1rem var(--pupil-eye);
 

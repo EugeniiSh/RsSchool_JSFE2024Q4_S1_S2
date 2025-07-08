@@ -6,7 +6,10 @@ import RC from './blocks/resultContainer';
 import RL from './blocks/resultLine';
 import WC from './blocks/wordContainer';
 import WB from './blocks/wordBlock';
+import BC from './blocks/buttonContainer';
 import storageExternal from '../../storage/external';
+import storageLocal from '../../storage/local';
+import { customEventList } from '../../events/custom';
 
 const playFieldStyle = {
   pazzleWrapper: style['play-field'],
@@ -29,7 +32,10 @@ const playFieldOptions = {
   resultLine: RL,
   wordContainer: WC,
   wordBlock: WB,
+  buttonContainer: BC,
   externalStorage: storageExternal,
+  localStorage: storageLocal,
+  eventList: customEventList,
 };
 
 export default new PlayField(playFieldOptions);

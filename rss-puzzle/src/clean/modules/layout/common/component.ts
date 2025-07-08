@@ -19,6 +19,8 @@ export class Component {
    */
   protected node: HTMLElement;
 
+  protected nodeEvents: Map<EventListener, [string, boolean]>;
+
   /**
    * Creates a new Component.
    * @constructor
@@ -38,6 +40,7 @@ export class Component {
     node.classList.add(...className);
     node.textContent = text;
     this.node = node;
+    this.nodeEvents = new Map();
 
     if (children) {
       this.appendChildren(children);
@@ -134,6 +137,7 @@ export class Component {
    */
   addListener(event: string, listener: EventListener, options = false) {
     this.node.addEventListener(event, listener, options);
+    this.nodeEvents.set(listener, [event, options]);
   }
 
   /**
@@ -166,6 +170,10 @@ export class Component {
    */
   destroy() {
     this.destroyChildren();
+    this.nodeEvents.forEach((data, func) => {
+      const [event, option] = data;
+      this.removeListener(event, func, option);
+    });
     this.node.remove();
   }
 

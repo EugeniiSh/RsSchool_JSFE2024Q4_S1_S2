@@ -8,6 +8,8 @@ import WC from './blocks/wordContainer';
 import WB from './blocks/wordBlock';
 import BC from './blocks/buttonContainer';
 import storageExternal from '../../storage/external';
+import storageLocal from '../../storage/local';
+import { customEventList } from '../../events/custom';
 
 const playFieldStyle =
 {
@@ -34,6 +36,8 @@ const playFieldOptions =
   wordBlock: WB,
   buttonContainer: BC,
   externalStorage: storageExternal,
+  localStorage: storageLocal,
+  eventList: customEventList,
 }
 
 export default new PlayField(playFieldOptions);

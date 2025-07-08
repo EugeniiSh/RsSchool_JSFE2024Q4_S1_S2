@@ -11,20 +11,21 @@ export interface IStorageLevelProgress
 {
   isComplete: boolean,
   roundProgress: Record<number, IStorageRoundProgress>,
-  roundCount: number
+  completeRoundCount: number;
+}
+
+export interface ILastlevelData
+{
+  level: TNumberOfLevel
+  round: number,
+  sentense: number,
 }
 
 export type TProgressData = Record<TNumberOfLevel, IStorageLevelProgress>;
 
 export interface IStorageGameProgress
 {
-  last:
-  {
-    level: TNumberOfLevel
-    round: number,
-    sentense: number,
-  },
-
+  last: ILastlevelData
   progress: TProgressData
 }
 
@@ -36,35 +37,27 @@ export class PuzzleGameStorage
 
   private startValue: TStorageValue;
 
+  protected startArray: number[];
+
   constructor()
   {
+    this.startArray = [];
     this.startValue = 
     {
       fname: 'new',
       lname: 'user',
       isNew: true,
-      game: PuzzleGameStorage.getStartGameValue(),
+      game: this.getStartGameValue(),
     };
   }
 
-  static getStartGameValue(): IStorageGameProgress
+  public getStartGameValue(): IStorageGameProgress
   {
     const gameLevelCount: TNumberOfLevel[] = [1, 2, 3, 4, 5, 6];
     const progressData: TProgressData = gameLevelCount.reduce((acc, num) =>
     {
-      const roundProgress: IStorageRoundProgress =
-      {
-        isComplete: false,
-        completeSentence: []
-      } 
-
-      const levelProgress: IStorageLevelProgress =
-      {
-        isComplete: false,
-        roundProgress: { 0: roundProgress },
-        roundCount: 0
-      }
-
+      const levelProgress: IStorageLevelProgress = this.getStartLevelProgress();
+    
       acc[num] = levelProgress;
       return acc;
 
@@ -79,6 +72,27 @@ export class PuzzleGameStorage
       },
 
       progress: progressData
+    }
+  }
+
+  public getStartRoundProgress(): IStorageRoundProgress
+  {
+    const emptyArray = this.startArray.slice();
+
+    return {
+      isComplete: false,
+      completeSentence: emptyArray,
+    } 
+  }
+
+  public getStartLevelProgress(): IStorageLevelProgress
+  {
+    const roundProgress = this.getStartRoundProgress();
+
+    return {
+      isComplete: false,
+      roundProgress: { 0: roundProgress },
+      completeRoundCount: 0,
     }
   }
 

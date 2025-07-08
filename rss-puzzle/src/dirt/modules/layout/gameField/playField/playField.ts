@@ -7,7 +7,8 @@ import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
 
 import { IPuzzleWordsData ,IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
-import { IStorageGameProgress } from '../../../storage/local';
+import { PuzzleGameStorage, IStorageGameProgress, ILastlevelData } from '../../../storage/local';
+import { TCustomEventList } from '../../../events/custom';
  
 export interface IPlayFieldStyleList
 {
@@ -39,6 +40,8 @@ export interface IPlayField
   wordBlock: WordBlock,
   buttonContainer: ButtonContainer,
   externalStorage: PuzzleGameExternalStorage,
+  localStorage: PuzzleGameStorage,
+  eventList: TCustomEventList,
 }
 
 export interface IRenderContentInfo
@@ -69,11 +72,15 @@ export class PlayField extends Component
 
   protected externalStorage: PuzzleGameExternalStorage;
 
+  protected localStorage: PuzzleGameStorage;
+
+  protected eventList: TCustomEventList;
+
   protected contentData: IPuzzleGameData | null; 
 
   protected wordCount: number;
 
-  protected currentSentence: string[];
+  protected currentSentence: WordContainer[];
 
   protected errorInSentence: number[];
 
@@ -100,6 +107,8 @@ export class PlayField extends Component
       wordBlock,
       buttonContainer,
       externalStorage,
+      localStorage,
+      eventList,
     }: IPlayField
   )
   {
@@ -113,6 +122,8 @@ export class PlayField extends Component
     this.wordBlock = wordBlock;
     this.buttonContainer = buttonContainer;
     this.externalStorage = externalStorage;
+    this.localStorage = localStorage;
+    this.eventList = eventList;
 
     this.contentData = null;
     this.wordCount = 0;
@@ -142,12 +153,12 @@ export class PlayField extends Component
   static getShuffleElementArr
   (elementArr: WordContainer[]): 
   { 
-    shuffle: WordContainer[], 
-    order: number[]
+    shuffleSentence: WordContainer[], 
+    shuffleOrderWords: number[]
   } 
   {
-    const shuffle: WordContainer[] = [];
-    const order: number[] = [];
+    const shuffleSentence: WordContainer[] = [];
+    const shuffleOrderWords: number[] = [];
     const randomNumSet: Set<number> = new Set();
 
     while(randomNumSet.size < elementArr.length)
@@ -157,11 +168,11 @@ export class PlayField extends Component
 
     randomNumSet.forEach((num) =>
     {
-      shuffle.push(elementArr[num]);
-      order.push(num + 1);
+      shuffleSentence.push(elementArr[num]);
+      shuffleOrderWords.push(num + 1);
     })
 
-    return { shuffle, order };
+    return { shuffleSentence, shuffleOrderWords };
   }
 
   static calculateAndSetBlockWidth(resultLine: ResultLine | InitialContainer, wordContainer: WordContainer[])
@@ -186,35 +197,32 @@ export class PlayField extends Component
   }
 
 
-
-
   public async renderGameFieldContent(contentInfo: IRenderContentInfo): Promise<void>
   {
     const lastGameData = contentInfo.playerProgress.last;
     this.contentData = await this.externalStorage.getData(lastGameData.level);
     const lastRoundSentenceList = this.contentData.rounds[lastGameData.round].words;
-    const lastSentence = lastRoundSentenceList[lastGameData.sentense];
-    const sentenceStr = lastSentence.textExample;
 
     this.currentResultContainer = contentInfo.result;
     this.currentLine.initial = contentInfo.initial;
     this.currentButtonBlock = contentInfo.button;
+    this.currentButtonBlock.setFuncGoToNextSentence(this.goToNextSentence.bind(this));
     
-    this.setCurrentSentence(sentenceStr);
     const roundSentenceGroup = this.getRoundSentenceGroup(lastRoundSentenceList, lastGameData.sentense);
     this.renderRoundSentenceGroup(roundSentenceGroup);
   }
 
   protected renderCurrentSentence(currentSentence: WordContainer[])
   {
-    const { shuffle, order } = PlayField.getShuffleElementArr(currentSentence);
-    this.initialGuessFill = order;
-    this.currentLine.initial.appendChildren(shuffle);
+    const { shuffleSentence, shuffleOrderWords } = PlayField.getShuffleElementArr(currentSentence);
+    this.setCurrentSentence(currentSentence, shuffleOrderWords);
+    this.currentLine.initial.destroyChildren();
+    this.currentLine.initial.appendChildren(shuffleSentence);
 
-    this.currentLine.result.appendChildren(this.wordContainer.getWordContainerArr(shuffle.length));
+    this.currentLine.result.appendChildren(this.wordContainer.getWordContainerArr(shuffleSentence.length));
     this.currentResultContainer.append(this.currentLine.result);
 
-    PlayField.calculateAndSetBlockWidth(this.currentLine.initial, shuffle);
+    PlayField.calculateAndSetBlockWidth(this.currentLine.initial, shuffleSentence);
   }
 
   protected renderRoundSentenceGroup(sentenceGroup: WordContainer[][])
@@ -240,16 +248,16 @@ export class PlayField extends Component
     })
   }
 
-  protected setCurrentSentence(rawString: string): void
+  protected setCurrentSentence(currentSentence: WordContainer[], initialGuessFill: number[]): void
   {
-    this.currentSentence = rawString.split(' ');
+    this.currentSentence = currentSentence;
     const wordCount = this.currentSentence.length;
     this.resultGuessFill = new Array(wordCount).fill(0);
-    this.initialGuessFill = new Array(wordCount).fill(1)
-    .map((item, index) => item + index);
+    this.initialGuessFill = initialGuessFill;
+    // .map((item, index) => item + index);
   }
 
-  protected getRoundSentenceGroup(round: IPuzzleWordsData[], currentSentence: number): WordContainer[][]
+  protected getRoundSentenceGroup(round: IPuzzleWordsData[], currentSentenceIndex: number): WordContainer[][]
   {
     let count = -1;
     const roundSentenceArr: WordContainer[][] = []
@@ -261,7 +269,7 @@ export class PlayField extends Component
       const sentence = round[count].textExample.split(' ');
       roundSentenceArr.push(this.getConvertSentenceIntoLayout(sentence));
     }
-    while(count < currentSentence)
+    while(count < currentSentenceIndex)
 
     return roundSentenceArr;
   }
@@ -287,6 +295,188 @@ export class PlayField extends Component
     });
 
     return result;
+  }
+
+  protected goToNextSentence()
+  {
+    const userData = this.localStorage.getValue();
+    const oldLevel = userData.game.last.level;
+    const oldRound = userData.game.last.round;
+    this.mutableUpdateUserGameProgress(userData.game, 'next-sentence');
+
+    const currentLevel = userData.game.last.level;
+    const currentRound = userData.game.last.round;
+    const nextSentenceNum = userData.game.last.sentense;
+
+    if(oldLevel !== currentLevel
+    || oldRound !== currentRound) 
+    {
+      this.localStorage.setValue(userData);
+      this.dispatchSomeEvent(this.eventList.start());
+
+      return;
+    }
+
+    if(!this.contentData) throw new Error('No information about current round.');
+    if(!Number.isInteger(nextSentenceNum) 
+    || (nextSentenceNum < 0 && nextSentenceNum > 9)) throw new Error('No information about next sentence.');
+
+    this.localStorage.setValue(userData);
+
+    const nextSentence = this.contentData
+    .rounds[currentRound]
+    .words[nextSentenceNum]
+    .textExample
+    .split(' ');
+    
+    const sentenceInLayout = this.getConvertSentenceIntoLayout(nextSentence);
+    this.currentLine.result = this.resultLine.getResultLine();
+    this.renderCurrentSentence(sentenceInLayout);
+
+    this.errorInSentence = this.getErrorsInSentence();
+    this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
+  }
+
+  protected mutableUpdateUserGameProgress
+  (
+    gameProgress: IStorageGameProgress, 
+    action: 'next-sentence' | 'custom-choice',
+    newLastGame?: Omit<ILastlevelData, 'sentence'>
+  ): void
+  {
+    switch(action)
+    {
+      case 'next-sentence':
+      {
+        const oldLastGame = gameProgress.last;
+        const levelProgressList = gameProgress.progress;
+        const level = levelProgressList[oldLastGame.level];
+        const round = level.roundProgress[oldLastGame.round];
+        round.completeSentence.push(oldLastGame.sentense);
+
+        if(round.completeSentence.length === 10) round.isComplete = true;
+
+        if(round.isComplete)
+        {
+          if(!this.contentData) throw Error("Can't update game progress.");
+
+          level.completeRoundCount += 1;
+          level.isComplete = this.contentData.roundsCount === level.completeRoundCount;
+        }
+
+        if(level.isComplete)
+        {
+          const nextLevel = Object.keys(levelProgressList).find((levelNum) =>
+          {
+            const isNotComplete = !levelProgressList[Number(levelNum) as TNumberOfLevel].isComplete
+            return isNotComplete;
+          }) as TNumberOfLevel | undefined;
+
+          if(!nextLevel) throw Error("Game Over");
+
+          const nextRoundProgress = levelProgressList[nextLevel].roundProgress;
+          let nextRound = 0;
+          Object.keys(nextRoundProgress).find((roundNum, index) =>
+          {
+            if(!nextRoundProgress[index])
+            {
+              nextRoundProgress[index] = this.localStorage.getStartRoundProgress();
+              nextRound = index;
+              return true;
+            }
+
+            if(!nextRoundProgress[Number(roundNum)].isComplete)
+            {
+              nextRound = Number(roundNum);
+              return true;
+            }
+
+            return false;
+          })
+
+          const lastSentence = nextRoundProgress[nextRound].completeSentence.at(-1);
+          const nextSentence = lastSentence || lastSentence === 0 ? lastSentence + 1 : 0;
+
+          oldLastGame.level = Number(nextLevel) as TNumberOfLevel;
+          oldLastGame.round = nextRound;
+          oldLastGame.sentense = nextSentence;
+
+          return;
+        }
+
+        if(round.isComplete)
+        {
+          const currentRoundProgress = level.roundProgress;
+          let nextRound = 0;
+
+          if(!this.contentData) throw Error("Can't update game progress.");
+
+          const roundCount = this.contentData.roundsCount;
+          Array.from({ length: roundCount }, (_ , index) => index)
+          .find((roundNum) =>
+          {
+            if(!currentRoundProgress[roundNum])
+            {
+              currentRoundProgress[roundNum] = this.localStorage.getStartRoundProgress();
+              nextRound = roundNum;
+              return true;
+            }
+
+            if(!currentRoundProgress[Number(roundNum)].isComplete)
+            {
+              nextRound = Number(roundNum);
+              return true;
+            }
+
+            return false;
+          });
+
+          const lastSentence = currentRoundProgress[nextRound].completeSentence.at(-1);
+          const nextSentence = lastSentence || lastSentence === 0 ? lastSentence + 1 : 0;
+
+          oldLastGame.round = nextRound;
+          oldLastGame.sentense = nextSentence;
+
+          return;
+        }
+
+        oldLastGame.sentense += 1;
+        break;
+      };
+
+      case 'custom-choice':
+      {
+        if(!newLastGame) throw Error("New game is undefined.");
+
+        const oldLastGame = gameProgress.last;
+        const levelProgressList = gameProgress.progress;
+
+        let nextLevel = levelProgressList[newLastGame.level];
+        if(!nextLevel)
+        {
+          levelProgressList[newLastGame.level] = this.localStorage.getStartLevelProgress();
+          nextLevel = levelProgressList[newLastGame.level];
+        } 
+
+        let nextRound = nextLevel.roundProgress[newLastGame.round];
+        if(!nextRound)
+        {
+          nextLevel.roundProgress[newLastGame.round] = this.localStorage.getStartRoundProgress();
+          nextRound = nextLevel.roundProgress[newLastGame.round];
+        }
+
+        let newSentence = nextRound.completeSentence.at(-1);
+        newSentence = newSentence === undefined ? 0 : newSentence;
+
+        oldLastGame.level = newLastGame.level;
+        oldLastGame.round = newLastGame.round;
+        oldLastGame.sentense = newSentence;
+
+        break;
+      }
+
+      default: break;
+    }
   }
 
   protected handlerClickWordBlock = (event: Event) =>
@@ -366,8 +556,6 @@ export class PlayField extends Component
 
     this.errorInSentence = this.getErrorsInSentence();
     this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
-
-    // console.log(this.errorInSentence);
   }
 
   public getWordCount(): number
@@ -390,6 +578,8 @@ export class PlayField extends Component
         wordBlock: this.wordBlock.getBlockWithWord(''),
         buttonContainer: this.buttonContainer.getButtonContainer(),
         externalStorage: this.externalStorage,
+        localStorage: this.localStorage,
+        eventList: this.eventList,
       }
     )
   }

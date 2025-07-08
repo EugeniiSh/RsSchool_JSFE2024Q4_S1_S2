@@ -26,6 +26,8 @@ export class ButtonContainer extends Component
 
   protected nextButton: CommonButton;
 
+  protected refToParentGoToNextSentence: () => void;
+
   constructor
   (
     {
@@ -38,13 +40,14 @@ export class ButtonContainer extends Component
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
+    this.refToParentGoToNextSentence = () => {};
 
     this.nextButtonOption =
     {
       className: [this.style.buttonNext, this.style.buttonNextDisabled],
       text: 'next',
       items: [],
-      clickListener: () => { console.log('click next') },
+      clickListener: () => { this.handleClickNextButton() },
       changeStatus(this: CommonButton, status)
       {
         this.toggleClass(style.buttonNextDisabled, !status);
@@ -54,6 +57,16 @@ export class ButtonContainer extends Component
     this.nextButton = new CommonButton(this.nextButtonOption);
 
     this.appendChildren([this.nextButton]);
+  }
+
+  protected handleClickNextButton()
+  {
+    this.refToParentGoToNextSentence();
+  }
+
+  public setFuncGoToNextSentence(func: () => void)
+  {
+    this.refToParentGoToNextSentence = func;
   }
 
   public changeStatusNextButton(status: boolean)

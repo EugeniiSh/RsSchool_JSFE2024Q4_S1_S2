@@ -5,7 +5,6 @@ import {
   IWrapperForm,
   WrapperForm,
 } from '../../modules/layout/login-form/wrapper-form';
-import { PuzzleGameStorage } from '../../modules/storage/local';
 
 import { firstName } from './fields/firstName';
 import { lastName } from './fields/lastName';
@@ -57,7 +56,7 @@ function wrapperFormLoginListener(this: WrapperForm) {
   const userData = {
     ...this.form.getFormValue(),
     isNew: false,
-    game: PuzzleGameStorage.getStartGameValue(),
+    game: this.storage.getStartGameValue(),
   };
 
   this.storage.setValue(userData);
