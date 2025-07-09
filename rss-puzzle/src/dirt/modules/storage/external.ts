@@ -1,4 +1,4 @@
-interface IPuzzleWordsData
+export interface IPuzzleWordsData
 {
   audioExample: string,
   textExample: string,
@@ -8,7 +8,7 @@ interface IPuzzleWordsData
   wordTranslate: string
 }
 
-interface IPuzzleLevelData
+export interface IPuzzleLevelData
 {
   id: string,
   name: string,
@@ -18,7 +18,7 @@ interface IPuzzleLevelData
   year: string
 }
 
-interface IPuzzleLevel
+export interface IPuzzleLevel
 {
   levelData: IPuzzleLevelData,
   words: IPuzzleWordsData[]

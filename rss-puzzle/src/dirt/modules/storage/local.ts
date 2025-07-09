@@ -1,13 +1,32 @@
 import { TFieldsValue } from '../layout/login-form/form';
 import { TNumberOfLevel } from './external';
 
+export interface IStorageRoundProgress
+{
+  isComplete: boolean,
+  completeSentence: number[]
+}
+
+export interface IStorageLevelProgress
+{
+  isComplete: boolean,
+  roundProgress: Record<number, IStorageRoundProgress>,
+  completeRoundCount: number;
+}
+
+export interface ILastlevelData
+{
+  level: TNumberOfLevel
+  round: number,
+  sentense: number,
+}
+
+export type TProgressData = Record<TNumberOfLevel, IStorageLevelProgress>;
 
 export interface IStorageGameProgress
 {
-  last:
-  {
-    level: TNumberOfLevel
-  }
+  last: ILastlevelData
+  progress: TProgressData
 }
 
 export type TStorageValue = TFieldsValue & { isNew: boolean, game: IStorageGameProgress };
@@ -18,24 +37,62 @@ export class PuzzleGameStorage
 
   private startValue: TStorageValue;
 
+  protected startArray: number[];
+
   constructor()
   {
+    this.startArray = [];
     this.startValue = 
     {
       fname: 'new',
       lname: 'user',
       isNew: true,
-      game: PuzzleGameStorage.getStartGameValue(),
+      game: this.getStartGameValue(),
     };
   }
 
-  static getStartGameValue(): IStorageGameProgress
+  public getStartGameValue(): IStorageGameProgress
   {
+    const gameLevelCount: TNumberOfLevel[] = [1, 2, 3, 4, 5, 6];
+    const progressData: TProgressData = gameLevelCount.reduce((acc, num) =>
+    {
+      const levelProgress: IStorageLevelProgress = this.getStartLevelProgress();
+    
+      acc[num] = levelProgress;
+      return acc;
+
+    }, {} as TProgressData);
+
     return {
       last:
       {
-        level: 1
-      }
+        level: 1,
+        round: 0,
+        sentense: 0,
+      },
+
+      progress: progressData
+    }
+  }
+
+  public getStartRoundProgress(): IStorageRoundProgress
+  {
+    const emptyArray = this.startArray.slice();
+
+    return {
+      isComplete: false,
+      completeSentence: emptyArray,
+    } 
+  }
+
+  public getStartLevelProgress(): IStorageLevelProgress
+  {
+    const roundProgress = this.getStartRoundProgress();
+
+    return {
+      isComplete: false,
+      roundProgress: { 0: roundProgress },
+      completeRoundCount: 0,
     }
   }
 

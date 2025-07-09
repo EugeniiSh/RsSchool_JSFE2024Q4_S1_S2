@@ -23,11 +23,15 @@ export class GameFieldHandler extends Component {
   public getGameFieldInterface(
     playerProgress: IStorageGameProgress,
   ): [PlayField] {
-    const playFieldInterface =
+    // const playFieldInterface = this.playField.getPlayFieldInterface(playerProgress);
+    // playFieldInterface.playField.renderGameFieldContent(playFieldInterface.renderInfo);
+    // return [
+    //   playFieldInterface.playField
+    // ];
+    const { playField, renderInfo } =
       this.playField.getPlayFieldInterface(playerProgress);
-    playFieldInterface.playField.renderGameFieldContent(
-      playFieldInterface.renderInfo,
-    );
-    return [playFieldInterface.playField];
+    playField.renderGameFieldContent(renderInfo);
+
+    return [playField];
   }
 }

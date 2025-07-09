@@ -2,6 +2,7 @@
 .play-field {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   gap: calc(var(--size-height-result) * 0.1);
 
