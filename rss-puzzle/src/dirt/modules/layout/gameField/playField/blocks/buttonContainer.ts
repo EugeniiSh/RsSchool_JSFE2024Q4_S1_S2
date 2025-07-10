@@ -5,8 +5,8 @@ import { CommonButton, ICommonButtonOptions } from '../../../button/common-butto
 
 export interface IButtonContainerStyleList
 {
-  buttonNext: string,
-  buttonNextDisabled: string,
+  buttonSentence: string,
+  buttonSentenceDisabled: string,
 }
 
 export interface IButtonContainerOptions
@@ -22,7 +22,11 @@ export class ButtonContainer extends Component
 
   protected style: IButtonContainerStyleList;
 
+  protected checkButtonOption: ICommonButtonOptions;
+
   protected nextButtonOption: ICommonButtonOptions;
+
+  protected checkButton: CommonButton;
 
   protected nextButton: CommonButton;
 
@@ -42,21 +46,34 @@ export class ButtonContainer extends Component
     this.style = style;
     this.refToParentGoToNextSentence = () => {};
 
+    this.checkButtonOption =
+    {
+      className: [this.style.buttonSentence, this.style.buttonSentenceDisabled],
+      text: 'check',
+      items: [],
+      clickListener: () => { },
+      changeStatus(this: CommonButton, status)
+      {
+        this.toggleClass(style.buttonSentenceDisabled, !status);
+      }
+    }
+
     this.nextButtonOption =
     {
-      className: [this.style.buttonNext, this.style.buttonNextDisabled],
+      className: [this.style.buttonSentence, this.style.buttonSentenceDisabled],
       text: 'next',
       items: [],
       clickListener: () => { this.handleClickNextButton() },
       changeStatus(this: CommonButton, status)
       {
-        this.toggleClass(style.buttonNextDisabled, !status);
+        this.toggleClass(style.buttonSentenceDisabled, !status);
       }
     }
 
+    this.checkButton = new CommonButton(this.checkButtonOption);
     this.nextButton = new CommonButton(this.nextButtonOption);
 
-    this.appendChildren([this.nextButton]);
+    this.appendChildren([this.checkButton, this.nextButton]);
   }
 
   protected handleClickNextButton()
@@ -67,6 +84,14 @@ export class ButtonContainer extends Component
   public setFuncGoToNextSentence(func: () => void)
   {
     this.refToParentGoToNextSentence = func;
+  }
+
+  public changeStatusCheckButton(status: boolean)
+  {
+    if(this.checkButton.changeStatus)
+    {
+      this.checkButton.changeStatus(status);
+    }
   }
 
   public changeStatusNextButton(status: boolean)

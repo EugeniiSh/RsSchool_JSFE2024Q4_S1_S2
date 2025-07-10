@@ -83,12 +83,15 @@
 
 .button-container
 {
-  border: none;
+  display: flex;
+  justify-content: space-around;
+
+  width: 100%;
 }
 
-.button-next
+.button-sentence
 {
-  padding: 1% 6%;
+  padding: 0.5% 2%;
 
   background-color: transparent;
   border: none;
