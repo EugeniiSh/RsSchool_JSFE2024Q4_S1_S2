@@ -30,6 +30,8 @@ export class ButtonContainer extends Component
 
   protected nextButton: CommonButton;
 
+  protected refToParentToggleWordValidationHighligh: (isHighligh: boolean) => void;
+
   protected refToParentGoToNextSentence: () => void;
 
   constructor
@@ -44,6 +46,7 @@ export class ButtonContainer extends Component
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
+    this.refToParentToggleWordValidationHighligh = () => {};
     this.refToParentGoToNextSentence = () => {};
 
     this.checkButtonOption =
@@ -51,7 +54,7 @@ export class ButtonContainer extends Component
       className: [this.style.buttonSentence, this.style.buttonSentenceDisabled],
       text: 'check',
       items: [],
-      clickListener: () => { },
+      clickListener: () => { this.handleClickCheckButton() },
       changeStatus(this: CommonButton, status)
       {
         this.toggleClass(style.buttonSentenceDisabled, !status);
@@ -76,17 +79,27 @@ export class ButtonContainer extends Component
     this.appendChildren([this.checkButton, this.nextButton]);
   }
 
-  protected handleClickNextButton()
+  protected handleClickCheckButton(): void
+  {
+    this.refToParentToggleWordValidationHighligh(true);
+  }
+
+  protected handleClickNextButton(): void
   {
     this.refToParentGoToNextSentence();
   }
 
-  public setFuncGoToNextSentence(func: () => void)
+  public setFuncToggleWordValidationHighligh(func: (arg: boolean) => void): void
+  {
+    this.refToParentToggleWordValidationHighligh = func;
+  }
+
+  public setFuncGoToNextSentence(func: () => void): void
   {
     this.refToParentGoToNextSentence = func;
   }
 
-  public changeStatusCheckButton(status: boolean)
+  public changeStatusCheckButton(status: boolean): void
   {
     if(this.checkButton.changeStatus)
     {
@@ -94,7 +107,7 @@ export class ButtonContainer extends Component
     }
   }
 
-  public changeStatusNextButton(status: boolean)
+  public changeStatusNextButton(status: boolean): void
   {
     if(this.nextButton.changeStatus)
     {

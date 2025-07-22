@@ -5,8 +5,8 @@ import {
 } from '../../../button/common-button';
 
 export interface IButtonContainerStyleList {
-  buttonNext: string;
-  buttonNextDisabled: string;
+  buttonSentence: string;
+  buttonSentenceDisabled: string;
 }
 
 export interface IButtonContainerOptions {
@@ -20,9 +20,17 @@ export class ButtonContainer extends Component {
 
   protected style: IButtonContainerStyleList;
 
+  protected checkButtonOption: ICommonButtonOptions;
+
   protected nextButtonOption: ICommonButtonOptions;
 
+  protected checkButton: CommonButton;
+
   protected nextButton: CommonButton;
+
+  protected refToParentToggleWordValidationHighligh: (
+    isHighligh: boolean,
+  ) => void;
 
   protected refToParentGoToNextSentence: () => void;
 
@@ -30,34 +38,64 @@ export class ButtonContainer extends Component {
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
+    this.refToParentToggleWordValidationHighligh = () => {};
     this.refToParentGoToNextSentence = () => {};
 
+    this.checkButtonOption = {
+      className: [this.style.buttonSentence, this.style.buttonSentenceDisabled],
+      text: 'check',
+      items: [],
+      clickListener: () => {
+        this.handleClickCheckButton();
+      },
+      changeStatus(this: CommonButton, status) {
+        this.toggleClass(style.buttonSentenceDisabled, !status);
+      },
+    };
+
     this.nextButtonOption = {
-      className: [this.style.buttonNext, this.style.buttonNextDisabled],
+      className: [this.style.buttonSentence, this.style.buttonSentenceDisabled],
       text: 'next',
       items: [],
       clickListener: () => {
         this.handleClickNextButton();
       },
       changeStatus(this: CommonButton, status) {
-        this.toggleClass(style.buttonNextDisabled, !status);
+        this.toggleClass(style.buttonSentenceDisabled, !status);
       },
     };
 
+    this.checkButton = new CommonButton(this.checkButtonOption);
     this.nextButton = new CommonButton(this.nextButtonOption);
 
-    this.appendChildren([this.nextButton]);
+    this.appendChildren([this.checkButton, this.nextButton]);
   }
 
-  protected handleClickNextButton() {
+  protected handleClickCheckButton(): void {
+    this.refToParentToggleWordValidationHighligh(true);
+  }
+
+  protected handleClickNextButton(): void {
     this.refToParentGoToNextSentence();
   }
 
-  public setFuncGoToNextSentence(func: () => void) {
+  public setFuncToggleWordValidationHighligh(
+    func: (arg: boolean) => void,
+  ): void {
+    this.refToParentToggleWordValidationHighligh = func;
+  }
+
+  public setFuncGoToNextSentence(func: () => void): void {
     this.refToParentGoToNextSentence = func;
   }
 
-  public changeStatusNextButton(status: boolean) {
+  public changeStatusCheckButton(status: boolean): void {
+    if (this.checkButton.changeStatus) {
+      this.checkButton.changeStatus(status);
+    }
+  }
+
+  public changeStatusNextButton(status: boolean): void {
     if (this.nextButton.changeStatus) {
       this.nextButton.changeStatus(status);
     }

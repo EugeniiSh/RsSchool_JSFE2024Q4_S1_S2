@@ -1,7 +1,7 @@
 import * as style from './blocks-style.module.scss';
-import { WordBlock } from '../../../../modules/layout/gameField/playField/blocks/wordBlock';
+import { WordBlock, IWordBlockOptions } from '../../../../modules/layout/gameField/playField/blocks/wordBlock';
 
-const wordBlockOptions =
+const wordBlockOptions: IWordBlockOptions =
 {
   className: [style['word-block']],
   text: '',
