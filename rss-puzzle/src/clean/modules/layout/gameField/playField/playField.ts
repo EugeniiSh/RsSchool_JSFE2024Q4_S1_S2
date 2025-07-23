@@ -29,13 +29,15 @@ export interface IPlayFieldStyleList {
   wordContainer: string;
   wordBlock: string;
   wordBlockPiece: string;
+  statusCorrect: string;
+  statusError: string;
 }
 
 export interface IFetchDataOptions {
   level: TNumberOfLevel;
 }
 
-export interface IPlayField {
+export interface IPlayFieldOption {
   className: string[];
   text: string;
   style: IPlayFieldStyleList;
@@ -111,7 +113,7 @@ export class PlayField extends Component {
     externalStorage,
     localStorage,
     eventList,
-  }: IPlayField) {
+  }: IPlayFieldOption) {
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
@@ -205,6 +207,9 @@ export class PlayField extends Component {
     this.currentResultContainer = contentInfo.result;
     this.currentLine.initial = contentInfo.initial;
     this.currentButtonBlock = contentInfo.button;
+    this.currentButtonBlock.setFuncToggleWordValidationHighligh(
+      this.toggleWordValidationHighligh.bind(this),
+    );
     this.currentButtonBlock.setFuncGoToNextSentence(
       this.goToNextSentence.bind(this),
     );
@@ -260,7 +265,6 @@ export class PlayField extends Component {
     const wordCount = this.currentSentence.length;
     this.resultGuessFill = new Array(wordCount).fill(0);
     this.initialGuessFill = initialGuessFill;
-    // .map((item, index) => item + index);
   }
 
   protected getRoundSentenceGroup(
@@ -299,7 +303,30 @@ export class PlayField extends Component {
     return result;
   }
 
-  protected goToNextSentence() {
+  protected toggleWordValidationHighligh(isHighligh: boolean): void {
+    const wordBlockList = this.currentLine.result.getChildren();
+
+    if (isHighligh) {
+      const errors = this.errorInSentence;
+      wordBlockList.forEach((wordBlock, index) => {
+        if (errors.includes(index)) {
+          wordBlock.toggleClass(this.style.statusError, true);
+          return;
+        }
+
+        wordBlock.toggleClass(this.style.statusCorrect, true);
+      });
+
+      return;
+    }
+
+    wordBlockList.forEach((wordBlock) => {
+      wordBlock.toggleClass(this.style.statusError, false);
+      wordBlock.toggleClass(this.style.statusCorrect, false);
+    });
+  }
+
+  protected goToNextSentence(): void {
     const userData = this.localStorage.getValue();
     const oldLevel = userData.game.last.level;
     const oldRound = userData.game.last.round;
@@ -325,6 +352,7 @@ export class PlayField extends Component {
       throw new Error('No information about next sentence.');
 
     this.localStorage.setValue(userData);
+    this.toggleWordValidationHighligh(false);
 
     const nextSentence =
       this.contentData.rounds[currentRound].words[
@@ -339,6 +367,7 @@ export class PlayField extends Component {
     this.currentButtonBlock.changeStatusNextButton(
       this.errorInSentence.length === 0,
     );
+    this.currentButtonBlock.changeStatusCheckButton(false);
   }
 
   protected mutableUpdateUserGameProgress(
@@ -517,6 +546,7 @@ export class PlayField extends Component {
     } else {
       const resultGuess = parent.closest(`.${this.style.resultGuess}`);
       if (resultGuess !== this.currentLine.result.getNode()) return;
+      this.toggleWordValidationHighligh(false);
 
       let position = 0;
 
@@ -552,6 +582,9 @@ export class PlayField extends Component {
     this.currentButtonBlock.changeStatusNextButton(
       this.errorInSentence.length === 0,
     );
+
+    const isResultLineFill = !this.resultGuessFill.includes(0);
+    this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);
   };
 
   public getWordCount(): number {

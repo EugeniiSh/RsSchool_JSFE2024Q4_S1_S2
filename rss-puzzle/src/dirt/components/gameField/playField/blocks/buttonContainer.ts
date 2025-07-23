@@ -3,8 +3,8 @@ import { ButtonContainer, IButtonContainerStyleList } from '../../../../modules/
 
 const buttonContainerStyle: IButtonContainerStyleList =
 {
-  buttonNext: style['button-next'],
-  buttonNextDisabled: style['button-next__disabled'],
+  buttonSentence: style['button-sentence'],
+  buttonSentenceDisabled: style['button-sentence__disabled'],
 }
 
 const buttonContainerOption =
