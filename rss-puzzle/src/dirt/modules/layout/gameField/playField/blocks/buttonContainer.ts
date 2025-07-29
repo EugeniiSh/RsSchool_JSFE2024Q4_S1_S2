@@ -1,12 +1,14 @@
-import { Component } from '../../../common/component';
+import { Component, IComponentOptions } from '../../../common/component';
 import { CommonButton, ICommonButtonOptions } from '../../../button/common-button';
 
 
 
 export interface IButtonContainerStyleList
 {
+  motivationButtonWrapper: string;
   buttonSentence: string,
   buttonSentenceDisabled: string,
+  buttonSentenceHidden: string,
 }
 
 export interface IButtonContainerOptions
@@ -22,6 +24,8 @@ export class ButtonContainer extends Component
 
   protected style: IButtonContainerStyleList;
 
+  protected motivationWrapperButtonOption: IComponentOptions;
+
   protected checkButtonOption: ICommonButtonOptions;
 
   protected nextButtonOption: ICommonButtonOptions;
@@ -29,6 +33,8 @@ export class ButtonContainer extends Component
   protected checkButton: CommonButton;
 
   protected nextButton: CommonButton;
+
+  protected motivationButtonWrapper: Component;
 
   protected refToParentToggleWordValidationHighligh: (isHighligh: boolean) => void;
 
@@ -63,7 +69,12 @@ export class ButtonContainer extends Component
 
     this.nextButtonOption =
     {
-      className: [this.style.buttonSentence, this.style.buttonSentenceDisabled],
+      className: 
+      [
+        this.style.buttonSentence, 
+        this.style.buttonSentenceDisabled,
+        this.style.buttonSentenceHidden,
+      ],
       text: 'next',
       items: [],
       clickListener: () => { this.handleClickNextButton() },
@@ -73,10 +84,23 @@ export class ButtonContainer extends Component
       }
     }
 
+    this.motivationWrapperButtonOption =
+    {
+      tag: 'div',
+      className: [this.style.motivationButtonWrapper],
+      text: '',
+    }
+
     this.checkButton = new CommonButton(this.checkButtonOption);
     this.nextButton = new CommonButton(this.nextButtonOption);
+    this.motivationButtonWrapper = new Component
+    (
+      this.motivationWrapperButtonOption,
+      this.checkButton,
+      this.nextButton
+    )
 
-    this.appendChildren([this.checkButton, this.nextButton]);
+    this.appendChildren([this.motivationButtonWrapper]);
   }
 
   protected handleClickCheckButton(): void
@@ -87,6 +111,19 @@ export class ButtonContainer extends Component
   protected handleClickNextButton(): void
   {
     this.refToParentGoToNextSentence();
+  }
+
+  public toggleVisibleMotivationButton(visibleButton: 'next' | 'check')
+  {
+    if(visibleButton === 'next')
+    {
+      this.nextButton.toggleClass(this.style.buttonSentenceHidden, false);
+      this.checkButton.toggleClass(this.style.buttonSentenceHidden, true);
+      return;
+    }
+
+    this.nextButton.toggleClass(this.style.buttonSentenceHidden, true);
+    this.checkButton.toggleClass(this.style.buttonSentenceHidden, false);
   }
 
   public setFuncToggleWordValidationHighligh(func: (arg: boolean) => void): void

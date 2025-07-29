@@ -3,8 +3,10 @@ import { ButtonContainer, IButtonContainerStyleList } from '../../../../modules/
 
 const buttonContainerStyle: IButtonContainerStyleList =
 {
+  motivationButtonWrapper: style['button-wrapper'],
   buttonSentence: style['button-sentence'],
   buttonSentenceDisabled: style['button-sentence__disabled'],
+  buttonSentenceHidden: style['button-sentence__visible_hidden'],
 }
 
 const buttonContainerOption =
