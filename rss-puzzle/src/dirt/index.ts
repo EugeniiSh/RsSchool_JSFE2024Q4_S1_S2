@@ -34,7 +34,6 @@ class PuzzleGame
 
 
 
-
 const body = document.querySelector('body');
 const game = new PuzzleGame(gameHandler);
 game.render(body);

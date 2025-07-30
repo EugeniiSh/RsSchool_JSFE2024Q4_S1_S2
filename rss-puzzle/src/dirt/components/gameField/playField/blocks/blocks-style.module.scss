@@ -59,6 +59,7 @@
   box-shadow: inset 0rem 0rem 1rem 1rem var(--pupil-eye);
 
   line-height: 1.75;
+  letter-spacing: -0.05em;
   text-align: center;
   text-shadow: 0rem 0rem 6rem var(--pupil-eye);
 
@@ -91,16 +92,32 @@
   border: none;
 }
 
+
+
+
+
+
 .button-container
 {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 
   width: 100%;
 }
 
+.button-wrapper
+{
+  position: relative;
+  display: flex;
+  justify-content: center;
+
+  height: 3em;
+  width: 7em;
+}
+
 .button-sentence
 {
+  position: absolute;
   padding: 0.5% 2%;
 
   background-color: transparent;
@@ -135,6 +152,14 @@
     transform: translate(-1%, 5%);
     box-shadow: 0rem 0rem 3rem 1rem var(--main-brown-middle);
     opacity: 0.5;
+    pointer-events: none;
+    cursor: auto;
+  }
+
+  &__visible_hidden
+  {
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     cursor: auto;
   }
