@@ -1,0 +1,10 @@
+.spark-effect
+{
+  animation: spark 1s linear 1;
+}
+
+@keyframes spark 
+{
+  from { filter: invert(100%); }
+  to { filter: invert(0%); }
+}

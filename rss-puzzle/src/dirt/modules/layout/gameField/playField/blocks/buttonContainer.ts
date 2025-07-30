@@ -16,6 +16,7 @@ export interface IButtonContainerOptions
   className: string[],
   text: string,
   style: IButtonContainerStyleList,
+  effectSpark?: (arg: Component) => void
 }
 
 export class ButtonContainer extends Component
@@ -23,6 +24,8 @@ export class ButtonContainer extends Component
   protected className: string[];
 
   protected style: IButtonContainerStyleList;
+
+  protected sparkEffect?: (arg: Component) => void;
 
   protected motivationWrapperButtonOption: IComponentOptions;
 
@@ -46,6 +49,7 @@ export class ButtonContainer extends Component
       className,
       text,
       style,
+      effectSpark
     }: IButtonContainerOptions
   )
   {
@@ -54,6 +58,7 @@ export class ButtonContainer extends Component
     this.style = style;
     this.refToParentToggleWordValidationHighligh = () => {};
     this.refToParentGoToNextSentence = () => {};
+    if(effectSpark) this.sparkEffect = effectSpark;
 
     this.checkButtonOption =
     {
@@ -117,13 +122,15 @@ export class ButtonContainer extends Component
   {
     if(visibleButton === 'next')
     {
-      this.nextButton.toggleClass(this.style.buttonSentenceHidden, false);
       this.checkButton.toggleClass(this.style.buttonSentenceHidden, true);
+      this.nextButton.toggleClass(this.style.buttonSentenceHidden, false);
+      if(this.sparkEffect) this.sparkEffect(this.nextButton);
       return;
     }
 
     this.nextButton.toggleClass(this.style.buttonSentenceHidden, true);
     this.checkButton.toggleClass(this.style.buttonSentenceHidden, false);
+    if(this.sparkEffect) this.sparkEffect(this.checkButton);
   }
 
   public setFuncToggleWordValidationHighligh(func: (arg: boolean) => void): void
@@ -160,6 +167,7 @@ export class ButtonContainer extends Component
         className: this.className,
         text: '',
         style: this.style,
+        effectSpark: this.sparkEffect,
       }
     )
   }

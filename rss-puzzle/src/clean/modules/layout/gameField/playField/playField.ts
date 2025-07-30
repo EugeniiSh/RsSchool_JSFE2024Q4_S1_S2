@@ -175,12 +175,13 @@ export class PlayField extends Component {
     wordContainer: WordContainer[],
   ) {
     // === Get width rezult line ===
-    const resultWidth = resultLine.getNode().offsetWidth;
+    const resultWidth = resultLine.getNode().getBoundingClientRect().width;
+
     // === Set the size of the word cards ===
     wordContainer.forEach((elem) => {
       // === Take the size '.word-container' ... ===
       const wordElem = elem.getNode();
-      const elemWidth = wordElem.offsetWidth;
+      const elemWidth = wordElem.getBoundingClientRect().width;
 
       // === and set it to '.word-block' ===
       const wordElemChild = elem.getChildren()[0].getNode();
@@ -317,6 +318,11 @@ export class PlayField extends Component {
         wordBlock.toggleClass(this.style.statusCorrect, true);
       });
 
+      if (errors.length === 0) {
+        this.currentButtonBlock.changeStatusNextButton(errors.length === 0);
+        this.currentButtonBlock.toggleVisibleMotivationButton('next');
+      }
+
       return;
     }
 
@@ -324,6 +330,8 @@ export class PlayField extends Component {
       wordBlock.toggleClass(this.style.statusError, false);
       wordBlock.toggleClass(this.style.statusCorrect, false);
     });
+
+    this.currentButtonBlock.toggleVisibleMotivationButton('check');
   }
 
   protected goToNextSentence(): void {
@@ -368,6 +376,7 @@ export class PlayField extends Component {
       this.errorInSentence.length === 0,
     );
     this.currentButtonBlock.changeStatusCheckButton(false);
+    this.currentButtonBlock.toggleVisibleMotivationButton('check');
   }
 
   protected mutableUpdateUserGameProgress(
@@ -579,9 +588,6 @@ export class PlayField extends Component {
     }
 
     this.errorInSentence = this.getErrorsInSentence();
-    this.currentButtonBlock.changeStatusNextButton(
-      this.errorInSentence.length === 0,
-    );
 
     const isResultLineFill = !this.resultGuessFill.includes(0);
     this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);

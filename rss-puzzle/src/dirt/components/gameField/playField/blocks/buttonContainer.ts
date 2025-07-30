@@ -1,6 +1,8 @@
 import * as style from './blocks-style.module.scss';
 import { ButtonContainer, IButtonContainerStyleList } from '../../../../modules/layout/gameField/playField/blocks/buttonContainer';
 
+import sparkEffect from '../../../../modules/effects/spark/spark';
+
 const buttonContainerStyle: IButtonContainerStyleList =
 {
   motivationButtonWrapper: style['button-wrapper'],
@@ -14,6 +16,7 @@ const buttonContainerOption =
   className: [style['button-container']],
   text: '',
   style: buttonContainerStyle,
+  effectSpark: sparkEffect,
 }
 
 export default new ButtonContainer(buttonContainerOption);
