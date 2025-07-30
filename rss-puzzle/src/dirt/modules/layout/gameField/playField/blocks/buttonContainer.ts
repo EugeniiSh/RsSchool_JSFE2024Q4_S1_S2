@@ -39,6 +39,8 @@ export class ButtonContainer extends Component
 
   protected motivationButtonWrapper: Component;
 
+  protected motivationButtonState: 'next' | 'check';
+
   protected refToParentToggleWordValidationHighligh: (isHighligh: boolean) => void;
 
   protected refToParentGoToNextSentence: () => void;
@@ -89,6 +91,8 @@ export class ButtonContainer extends Component
       }
     }
 
+    this.motivationButtonState = 'check';
+
     this.motivationWrapperButtonOption =
     {
       tag: 'div',
@@ -125,12 +129,20 @@ export class ButtonContainer extends Component
       this.checkButton.toggleClass(this.style.buttonSentenceHidden, true);
       this.nextButton.toggleClass(this.style.buttonSentenceHidden, false);
       if(this.sparkEffect) this.sparkEffect(this.nextButton);
+
+      this.motivationButtonState = visibleButton;
+
       return;
     }
 
     this.nextButton.toggleClass(this.style.buttonSentenceHidden, true);
     this.checkButton.toggleClass(this.style.buttonSentenceHidden, false);
-    if(this.sparkEffect) this.sparkEffect(this.checkButton);
+    if(this.sparkEffect && this.motivationButtonState === 'next')
+    {
+      this.sparkEffect(this.checkButton);
+    } 
+
+    this.motivationButtonState = visibleButton;
   }
 
   public setFuncToggleWordValidationHighligh(func: (arg: boolean) => void): void
