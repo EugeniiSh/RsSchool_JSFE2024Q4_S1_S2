@@ -5,6 +5,8 @@ import { CommonButton, ICommonButtonOptions } from '../../../button/common-butto
 
 export interface IButtonContainerStyleList
 {
+  buttonWrapper: string;
+  supportButtonWrapper: string;
   motivationButtonWrapper: string;
   buttonSentence: string,
   buttonSentenceDisabled: string,
@@ -29,17 +31,26 @@ export class ButtonContainer extends Component
 
   protected motivationWrapperButtonOption: IComponentOptions;
 
-  protected checkButtonOption: ICommonButtonOptions;
-
-  protected nextButtonOption: ICommonButtonOptions;
-
-  protected checkButton: CommonButton;
-
-  protected nextButton: CommonButton;
-
   protected motivationButtonWrapper: Component;
 
   protected motivationButtonState: 'next' | 'check';
+
+  protected checkButtonOption: ICommonButtonOptions;
+
+  protected checkButton: CommonButton;
+
+  protected nextButtonOption: ICommonButtonOptions;
+
+  protected nextButton: CommonButton;
+
+  protected supportWrapperButtonOption: IComponentOptions;
+
+  protected supportButtonWraper: Component;
+
+  protected autoCompleteButtonOption: ICommonButtonOptions;
+
+  protected autoCompleteButton: CommonButton;
+
 
   protected refToParentToggleWordValidationHighligh: (isHighligh: boolean) => void;
 
@@ -91,12 +102,27 @@ export class ButtonContainer extends Component
       }
     }
 
+    this.autoCompleteButtonOption = 
+    {
+      className: [this.style.buttonSentence],
+      text: "help!",
+      items: [],
+      clickListener: () => {},
+    }
+
     this.motivationButtonState = 'check';
 
     this.motivationWrapperButtonOption =
     {
       tag: 'div',
-      className: [this.style.motivationButtonWrapper],
+      className: [this.style.buttonWrapper, this.style.motivationButtonWrapper],
+      text: '',
+    }
+
+    this.supportWrapperButtonOption =
+    {
+      tag: 'div',
+      className: [this.style.buttonWrapper, this.style.supportButtonWrapper],
       text: '',
     }
 
@@ -107,9 +133,17 @@ export class ButtonContainer extends Component
       this.motivationWrapperButtonOption,
       this.checkButton,
       this.nextButton
-    )
+    );
 
-    this.appendChildren([this.motivationButtonWrapper]);
+    this.autoCompleteButton = new CommonButton(this.autoCompleteButtonOption);
+    this.supportButtonWraper = new Component
+    (
+      this.supportWrapperButtonOption,
+      this.autoCompleteButton
+    )
+    
+
+    this.appendChildren([this.supportButtonWraper, this.motivationButtonWrapper]);
   }
 
   protected handleClickCheckButton(): void

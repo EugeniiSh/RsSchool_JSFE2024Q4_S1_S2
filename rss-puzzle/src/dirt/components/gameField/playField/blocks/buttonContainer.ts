@@ -5,7 +5,9 @@ import sparkEffect from '../../../../modules/effects/spark/spark';
 
 const buttonContainerStyle: IButtonContainerStyleList =
 {
-  motivationButtonWrapper: style['button-wrapper'],
+  buttonWrapper: style['button-wrapper'],
+  supportButtonWrapper: style['button-wrapper__support'],
+  motivationButtonWrapper: style['button-wrapper__motivation'],
   buttonSentence: style['button-sentence'],
   buttonSentenceDisabled: style['button-sentence__disabled'],
   buttonSentenceHidden: style['button-sentence__visible_hidden'],
