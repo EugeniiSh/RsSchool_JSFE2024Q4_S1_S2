@@ -82,7 +82,7 @@ export class PlayField extends Component
 
   protected wordCount: number;
 
-  protected currentSentence: WordContainer[];
+  protected currentSentence: WordBlock[];
 
   protected errorInSentence: number[];
 
@@ -211,6 +211,7 @@ export class PlayField extends Component
     this.currentButtonBlock = contentInfo.button;
     this.currentButtonBlock.setFuncToggleWordValidationHighligh(this.toggleWordValidationHighligh.bind(this));
     this.currentButtonBlock.setFuncGoToNextSentence(this.goToNextSentence.bind(this));
+    this.currentButtonBlock.setFuncCollectSentenceInRightOrder(this.collectSentenceInRightOrder.bind(this));
     
     const roundSentenceGroup = this.getRoundSentenceGroup(lastRoundSentenceList, lastGameData.sentense);
     this.renderRoundSentenceGroup(roundSentenceGroup);
@@ -254,7 +255,9 @@ export class PlayField extends Component
 
   protected setCurrentSentence(currentSentence: WordContainer[], initialGuessFill: number[]): void
   {
-    this.currentSentence = currentSentence;
+    // In this array, the words are arranged in the correct order.
+    this.currentSentence = currentSentence.map((container) => container.getChildren()[0]) as WordBlock[];
+
     const wordCount = this.currentSentence.length;
     this.resultGuessFill = new Array(wordCount).fill(0);
     this.initialGuessFill = initialGuessFill;
@@ -377,6 +380,27 @@ export class PlayField extends Component
     this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
     this.currentButtonBlock.changeStatusCheckButton(false);
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
+  }
+
+  protected collectSentenceInRightOrder(): void
+  {
+    this.toggleWordValidationHighligh(false);
+
+    this.currentLine.result.cleanInnerHTML();
+    this.currentLine.initial.getChildren().forEach((wordContainer) =>
+    {
+      wordContainer.cleanInnerHTML();
+    });
+
+    this.currentSentence.forEach((wordBlock, index) =>
+    {
+      this.currentLine.result.append(wordBlock);
+      this.resultGuessFill[index] = index + 1;
+      this.initialGuessFill[index] = 0;
+    });
+
+    this.errorInSentence = this.getErrorsInSentence();
+    this.toggleWordValidationHighligh(true);
   }
 
   protected mutableUpdateUserGameProgress

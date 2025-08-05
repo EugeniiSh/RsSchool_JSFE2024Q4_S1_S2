@@ -56,6 +56,8 @@ export class ButtonContainer extends Component
 
   protected refToParentGoToNextSentence: () => void;
 
+  protected refToParentCollectSentenceInRightOrder: () => void;
+
   constructor
   (
     {
@@ -71,6 +73,7 @@ export class ButtonContainer extends Component
     this.style = style;
     this.refToParentToggleWordValidationHighligh = () => {};
     this.refToParentGoToNextSentence = () => {};
+    this.refToParentCollectSentenceInRightOrder = () => {};
     if(effectSpark) this.sparkEffect = effectSpark;
 
     this.checkButtonOption =
@@ -107,7 +110,7 @@ export class ButtonContainer extends Component
       className: [this.style.buttonSentence],
       text: "help!",
       items: [],
-      clickListener: () => {},
+      clickListener: () => { this.handleClickAutoComleteButton() },
     }
 
     this.motivationButtonState = 'check';
@@ -156,6 +159,11 @@ export class ButtonContainer extends Component
     this.refToParentGoToNextSentence();
   }
 
+  protected handleClickAutoComleteButton()
+  {
+    this.refToParentCollectSentenceInRightOrder();
+  }
+
   public toggleVisibleMotivationButton(visibleButton: 'next' | 'check')
   {
     if(visibleButton === 'next')
@@ -187,6 +195,11 @@ export class ButtonContainer extends Component
   public setFuncGoToNextSentence(func: () => void): void
   {
     this.refToParentGoToNextSentence = func;
+  }
+
+  public setFuncCollectSentenceInRightOrder(func: () => void): void
+  {
+    this.refToParentCollectSentenceInRightOrder = func;
   }
 
   public changeStatusCheckButton(status: boolean): void
