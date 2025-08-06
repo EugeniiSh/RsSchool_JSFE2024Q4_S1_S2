@@ -218,4 +218,9 @@ export class Component {
 
     return currentChild;
   }
+
+  getRef(): this
+  {
+    return this;
+  }
 }

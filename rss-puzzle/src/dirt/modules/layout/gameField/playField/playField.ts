@@ -54,6 +54,13 @@ export interface IRenderContentInfo
   button: ButtonContainer,
 }
 
+export type TPlayFieldMethods = Pick<
+  PlayField,
+  | 'collectSentenceInRightOrder'
+  | 'goToNextSentence'
+  | 'toggleWordValidationHighligh'
+>
+
 export class PlayField extends Component
 {
   protected className: string[];
@@ -200,7 +207,7 @@ export class PlayField extends Component
   }
 
 
-  public async renderGameFieldContent(contentInfo: IRenderContentInfo): Promise<void>
+  public async renderGameFieldContent(this: PlayField, contentInfo: IRenderContentInfo): Promise<void>
   {
     const lastGameData = contentInfo.playerProgress.last;
     this.contentData = await this.externalStorage.getData(lastGameData.level);
@@ -209,9 +216,7 @@ export class PlayField extends Component
     this.currentResultContainer = contentInfo.result;
     this.currentLine.initial = contentInfo.initial;
     this.currentButtonBlock = contentInfo.button;
-    this.currentButtonBlock.setFuncToggleWordValidationHighligh(this.toggleWordValidationHighligh.bind(this));
-    this.currentButtonBlock.setFuncGoToNextSentence(this.goToNextSentence.bind(this));
-    this.currentButtonBlock.setFuncCollectSentenceInRightOrder(this.collectSentenceInRightOrder.bind(this));
+    this.currentButtonBlock.setParentMethods(this.getBoundMethods());
     
     const roundSentenceGroup = this.getRoundSentenceGroup(lastRoundSentenceList, lastGameData.sentense);
     this.renderRoundSentenceGroup(roundSentenceGroup);
@@ -303,7 +308,7 @@ export class PlayField extends Component
     return result;
   }
 
-  protected toggleWordValidationHighligh(isHighligh: boolean): void
+  public toggleWordValidationHighligh(isHighligh: boolean): void
   {
     const wordBlockList = this.currentLine.result.getChildren();
 
@@ -339,7 +344,7 @@ export class PlayField extends Component
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
   }
 
-  protected goToNextSentence(): void
+  public goToNextSentence(): void
   {
     const userData = this.localStorage.getValue();
     const oldLevel = userData.game.last.level;
@@ -382,7 +387,7 @@ export class PlayField extends Component
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
   }
 
-  protected collectSentenceInRightOrder(): void
+  public collectSentenceInRightOrder(): void
   {
     this.toggleWordValidationHighligh(false);
 
@@ -631,6 +636,15 @@ export class PlayField extends Component
   public getWordCount(): number
   {
     return this.wordCount;
+  }
+
+  public getBoundMethods(): TPlayFieldMethods
+  {
+    return {
+      collectSentenceInRightOrder: this.collectSentenceInRightOrder.bind(this),
+      goToNextSentence: this.goToNextSentence.bind(this),
+      toggleWordValidationHighligh: this.toggleWordValidationHighligh.bind(this)
+    }
   }
 
   public getPlayField(): PlayField

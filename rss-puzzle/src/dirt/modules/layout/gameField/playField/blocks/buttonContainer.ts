@@ -2,7 +2,6 @@ import { Component, IComponentOptions } from '../../../common/component';
 import { CommonButton, ICommonButtonOptions } from '../../../button/common-button';
 
 
-
 export interface IButtonContainerStyleList
 {
   buttonWrapper: string;
@@ -13,11 +12,19 @@ export interface IButtonContainerStyleList
   buttonSentenceHidden: string,
 }
 
+export interface IButtonContainerExternalMethods
+{
+  collectSentenceInRightOrder: () => void;
+  goToNextSentence: () => void;
+  toggleWordValidationHighligh: (isHighligh: boolean) => void;
+}
+
 export interface IButtonContainerOptions
 {
   className: string[],
   text: string,
   style: IButtonContainerStyleList,
+  parentMethods?: IButtonContainerExternalMethods,
   effectSpark?: (arg: Component) => void
 }
 
@@ -26,6 +33,8 @@ export class ButtonContainer extends Component
   protected className: string[];
 
   protected style: IButtonContainerStyleList;
+
+  protected parentMethods?: IButtonContainerExternalMethods;
 
   protected sparkEffect?: (arg: Component) => void;
 
@@ -51,13 +60,6 @@ export class ButtonContainer extends Component
 
   protected autoCompleteButton: CommonButton;
 
-
-  protected refToParentToggleWordValidationHighligh: (isHighligh: boolean) => void;
-
-  protected refToParentGoToNextSentence: () => void;
-
-  protected refToParentCollectSentenceInRightOrder: () => void;
-
   constructor
   (
     {
@@ -71,9 +73,7 @@ export class ButtonContainer extends Component
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
-    this.refToParentToggleWordValidationHighligh = () => {};
-    this.refToParentGoToNextSentence = () => {};
-    this.refToParentCollectSentenceInRightOrder = () => {};
+  
     if(effectSpark) this.sparkEffect = effectSpark;
 
     this.checkButtonOption =
@@ -151,17 +151,26 @@ export class ButtonContainer extends Component
 
   protected handleClickCheckButton(): void
   {
-    this.refToParentToggleWordValidationHighligh(true);
+    if(this.parentMethods)
+    {
+      this.parentMethods.toggleWordValidationHighligh(true);
+    }
   }
 
   protected handleClickNextButton(): void
   {
-    this.refToParentGoToNextSentence();
+    if(this.parentMethods)
+    {
+      this.parentMethods.goToNextSentence();
+    }
   }
 
   protected handleClickAutoComleteButton()
   {
-    this.refToParentCollectSentenceInRightOrder();
+    if(this.parentMethods)
+    {
+      this.parentMethods.collectSentenceInRightOrder();
+    }
   }
 
   public toggleVisibleMotivationButton(visibleButton: 'next' | 'check')
@@ -187,21 +196,6 @@ export class ButtonContainer extends Component
     this.motivationButtonState = visibleButton;
   }
 
-  public setFuncToggleWordValidationHighligh(func: (arg: boolean) => void): void
-  {
-    this.refToParentToggleWordValidationHighligh = func;
-  }
-
-  public setFuncGoToNextSentence(func: () => void): void
-  {
-    this.refToParentGoToNextSentence = func;
-  }
-
-  public setFuncCollectSentenceInRightOrder(func: () => void): void
-  {
-    this.refToParentCollectSentenceInRightOrder = func;
-  }
-
   public changeStatusCheckButton(status: boolean): void
   {
     if(this.checkButton.changeStatus)
@@ -216,6 +210,11 @@ export class ButtonContainer extends Component
     {
       this.nextButton.changeStatus(status);
     }
+  }
+
+  public setParentMethods(methods: IButtonContainerExternalMethods): void
+  {
+    this.parentMethods = methods;
   }
 
   public getButtonContainer(): ButtonContainer
