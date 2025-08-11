@@ -5,6 +5,7 @@ import { ResultLine } from './blocks/resultLine';
 import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
+import collapsEffect from '../../../effects/collapse/collapse';
 
 import {
   IPuzzleWordsData,
@@ -59,6 +60,13 @@ export interface IRenderContentInfo {
   button: ButtonContainer;
 }
 
+export type TPlayFieldMethods = Pick<
+  PlayField,
+  | 'collectSentenceInRightOrder'
+  | 'goToNextSentence'
+  | 'toggleWordValidationHighligh'
+>;
+
 export class PlayField extends Component {
   protected className: string[];
 
@@ -86,7 +94,7 @@ export class PlayField extends Component {
 
   protected wordCount: number;
 
-  protected currentSentence: WordContainer[];
+  protected currentSentence: WordBlock[];
 
   protected errorInSentence: number[];
 
@@ -198,6 +206,7 @@ export class PlayField extends Component {
   }
 
   public async renderGameFieldContent(
+    this: PlayField,
     contentInfo: IRenderContentInfo,
   ): Promise<void> {
     const lastGameData = contentInfo.playerProgress.last;
@@ -208,12 +217,7 @@ export class PlayField extends Component {
     this.currentResultContainer = contentInfo.result;
     this.currentLine.initial = contentInfo.initial;
     this.currentButtonBlock = contentInfo.button;
-    this.currentButtonBlock.setFuncToggleWordValidationHighligh(
-      this.toggleWordValidationHighligh.bind(this),
-    );
-    this.currentButtonBlock.setFuncGoToNextSentence(
-      this.goToNextSentence.bind(this),
-    );
+    this.currentButtonBlock.setParentMethods(this.getBoundMethods());
 
     const roundSentenceGroup = this.getRoundSentenceGroup(
       lastRoundSentenceList,
@@ -262,7 +266,11 @@ export class PlayField extends Component {
     currentSentence: WordContainer[],
     initialGuessFill: number[],
   ): void {
-    this.currentSentence = currentSentence;
+    // In this array, the words are arranged in the correct order.
+    this.currentSentence = currentSentence.map(
+      (container) => container.getChildren()[0],
+    ) as WordBlock[];
+
     const wordCount = this.currentSentence.length;
     this.resultGuessFill = new Array(wordCount).fill(0);
     this.initialGuessFill = initialGuessFill;
@@ -304,7 +312,7 @@ export class PlayField extends Component {
     return result;
   }
 
-  protected toggleWordValidationHighligh(isHighligh: boolean): void {
+  public toggleWordValidationHighligh(isHighligh: boolean): void {
     const wordBlockList = this.currentLine.result.getChildren();
 
     if (isHighligh) {
@@ -334,7 +342,7 @@ export class PlayField extends Component {
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
   }
 
-  protected goToNextSentence(): void {
+  public goToNextSentence(): void {
     const userData = this.localStorage.getValue();
     const oldLevel = userData.game.last.level;
     const oldRound = userData.game.last.round;
@@ -377,6 +385,30 @@ export class PlayField extends Component {
     );
     this.currentButtonBlock.changeStatusCheckButton(false);
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
+  }
+
+  public async collectSentenceInRightOrder(): Promise<void> {
+    this.dispatchSomeEvent(this.eventList.disableUI());
+    this.toggleWordValidationHighligh(false);
+
+    await collapsEffect(this.currentSentence, 'hide');
+
+    this.currentLine.result.cleanInnerHTML();
+    this.currentLine.initial.getChildren().forEach((wordContainer) => {
+      wordContainer.cleanInnerHTML();
+    });
+
+    this.currentSentence.forEach((wordBlock, index) => {
+      this.currentLine.result.append(wordBlock);
+      this.resultGuessFill[index] = index + 1;
+      this.initialGuessFill[index] = 0;
+    });
+
+    await collapsEffect(this.currentSentence, 'show');
+
+    this.errorInSentence = this.getErrorsInSentence();
+    this.toggleWordValidationHighligh(true);
+    this.dispatchSomeEvent(this.eventList.anableUI());
   }
 
   protected mutableUpdateUserGameProgress(
@@ -595,6 +627,15 @@ export class PlayField extends Component {
 
   public getWordCount(): number {
     return this.wordCount;
+  }
+
+  public getBoundMethods(): TPlayFieldMethods {
+    return {
+      collectSentenceInRightOrder: this.collectSentenceInRightOrder.bind(this),
+      goToNextSentence: this.goToNextSentence.bind(this),
+      toggleWordValidationHighligh:
+        this.toggleWordValidationHighligh.bind(this),
+    };
   }
 
   public getPlayField(): PlayField {
