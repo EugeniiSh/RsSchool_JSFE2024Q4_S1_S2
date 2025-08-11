@@ -5,6 +5,7 @@ import { ResultLine } from './blocks/resultLine';
 import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
+import collapsEffect from '../../../effects/collapse/collapse';
 
 import { IPuzzleWordsData ,IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
 import { PuzzleGameStorage, IStorageGameProgress, ILastlevelData } from '../../../storage/local';
@@ -387,9 +388,12 @@ export class PlayField extends Component
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
   }
 
-  public collectSentenceInRightOrder(): void
+  public async collectSentenceInRightOrder(): Promise<void>
   {
+    this.dispatchSomeEvent(this.eventList.disableUI());
     this.toggleWordValidationHighligh(false);
+
+    await collapsEffect(this.currentSentence, 'hide');
 
     this.currentLine.result.cleanInnerHTML();
     this.currentLine.initial.getChildren().forEach((wordContainer) =>
@@ -404,8 +408,11 @@ export class PlayField extends Component
       this.initialGuessFill[index] = 0;
     });
 
+    await collapsEffect(this.currentSentence, 'show');
+
     this.errorInSentence = this.getErrorsInSentence();
     this.toggleWordValidationHighligh(true);
+    this.dispatchSomeEvent(this.eventList.anableUI());
   }
 
   protected mutableUpdateUserGameProgress
