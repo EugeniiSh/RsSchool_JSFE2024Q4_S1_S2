@@ -24,6 +24,10 @@ const playFieldStyle: IPlayFieldStyleList =
   wordBlockPiece: styleBlocks['word-block__piece'],
   statusCorrect: styleBlocks['word-block__status_correct'],
   statusError: styleBlocks['word-block__status_error'],
+  wordBlockDrag: styleBlocks['word-block__drag'],
+  wordBlockHLLeft: styleBlocks['word-block__hl_left'],
+  wordBlockHLRight: styleBlocks['word-block__hl_right'],
+  wordBlockHLCenter: styleBlocks['word-block__hl_center'],
 }
 
 const playFieldOptions: IPlayFieldOption =

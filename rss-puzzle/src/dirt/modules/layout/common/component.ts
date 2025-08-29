@@ -5,6 +5,11 @@ export interface IComponentOptions
   text: string;
 }
 
+export interface TypedEventHandler<T extends Event> 
+{
+  (event: T): void;
+}
+
 
 /**
  * Represents a component for creating and managing HTML elements with additional functionalities.
@@ -93,6 +98,46 @@ export class Component {
     });
   }
 
+  appBeforeSpecifiedChildren(position: number, newComponent: Component)
+  {
+    const newChildrenArr: Component[] = [];
+ 
+    this.children.forEach((child, index) =>
+    {
+      if(index === position)
+      {
+        newChildrenArr.push(newComponent);
+        newChildrenArr.push(child);
+        child.getNode().before(newComponent.getNode());
+        return;
+      }
+
+      newChildrenArr.push(child);
+    })
+
+    this.children = newChildrenArr;
+  }
+
+  appAfterSpecifiedChildren(position: number, newComponent: Component)
+  {
+    const newChildrenArr: Component[] = [];
+ 
+    this.children.forEach((child, index) =>
+    {
+      if(index === position)
+      {
+        newChildrenArr.push(child);
+        newChildrenArr.push(newComponent);
+        child.getNode().after(newComponent.getNode());
+        return;
+      }
+
+      newChildrenArr.push(child);
+    })
+
+    this.children = newChildrenArr;
+  }
+
   /**
    * Returns the HTML node associated with the component.
    * @returns {HTMLElement} - The HTML node.
@@ -175,6 +220,18 @@ export class Component {
   {
     this.node.dispatchEvent(event);
   } 
+
+  destroyOneChild(position: number)
+  {
+    const destroingChild = this.children[position];
+    this.children = this.children.filter((_, index) =>
+    {
+      if(index === position) return false;
+      return true;
+    })
+
+    destroingChild.destroy();
+  }
 
   /**
    * Destroys all child components associated with the current component.
