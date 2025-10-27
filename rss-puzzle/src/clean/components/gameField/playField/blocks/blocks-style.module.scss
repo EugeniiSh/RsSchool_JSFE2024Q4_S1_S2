@@ -14,6 +14,7 @@
 }
 
 .guess-block {
+  position: relative;
   display: flex;
   justify-content: flex-start;
 
@@ -21,6 +22,8 @@
   height: calc(var(--size-height-result) * 0.1);
 
   background-color: var(--main-brown-light);
+
+  user-select: none;
 }
 
 .result-guess {
@@ -34,6 +37,10 @@
 .word-container {
   flex: 1;
   cursor: pointer;
+
+  &__filled {
+    flex: 0;
+  }
 }
 
 .word-block {
@@ -50,10 +57,11 @@
   text-align: center;
   text-shadow: 0rem 0rem 6rem var(--pupil-eye);
 
+  touch-action: none;
   cursor: pointer;
 
   transition-property: box-shadow;
-  transition-duration: 0.3s;
+  transition-duration: 0.1s;
 
   &__status_correct {
     box-shadow: inset 0rem 0rem 1rem 1rem var(--iris-eye);
@@ -61,6 +69,31 @@
 
   &__status_error {
     box-shadow: inset 0rem 0rem 1rem 1rem var(--main-red);
+  }
+
+  &__drag {
+    position: fixed;
+    opacity: 0.5;
+    outline: 2rem solid var(--magic-color);
+    z-index: 999;
+  }
+
+  &__hl_left {
+    box-shadow:
+      inset 1rem 0rem 0rem 0.3rem var(--main-black-opacity05),
+      inset 6rem 0rem 6rem 1rem var(--pupil-eye),
+      inset 0rem 0rem 1rem 1rem var(--pupil-eye);
+  }
+
+  &__hl_right {
+    box-shadow:
+      inset -1rem 0rem 0rem 0.3rem var(--main-black-opacity05),
+      inset -6rem 0rem 6rem 1rem var(--pupil-eye),
+      inset 0rem 0rem 1rem 1rem var(--pupil-eye);
+  }
+
+  &__hl_center {
+    box-shadow: inset 0rem 0rem 3rem 2rem var(--pupil-eye);
   }
 
   @media (hover: hover) {
@@ -72,6 +105,10 @@
 
 .word-block__piece {
   border: none;
+}
+
+.hovered {
+  background-color: 5rem solid rgb(255, 247, 0);
 }
 
 .button-container {

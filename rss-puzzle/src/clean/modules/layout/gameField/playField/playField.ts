@@ -28,10 +28,15 @@ export interface IPlayFieldStyleList {
   initialGuess: string;
   guessBlock: string;
   wordContainer: string;
+  wordContainerFilled: string;
   wordBlock: string;
   wordBlockPiece: string;
   statusCorrect: string;
   statusError: string;
+  wordBlockDrag: string;
+  wordBlockHLLeft: string;
+  wordBlockHLRight: string;
+  wordBlockHLCenter: string;
 }
 
 export interface IFetchDataOptions {
@@ -108,6 +113,10 @@ export class PlayField extends Component {
 
   protected currentLine: { result: ResultLine; initial: InitialContainer };
 
+  protected isMouseDown: boolean;
+
+  protected timeoutId: NodeJS.Timeout | null;
+
   constructor({
     className,
     text,
@@ -148,7 +157,12 @@ export class PlayField extends Component {
       initial: this.initialContainer.getInitialContainer(),
     };
 
+    this.isMouseDown = false;
+    this.timeoutId = null;
+
     this.addListener('click', this.handlerClickWordBlock);
+    this.addListener('pointerdown', this.handlerPointerDown);
+    this.addListener('pointerup', this.handlerPointerUp);
   }
 
   static honestRandom(min: number, max: number): number {
@@ -202,6 +216,15 @@ export class PlayField extends Component {
         '--size-width-ratio',
         wordElemWidthRatio.toString(),
       );
+
+      // === updating the set width flag ===
+      // This is necessary to correctly adjust block widths when words are moved between
+      // the initial block and the result block.
+      const wordContainerChild = elem.getChildren()[0];
+      if (wordContainerChild instanceof WordBlock) {
+        wordContainerChild.setIsWidthSet(true);
+        elem.setFillStatus(true, wordContainerChild);
+      }
     });
   }
 
@@ -313,17 +336,21 @@ export class PlayField extends Component {
   }
 
   public toggleWordValidationHighligh(isHighligh: boolean): void {
-    const wordBlockList = this.currentLine.result.getChildren();
+    const wordContainerList = this.currentLine.result.getChildren();
 
     if (isHighligh) {
       const errors = this.errorInSentence;
-      wordBlockList.forEach((wordBlock, index) => {
+      wordContainerList.forEach((wordContainer, index) => {
         if (errors.includes(index)) {
-          wordBlock.toggleClass(this.style.statusError, true);
+          wordContainer
+            .getChildren()[0]
+            .toggleClass(this.style.statusError, true);
           return;
         }
 
-        wordBlock.toggleClass(this.style.statusCorrect, true);
+        wordContainer
+          .getChildren()[0]
+          .toggleClass(this.style.statusCorrect, true);
       });
 
       if (errors.length === 0) {
@@ -334,9 +361,12 @@ export class PlayField extends Component {
       return;
     }
 
-    wordBlockList.forEach((wordBlock) => {
-      wordBlock.toggleClass(this.style.statusError, false);
-      wordBlock.toggleClass(this.style.statusCorrect, false);
+    wordContainerList.forEach((wordContainer) => {
+      const wordBlock = wordContainer.getChildren()[0];
+      if (wordBlock) {
+        wordBlock.toggleClass(this.style.statusError, false);
+        wordBlock.toggleClass(this.style.statusCorrect, false);
+      }
     });
 
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
@@ -393,13 +423,14 @@ export class PlayField extends Component {
 
     await collapsEffect(this.currentSentence, 'hide');
 
-    this.currentLine.result.cleanInnerHTML();
-    this.currentLine.initial.getChildren().forEach((wordContainer) => {
+    const currentLineResultChildren = this.currentLine.result.getChildren();
+    this.currentLine.initial.getChildren().forEach((wordContainer, index) => {
+      currentLineResultChildren[index].cleanInnerHTML();
       wordContainer.cleanInnerHTML();
     });
 
     this.currentSentence.forEach((wordBlock, index) => {
-      this.currentLine.result.append(wordBlock);
+      currentLineResultChildren[index].append(wordBlock);
       this.resultGuessFill[index] = index + 1;
       this.initialGuessFill[index] = 0;
     });
@@ -549,6 +580,7 @@ export class PlayField extends Component {
   }
 
   protected handlerClickWordBlock = (event: Event) => {
+    if (!this.isMouseDown) return;
     if (event.target === null) return;
     if (!(event.target instanceof HTMLElement)) return;
 
@@ -580,10 +612,9 @@ export class PlayField extends Component {
       const resultNewPosition = this.resultGuessFill.indexOf(0);
       this.resultGuessFill[resultNewPosition] = numberCorrectOrder;
 
-      this.currentLine.result.replaceChildren(
-        resultNewPosition,
-        wordBlockComponent,
-      );
+      this.currentLine.result
+        .getChildren()
+        [resultNewPosition].append(wordBlockComponent);
     } else {
       const resultGuess = parent.closest(`.${this.style.resultGuess}`);
       if (resultGuess !== this.currentLine.result.getNode()) return;
@@ -592,7 +623,8 @@ export class PlayField extends Component {
       let position = 0;
 
       this.currentLine.result.getChildren().find((wordContainer, index) => {
-        if (wordContainer && wordContainer.getNode() === parent) {
+        const wordBlock = wordContainer.getChildren()[0];
+        if (wordBlock && wordBlock.getNode() === parent) {
           position = index;
           return true;
         }
@@ -600,13 +632,11 @@ export class PlayField extends Component {
         return false;
       });
 
-      const wordBlockComponent =
-        this.currentLine.result.getChildren()[position];
+      const wordBlockComponent = this.currentLine.result
+        .getChildren()
+        [position].getChildren()[0];
 
-      this.currentLine.result.replaceChildren(
-        position,
-        this.wordContainer.getWordContainerArr()[0],
-      );
+      this.currentLine.result.getChildren()[position].cleanInnerHTML();
 
       const numberCorrectOrder = this.resultGuessFill[position];
       this.resultGuessFill[position] = 0;
@@ -623,6 +653,541 @@ export class PlayField extends Component {
 
     const isResultLineFill = !this.resultGuessFill.includes(0);
     this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);
+
+    this.isMouseDown = false;
+  };
+
+  protected handlerDragAndDropWordBlock = (event: Event) => {
+    if (!(event instanceof PointerEvent)) return;
+    if (event.target === null) return;
+    if (!(event.target instanceof HTMLElement)) return;
+
+    const parent = event.target.closest<HTMLElement>(
+      `.${this.style.wordBlock}`,
+    );
+    if (parent === null) return;
+    if (
+      !parent.closest(`.${this.style.initialGuess}`) &&
+      parent.closest(`.${this.style.resultGuess}`) !==
+        this.currentLine.result.getNode()
+    )
+      return;
+
+    let guessBlockElemBelow: 'result' | 'initial' = 'result';
+    let guessBlockWordRised: 'result' | 'initial' = 'result';
+    if (parent.closest(`.${this.style.initialGuess}`)) {
+      guessBlockWordRised = 'initial';
+    }
+    if (parent === null) return;
+
+    parent.setPointerCapture(event.pointerId);
+    this.toggleWordValidationHighligh(false);
+
+    let position = 0;
+
+    this.currentLine[guessBlockWordRised]
+      .getChildren()
+      .find((wordContainer, index) => {
+        const wordBlock = wordContainer.getChildren()[0];
+        if (wordBlock && wordBlock.getNode() === parent) {
+          position = index;
+          return true;
+        }
+
+        return false;
+      });
+
+    const parentComp = this.currentLine[guessBlockWordRised]
+      .getChildren()
+      [position].getChildren()[0];
+
+    const playFildCord = this.getNode().getBoundingClientRect();
+
+    const dragstartOff = (dragstartEvent: Event) => {
+      dragstartEvent.preventDefault();
+    };
+    parentComp.addListener('dragstart', dragstartOff);
+
+    const parentCord = parentComp.getNode().getBoundingClientRect();
+    const shiftX = event.clientX - parentCord.left;
+    const shiftY = event.clientY - parentCord.top;
+
+    const moveAt = (moveEvent: PointerEvent) => {
+      let isFlayOver = false;
+      switch (true) {
+        case moveEvent.pageX - shiftX < playFildCord.left:
+          isFlayOver = true;
+          break;
+        case moveEvent.pageX - shiftX + parentCord.width > playFildCord.right:
+          isFlayOver = true;
+          break;
+        case moveEvent.pageY - shiftY < playFildCord.top:
+          isFlayOver = true;
+          break;
+        case moveEvent.pageY - shiftY + parentCord.height > playFildCord.bottom:
+          isFlayOver = true;
+          break;
+        default:
+          isFlayOver = false;
+      }
+      if (isFlayOver) return;
+
+      const cordX = moveEvent.pageX - playFildCord.left;
+      const cordY = moveEvent.pageY - playFildCord.top;
+      // Because of the "perspective" the Y coordinates are calculated incorrectly.
+      // Perhaps there is another reason that I don't know.
+      // correctionCordY is used to correct these coordinates.
+      const correctionCordY = 1.03;
+
+      parentComp.getNode().style.left = `${cordX - shiftX}rem`;
+      parentComp.getNode().style.top = `${(cordY - shiftY) * correctionCordY}rem`;
+    };
+
+    type TElemParts = 'center' | 'right' | 'left' | 'none';
+    interface IDropableElems {
+      center: Component | null;
+      left: Component | null;
+      right: Component | null;
+    }
+
+    const cleanHL = (components: (Component | null)[]) => {
+      components.forEach((component) => {
+        if (!component) return;
+        component.toggleClass(this.style.wordBlockHLLeft, false);
+        component.toggleClass(this.style.wordBlockHLRight, false);
+        component.toggleClass(this.style.wordBlockHLCenter, false);
+      });
+    };
+
+    const highLighPartElem = (
+      HLElems: IDropableElems,
+      HLPart: TElemParts,
+      cleanHLElems?: (Component | null)[],
+    ) => {
+      switch (HLPart) {
+        case 'center':
+          if (cleanHLElems) cleanHL(cleanHLElems);
+          if (!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        case 'left':
+          if (cleanHLElems) cleanHL(cleanHLElems);
+          if (!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLLeft, true);
+          if (!HLElems.left) break;
+          HLElems.left.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        case 'right':
+          if (cleanHLElems) cleanHL(cleanHLElems);
+          if (!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLRight, true);
+          if (!HLElems.right) break;
+          HLElems.right.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    const wordContainerOfDragElem = parentComp.getParentComponent();
+    if (!wordContainerOfDragElem)
+      throw Error('Parent container of the drag element was not found');
+    if (!(wordContainerOfDragElem instanceof WordContainer))
+      throw Error('Parent container of the drag element is not WordContainer');
+    wordContainerOfDragElem.setFillStatus(false);
+
+    parentComp.toggleClass(this.style.wordBlockDrag, true);
+    moveAt(event);
+
+    let elemBelowPosition = 0;
+    let currentElemPart: TElemParts = 'none';
+
+    const currentDroppable: IDropableElems = {
+      center: null,
+      left: null,
+      right: null,
+    };
+
+    const halfWidthParent = parentCord.width / 2;
+    const xShiftForCordBelow = halfWidthParent - shiftX;
+
+    const onMouseMove = (mouseMoveEvent: PointerEvent) => {
+      moveAt(mouseMoveEvent);
+
+      const xCordBelow = mouseMoveEvent.clientX + xShiftForCordBelow;
+      const yCordBelow = mouseMoveEvent.clientY - shiftY;
+
+      parentComp.getNode().hidden = true;
+      let elemBelow = document.elementFromPoint(xCordBelow, yCordBelow);
+      parentComp.getNode().hidden = false;
+
+      if (
+        !elemBelow ||
+        !(
+          elemBelow.closest(`.${this.style.wordBlock}`) ||
+          elemBelow.closest(`.${this.style.wordContainer}`)
+        ) ||
+        (elemBelow.closest(`.${this.style.resultGuess}`) !==
+          this.currentLine.result.getNode() &&
+          !elemBelow.closest(`.${this.style.initialGuess}`))
+      ) {
+        currentElemPart = 'none';
+        cleanHL(this.currentLine.result.getChildren());
+        cleanHL(this.currentLine.initial.getChildren());
+        return;
+      }
+
+      if (elemBelow.closest(`.${this.style.initialGuess}`)) {
+        guessBlockElemBelow = 'initial';
+        elemBelow = elemBelow.closest(`.${this.style.wordContainer}`);
+        if (!elemBelow)
+          throw new Error(
+            'Element below initial container does not contain wordContainer. 869',
+          );
+      } else {
+        guessBlockElemBelow = 'result';
+        elemBelow = elemBelow.closest(`.${this.style.wordContainer}`);
+        if (!elemBelow)
+          throw new Error(
+            'Element below result conteiner does not contain wordContainer. 877',
+          );
+      }
+
+      const elemBelowCord = elemBelow.getBoundingClientRect();
+      const EBPartWidth = elemBelowCord.width / 5;
+      let elemBelowPart: TElemParts = 'none';
+      switch (true) {
+        case xCordBelow >= elemBelowCord.left &&
+          xCordBelow < elemBelowCord.left + EBPartWidth: {
+          elemBelowPart = 'left';
+          break;
+        }
+        case xCordBelow >= elemBelowCord.left + EBPartWidth &&
+          xCordBelow < elemBelowCord.left + EBPartWidth * 4: {
+          elemBelowPart = 'center';
+          break;
+        }
+        case xCordBelow >= elemBelowCord.left + EBPartWidth * 4 &&
+          xCordBelow < elemBelowCord.left + EBPartWidth * 5: {
+          elemBelowPart = 'right';
+          break;
+        }
+        default:
+          elemBelowPart = 'none';
+      }
+
+      elemBelowPosition = 0;
+      this.currentLine[guessBlockElemBelow]
+        .getChildren()
+        .find((wordContainer, index) => {
+          if (wordContainer && wordContainer.getNode() === elemBelow) {
+            elemBelowPosition = index;
+            return true;
+          }
+
+          return false;
+        });
+
+      const compBelow =
+        this.currentLine[guessBlockElemBelow].getChildren()[elemBelowPosition];
+      const compBelowNearbyLeft =
+        this.currentLine[guessBlockElemBelow].getChildren()[
+          elemBelowPosition - 1
+        ];
+      const compBelowNearbyRight =
+        this.currentLine[guessBlockElemBelow].getChildren()[
+          elemBelowPosition + 1
+        ];
+
+      if (currentDroppable.center !== compBelow) {
+        const { center, left, right } = currentDroppable;
+        const dropArr = [center, left, right];
+        cleanHL(dropArr);
+
+        currentDroppable.center = compBelow;
+        currentDroppable.left = compBelowNearbyLeft;
+        currentDroppable.right = compBelowNearbyRight;
+        if (!currentDroppable.center) return;
+
+        highLighPartElem(currentDroppable, elemBelowPart);
+        return;
+      }
+
+      if (currentElemPart === elemBelowPart) return;
+      currentElemPart = elemBelowPart;
+
+      const { center, left, right } = currentDroppable;
+      const dropArr = [center, left, right];
+
+      highLighPartElem(currentDroppable, elemBelowPart, dropArr);
+    };
+
+    parentComp.getNode().addEventListener('pointermove', onMouseMove);
+
+    const insertDragElement = () => {
+      const isSameGuessBlocks = guessBlockElemBelow === guessBlockWordRised;
+
+      if (currentElemPart === 'center' && currentDroppable.center) {
+        if (position === elemBelowPosition && isSameGuessBlocks) {
+          wordContainerOfDragElem.setFillStatus(true, parentComp);
+          return;
+        }
+
+        const replacingElem = this.currentLine[guessBlockElemBelow]
+          .getChildren()
+          [elemBelowPosition].getChildren()[0];
+
+        this.currentLine[guessBlockElemBelow]
+          .getChildren()
+          [elemBelowPosition].cleanInnerHTML();
+
+        this.currentLine[guessBlockWordRised]
+          .getChildren()
+          [position].cleanInnerHTML();
+
+        this.currentLine[guessBlockElemBelow]
+          .getChildren()
+          [elemBelowPosition].append(parentComp);
+
+        if (replacingElem) {
+          this.currentLine[guessBlockWordRised]
+            .getChildren()
+            [position].append(replacingElem);
+        }
+
+        const parentCorrectOrder =
+          this[`${guessBlockWordRised}GuessFill`][position];
+        this[`${guessBlockWordRised}GuessFill`][position] =
+          this[`${guessBlockElemBelow}GuessFill`][elemBelowPosition];
+        this[`${guessBlockElemBelow}GuessFill`][elemBelowPosition] =
+          parentCorrectOrder;
+
+        return;
+      }
+
+      if (currentElemPart === 'right' && currentDroppable.center) {
+        let deletingBlockPosition = position;
+
+        if (!isSameGuessBlocks) {
+          const emptyPosition =
+            this[`${guessBlockElemBelow}GuessFill`].lastIndexOf(0);
+          if (emptyPosition === -1)
+            throw new Error(
+              `Not emptyPosition found into <${guessBlockElemBelow}> block`,
+            );
+
+          const vector = emptyPosition - elemBelowPosition;
+          deletingBlockPosition =
+            vector > 0 ? emptyPosition + 1 : emptyPosition;
+
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(
+            elemBelowPosition,
+            wordContainer,
+          );
+
+          this.currentLine[guessBlockWordRised]
+            .getChildren()
+            [position].cleanInnerHTML();
+
+          this.currentLine[guessBlockElemBelow].destroyOneChild(
+            deletingBlockPosition,
+          );
+
+          const parentCorrectOrder =
+            this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockWordRised}GuessFill`][position] = 0;
+          this[`${guessBlockElemBelow}GuessFill`] = this[
+            `${guessBlockElemBelow}GuessFill`
+          ].reduce((acc, corOrder, index) => {
+            if (
+              emptyPosition === elemBelowPosition &&
+              index === elemBelowPosition
+            ) {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if (index === emptyPosition) return acc;
+            if (index === elemBelowPosition) {
+              acc.push(corOrder, parentCorrectOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        } else {
+          const vector = position - elemBelowPosition;
+          deletingBlockPosition = vector > 0 ? position + 1 : position;
+
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(
+            elemBelowPosition,
+            wordContainer,
+          );
+
+          this.currentLine[guessBlockWordRised]
+            .getChildren()
+            [deletingBlockPosition].cleanInnerHTML();
+
+          this.currentLine[guessBlockWordRised].destroyOneChild(
+            deletingBlockPosition,
+          );
+
+          const parentCorrectOrder =
+            this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockElemBelow}GuessFill`] = this[
+            `${guessBlockElemBelow}GuessFill`
+          ].reduce((acc, corOrder, index) => {
+            if (position === elemBelowPosition && index === elemBelowPosition) {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if (index === position) return acc;
+            if (index === elemBelowPosition) {
+              acc.push(corOrder, parentCorrectOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        }
+
+        return;
+      }
+
+      if (currentElemPart === 'left' && currentDroppable.center) {
+        let deletingBlockPosition = position;
+
+        if (!isSameGuessBlocks) {
+          const emptyPosition =
+            this[`${guessBlockElemBelow}GuessFill`].indexOf(0);
+          if (emptyPosition === -1)
+            throw new Error(
+              `Not emptyPosition found into <${guessBlockElemBelow}> block`,
+            );
+
+          const vector = emptyPosition - elemBelowPosition;
+          deletingBlockPosition =
+            vector >= 0 ? emptyPosition + 1 : emptyPosition;
+
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(
+            elemBelowPosition,
+            wordContainer,
+          );
+
+          this.currentLine[guessBlockWordRised]
+            .getChildren()
+            [position].cleanInnerHTML();
+
+          this.currentLine[guessBlockElemBelow].destroyOneChild(
+            deletingBlockPosition,
+          );
+
+          const parentCorrectOrder =
+            this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockWordRised}GuessFill`][position] = 0;
+          this[`${guessBlockElemBelow}GuessFill`] = this[
+            `${guessBlockElemBelow}GuessFill`
+          ].reduce((acc, corOrder, index) => {
+            if (
+              emptyPosition === elemBelowPosition &&
+              index === elemBelowPosition
+            ) {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if (index === emptyPosition) return acc;
+            if (index === elemBelowPosition) {
+              acc.push(parentCorrectOrder, corOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        } else {
+          const vector = position - elemBelowPosition;
+          deletingBlockPosition = vector >= 0 ? position + 1 : position;
+
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(
+            elemBelowPosition,
+            wordContainer,
+          );
+
+          this.currentLine[guessBlockWordRised]
+            .getChildren()
+            [deletingBlockPosition].cleanInnerHTML();
+
+          this.currentLine[guessBlockWordRised].destroyOneChild(
+            deletingBlockPosition,
+          );
+
+          const parentCorrectOrder =
+            this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockElemBelow}GuessFill`] = this[
+            `${guessBlockElemBelow}GuessFill`
+          ].reduce((acc, corOrder, index) => {
+            if (position === elemBelowPosition && index === elemBelowPosition) {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if (index === position) return acc;
+            if (index === elemBelowPosition) {
+              acc.push(parentCorrectOrder, corOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        }
+
+        return;
+      }
+
+      wordContainerOfDragElem.setFillStatus(true, parentComp);
+    };
+
+    const handlerPointerUp = () => {
+      cleanHL(this.currentLine[guessBlockElemBelow].getChildren());
+      insertDragElement();
+
+      parentComp.getNode().removeEventListener('pointermove', onMouseMove);
+      parentComp.toggleClass(this.style.wordBlockDrag, false);
+      parentComp.removeListener('dragstart', dragstartOff);
+      parentComp.getNode().removeEventListener('pointerup', handlerPointerUp);
+
+      this.errorInSentence = this.getErrorsInSentence();
+      const isResultLineFill = !this.resultGuessFill.includes(0);
+      this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);
+    };
+
+    parentComp.getNode().addEventListener('pointerup', handlerPointerUp);
+  };
+
+  protected handlerPointerDown = (event: Event) => {
+    this.isMouseDown = true;
+    this.timeoutId = setTimeout(() => {
+      if (this.isMouseDown) {
+        this.handlerDragAndDropWordBlock(event);
+        this.isMouseDown = false;
+      }
+    }, 200);
+  };
+
+  protected handlerPointerUp = () => {
+    if (this.timeoutId) clearTimeout(this.timeoutId);
   };
 
   public getWordCount(): number {
