@@ -3,6 +3,12 @@ export interface IComponentOptions
   tag: string;
   className: string[];
   text: string;
+  parentComponent?: null | Component;
+}
+
+export interface TypedEventHandler<T extends Event> 
+{
+  (event: T): void;
 }
 
 
@@ -21,7 +27,15 @@ export class Component {
    */
   protected node: HTMLElement;
 
+  protected nodeText: string;
+
+  protected nodeAttribute: Record<string, string>;
+
+  protected nodeClassList: Record<string, boolean>
+
   protected nodeEvents: Map<EventListener, [string, boolean]>;
+
+  protected parentComponent: null | Component;
 
   /**
    * Creates a new Component.
@@ -39,7 +53,8 @@ export class Component {
     { 
       tag = "div", 
       className = [], 
-      text = "" 
+      text = "",
+      parentComponent = null,
     }:IComponentOptions,
 
     ...children: Component[]
@@ -49,7 +64,16 @@ export class Component {
     node.classList.add(...className);
     node.textContent = text;
     this.node = node;
+    this.nodeText = text;
+    this.nodeAttribute = {};
+    this.nodeClassList = {};
     this.nodeEvents = new Map();
+    this.parentComponent = parentComponent;
+
+    className.forEach((nameClass) =>
+    {
+      this.nodeClassList[nameClass] = true;
+    })
 
     if (children) 
     {
@@ -63,12 +87,14 @@ export class Component {
    */
   append(child: Component) 
   {
+    child.setParentComponent(this);
     this.children.push(child);
     this.node.append(child.getNode());
   }
 
   prepend(child: Component)
   {
+    child.setParentComponent(this);
     this.children.unshift(child);
     this.node.prepend(child.getNode());
   }
@@ -93,6 +119,48 @@ export class Component {
     });
   }
 
+  appBeforeSpecifiedChildren(position: number, newComponent: Component)
+  {
+    const newChildrenArr: Component[] = [];
+    newComponent.setParentComponent(this);
+ 
+    this.children.forEach((child, index) =>
+    {
+      if(index === position)
+      {
+        newChildrenArr.push(newComponent);
+        newChildrenArr.push(child);
+        child.getNode().before(newComponent.getNode());
+        return;
+      }
+
+      newChildrenArr.push(child);
+    })
+
+    this.children = newChildrenArr;
+  }
+
+  appAfterSpecifiedChildren(position: number, newComponent: Component)
+  {
+    const newChildrenArr: Component[] = [];
+    newComponent.setParentComponent(this);
+ 
+    this.children.forEach((child, index) =>
+    {
+      if(index === position)
+      {
+        newChildrenArr.push(child);
+        newChildrenArr.push(newComponent);
+        child.getNode().after(newComponent.getNode());
+        return;
+      }
+
+      newChildrenArr.push(child);
+    })
+
+    this.children = newChildrenArr;
+  }
+
   /**
    * Returns the HTML node associated with the component.
    * @returns {HTMLElement} - The HTML node.
@@ -111,12 +179,33 @@ export class Component {
     return this.children;
   }
 
+  getTextContent(): string
+  {
+    return this.nodeText;
+  }
+
+  getAttribute(attribute: string): string | undefined
+  {
+    return this.nodeAttribute[attribute];
+  }
+
+  getClassList(): Record<string, boolean>
+  {
+    return this.nodeClassList;
+  }
+
+  getEventListeners(): Map<EventListener, [string, boolean]>
+  {
+    return this.nodeEvents;
+  }
+
   /**
    * Sets the text content of the component.
    * @param {string} content - The text content to be set.
    */
   setTextContent(content: string) 
   {
+    this.nodeText = content;
     this.node.textContent = content;
   }
 
@@ -127,6 +216,7 @@ export class Component {
    */
   setAttribute(attribute: string, value: string) 
   {
+    this.nodeAttribute[attribute] = value;
     this.node.setAttribute(attribute, value);
   }
 
@@ -136,6 +226,7 @@ export class Component {
    */
   removeAttribute(attribute: string) 
   {
+    delete this.nodeAttribute[attribute];
     this.node.removeAttribute(attribute);
   }
 
@@ -145,6 +236,22 @@ export class Component {
    */
   toggleClass(className: string, force: boolean | undefined = undefined): boolean
   {
+    switch(true)
+    {
+      case force === true : this.nodeClassList[className] = true; break;
+      case force === false : delete this.nodeClassList[className]; break;
+      default: 
+      {
+        const currentClass = this.nodeClassList[className];
+        if(currentClass !== undefined)
+        {
+          this.nodeClassList[className] = !currentClass; break;
+        } 
+
+        this.nodeClassList[className] = true; break;
+      }
+    }
+
     return this.node.classList.toggle(className, force);
   }
 
@@ -169,12 +276,25 @@ export class Component {
   removeListener(event: string, listener: EventListener, options = false) 
   {
     this.node.removeEventListener(event, listener, options);
+    this.nodeEvents.delete(listener);
   }
 
   dispatchSomeEvent(event: Event)
   {
     this.node.dispatchEvent(event);
   } 
+
+  destroyOneChild(position: number)
+  {
+    const destroingChild = this.children[position];
+    this.children = this.children.filter((_, index) =>
+    {
+      if(index === position) return false;
+      return true;
+    })
+
+    destroingChild.destroy();
+  }
 
   /**
    * Destroys all child components associated with the current component.
@@ -195,6 +315,7 @@ export class Component {
   destroy() 
   {
     this.destroyChildren();
+    this.setParentComponent(null);
     this.nodeEvents.forEach((data, func) =>
     {
       const [event, option] = data;
@@ -205,15 +326,25 @@ export class Component {
 
   cleanInnerHTML()
   {
+    this.children.forEach((child) =>
+    {
+      if(child.getParentComponent() === this)
+      {
+        child.setParentComponent(null);
+      }
+    })
     this.node.innerHTML = '';
     this.children.length = 0;
   }
 
   replaceChildren(childNum: number, newChild: Component): Component
   {
-    const childrenArr = this.getChildren();
-    const currentChild = childrenArr[childNum];
-    childrenArr[childNum] = newChild;
+    const currentChild = this.children[childNum];
+
+    currentChild.setParentComponent(null);
+    newChild.setParentComponent(this);
+
+    this.children[childNum] = newChild;
     currentChild.getNode().replaceWith(newChild.getNode());
 
     return currentChild;
@@ -222,5 +353,15 @@ export class Component {
   getRef(): this
   {
     return this;
+  }
+
+  getParentComponent(): null | Component
+  {
+    return this.parentComponent;
+  }
+
+  setParentComponent(myParent: null | Component): void
+  {
+    this.parentComponent = myParent;
   }
 }

@@ -15,6 +15,8 @@ export class WordBlock extends Component
 
   protected pieceClassName: string[];
 
+  protected isWidthSet: boolean;
+
   constructor
   (
     {
@@ -28,6 +30,7 @@ export class WordBlock extends Component
     this.className = className;
     this.word = text;
     this.pieceClassName = pieceClassName;
+    this.isWidthSet = false;
 
     const piece = new Component
     (
@@ -39,6 +42,16 @@ export class WordBlock extends Component
     );
 
     this.append(piece);
+  }
+
+  public setIsWidthSet(flag: boolean): void
+  {
+    this.isWidthSet = flag;
+  }
+
+  public getIsWidthSet(): boolean
+  {
+    return this.isWidthSet;
   }
 
   public getBlockWithWord(word: string): WordBlock
