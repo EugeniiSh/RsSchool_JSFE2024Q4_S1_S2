@@ -20,6 +20,7 @@ const playFieldStyle: IPlayFieldStyleList =
   initialGuess: styleBlocks['initial-guess'],
   guessBlock: styleBlocks['guess-block'],
   wordContainer: styleBlocks['word-container'],
+  wordContainerFilled: styleBlocks['word-container__filled'],
   wordBlock: styleBlocks['word-block'],
   wordBlockPiece: styleBlocks['word-block__piece'],
   statusCorrect: styleBlocks['word-block__status_correct'],

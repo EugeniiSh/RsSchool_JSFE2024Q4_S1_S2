@@ -20,6 +20,7 @@ export interface IPlayFieldStyleList
   initialGuess: string,
   guessBlock: string,
   wordContainer: string,
+  wordContainerFilled: string,
   wordBlock: string,
   wordBlockPiece: string,
   statusCorrect: string,
@@ -217,6 +218,16 @@ export class PlayField extends Component
       // === add a variable for adaptability ===
       const  wordElemWidthRatio = elemWidth / resultWidth;
       wordElemChild.style.setProperty('--size-width-ratio', wordElemWidthRatio.toString());
+
+      // === updating the set width flag ===
+      // This is necessary to correctly adjust block widths when words are moved between 
+      // the initial block and the result block.
+      const wordContainerChild = elem.getChildren()[0];
+      if(wordContainerChild instanceof WordBlock)
+      {
+        wordContainerChild.setIsWidthSet(true);
+        elem.setFillStatus(true, wordContainerChild);
+      }
     })
   }
 
@@ -324,20 +335,20 @@ export class PlayField extends Component
 
   public toggleWordValidationHighligh(isHighligh: boolean): void
   {
-    const wordBlockList = this.currentLine.result.getChildren();
+    const wordContainerList = this.currentLine.result.getChildren();
 
     if(isHighligh)
     {
       const errors = this.errorInSentence;
-      wordBlockList.forEach((wordBlock, index) =>
+      wordContainerList.forEach((wordContainer, index) =>
       {
         if(errors.includes(index))
         {
-          wordBlock.toggleClass(this.style.statusError, true);
+          wordContainer.getChildren()[0].toggleClass(this.style.statusError, true);
           return;
         }
 
-        wordBlock.toggleClass(this.style.statusCorrect, true);
+        wordContainer.getChildren()[0].toggleClass(this.style.statusCorrect, true);
       })
 
       if(errors.length === 0)
@@ -349,10 +360,14 @@ export class PlayField extends Component
       return;
     }
 
-    wordBlockList.forEach((wordBlock) =>
+    wordContainerList.forEach((wordContainer) =>
     {
-      wordBlock.toggleClass(this.style.statusError, false);
-      wordBlock.toggleClass(this.style.statusCorrect, false);
+      const wordBlock = wordContainer.getChildren()[0];
+      if(wordBlock)
+      {
+        wordBlock.toggleClass(this.style.statusError, false);
+        wordBlock.toggleClass(this.style.statusCorrect, false);
+      }
     })
 
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
@@ -408,15 +423,16 @@ export class PlayField extends Component
 
     await collapsEffect(this.currentSentence, 'hide');
 
-    this.currentLine.result.cleanInnerHTML();
-    this.currentLine.initial.getChildren().forEach((wordContainer) =>
+    const currentLineResultChildren = this.currentLine.result.getChildren();
+    this.currentLine.initial.getChildren().forEach((wordContainer, index) =>
     {
+      currentLineResultChildren[index].cleanInnerHTML();
       wordContainer.cleanInnerHTML();
     });
 
     this.currentSentence.forEach((wordBlock, index) =>
     {
-      this.currentLine.result.append(wordBlock);
+      currentLineResultChildren[index].append(wordBlock);
       this.resultGuessFill[index] = index + 1;
       this.initialGuessFill[index] = 0;
     });
@@ -610,7 +626,7 @@ export class PlayField extends Component
       const resultNewPosition = this.resultGuessFill.indexOf(0);
       this.resultGuessFill[resultNewPosition] = numberCorrectOrder;
 
-      this.currentLine.result.replaceChildren(resultNewPosition, wordBlockComponent);
+      this.currentLine.result.getChildren()[resultNewPosition].append(wordBlockComponent);
     }
     else
     {
@@ -622,7 +638,8 @@ export class PlayField extends Component
       
       this.currentLine.result.getChildren().find((wordContainer, index) =>
       {
-        if(wordContainer && wordContainer.getNode() === parent) 
+        const wordBlock = wordContainer.getChildren()[0];
+        if(wordBlock && wordBlock.getNode() === parent) 
         {
           position = index;
           return true;
@@ -633,10 +650,12 @@ export class PlayField extends Component
 
       const wordBlockComponent = 
       this.currentLine.result
-      .getChildren()[position];
+      .getChildren()[position]
+      .getChildren()[0];
 
       this.currentLine.result
-      .replaceChildren(position, this.wordContainer.getWordContainerArr()[0]);
+      .getChildren()[position]
+      .cleanInnerHTML();
 
       const numberCorrectOrder = this.resultGuessFill[position];
       this.resultGuessFill[position] = 0;
@@ -662,15 +681,15 @@ export class PlayField extends Component
     if(event.target === null) return;
     if(!(event.target instanceof HTMLElement)) return;
   
-    // const parent = event.target.closest<HTMLElement>(`.${this.style.wordBlock}`);
-    let parent = event.target.closest<HTMLElement>(`.${this.style.wordBlock}`);
+    const parent = event.target.closest<HTMLElement>(`.${this.style.wordBlock}`);
     if(parent === null) return;
+    if(!parent.closest(`.${this.style.initialGuess}`) 
+    && (parent.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode())) return;
 
     let guessBlockElemBelow: 'result' | 'initial' = 'result';
     let guessBlockWordRised: 'result' | 'initial' = 'result';
     if(parent.closest(`.${this.style.initialGuess}`))
     {
-      parent = parent.closest<HTMLElement>(`.${this.style.wordContainer}`);
       guessBlockWordRised = 'initial';
     }
     if(parent === null) return;
@@ -678,13 +697,12 @@ export class PlayField extends Component
     parent.setPointerCapture(event.pointerId);
     this.toggleWordValidationHighligh(false);
 
-    console.log('parent =', parent);
-
     let position = 0;
       
     this.currentLine[guessBlockWordRised].getChildren().find((wordContainer, index) =>
     {
-      if(wordContainer && wordContainer.getNode() === parent) 
+      const wordBlock = wordContainer.getChildren()[0];
+      if(wordBlock && wordBlock.getNode() === parent) 
       {
         position = index;
         return true;
@@ -693,42 +711,45 @@ export class PlayField extends Component
       return false;
     })
 
-    const parentComp = this.currentLine[guessBlockWordRised].getChildren()[position];
+    const parentComp = this.currentLine[guessBlockWordRised]
+    .getChildren()[position]
+    .getChildren()[0];
+
     const playFildCord = this.getNode().getBoundingClientRect();
 
-    const dragstartOff = (event: Event) => {event.preventDefault();}
+    const dragstartOff = (dragstartEvent: Event) => {dragstartEvent.preventDefault();}
     parentComp.addListener('dragstart', dragstartOff);
 
     const parentCord = parentComp.getNode().getBoundingClientRect();
     const shiftX = event.clientX - parentCord.left;
     const shiftY = event.clientY - parentCord.top;
 
-    const moveAt = (event: PointerEvent) =>
+    const moveAt = (moveEvent: PointerEvent) =>
     {
       let isFlayOver = false;
       switch(true)
       {
-        case event.pageX < playFildCord.left: isFlayOver = true;
+        case (moveEvent.pageX - shiftX) < playFildCord.left: isFlayOver = true;
         break; 
-        case event.pageX + parentCord.width > playFildCord.right: isFlayOver = true;
+        case ((moveEvent.pageX - shiftX) + parentCord.width) > playFildCord.right: isFlayOver = true;
         break;
-        case event.pageY < playFildCord.top: isFlayOver = true;
+        case (moveEvent.pageY - shiftY) < playFildCord.top: isFlayOver = true;
         break;
-        case event.pageY + parentCord.height > playFildCord.bottom: isFlayOver = true;
+        case ((moveEvent.pageY - shiftY) + parentCord.height) > playFildCord.bottom: isFlayOver = true;
         break;
         default: isFlayOver = false;
       }
       if(isFlayOver) return;
 
-      const cordX = event.pageX - playFildCord.left;
-      const cordY = event.pageY - playFildCord.top;
+      const cordX = moveEvent.pageX - playFildCord.left;
+      const cordY = moveEvent.pageY - playFildCord.top;
       // Because of the "perspective" the Y coordinates are calculated incorrectly. 
       // Perhaps there is another reason that I don't know.
       // correctionCordY is used to correct these coordinates.
       const correctionCordY = 1.03;
 
-      parentComp.getNode().style.left = cordX - shiftX + 'rem';
-      parentComp.getNode().style.top = (cordY - shiftY) * correctionCordY + 'rem';
+      parentComp.getNode().style.left = `${cordX - shiftX}rem`;
+      parentComp.getNode().style.top = `${(cordY - shiftY) * correctionCordY}rem`;
     }
 
     type TElemParts = 'center' | 'right' | 'left' | 'none';
@@ -737,44 +758,6 @@ export class PlayField extends Component
       center: Component | null,
       left: Component | null,
       right: Component | null,
-    }
-
-    const highLighPartElem = 
-    (
-      HLElems: IDropableElems,
-      HLPart: TElemParts, 
-      cleanHLElems?: (Component | null)[]
-    ) =>
-    {
-      switch(HLPart)
-      {
-        case 'center': 
-        {
-          if(cleanHLElems) cleanHL(cleanHLElems);
-          if(!HLElems.center) break;
-          HLElems.center.toggleClass(this.style.wordBlockHLCenter, true);
-          break;
-        };
-        case 'left': 
-        {
-          if(cleanHLElems) cleanHL(cleanHLElems);
-          if(!HLElems.center) break;
-          HLElems.center.toggleClass(this.style.wordBlockHLLeft, true);
-          if(!HLElems.left) break;
-          HLElems.left.toggleClass(this.style.wordBlockHLRight, true);
-          break;
-        };
-        case 'right': 
-        {
-          if(cleanHLElems) cleanHL(cleanHLElems);
-          if(!HLElems.center) break;
-          HLElems.center.toggleClass(this.style.wordBlockHLRight, true);
-          if(!HLElems.right) break;
-          HLElems.right.toggleClass(this.style.wordBlockHLLeft, true);
-          break;
-        };
-        default: break;
-      }
     }
 
     const cleanHL = (components: (Component | null)[]) =>
@@ -788,17 +771,53 @@ export class PlayField extends Component
       })
     }
 
-    const wordContainer = this.wordContainer.getWordContainerArr()[0];
-    this.currentLine[guessBlockWordRised].replaceChildren(position, wordContainer);
-    wordContainer.append(parentComp);
+    const highLighPartElem = 
+    (
+      HLElems: IDropableElems,
+      HLPart: TElemParts, 
+      cleanHLElems?: (Component | null)[]
+    ) =>
+    {
+      switch(HLPart)
+      {
+        case 'center': 
+          if(cleanHLElems) cleanHL(cleanHLElems);
+          if(!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        case 'left': 
+          if(cleanHLElems) cleanHL(cleanHLElems);
+          if(!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLLeft, true);
+          if(!HLElems.left) break;
+          HLElems.left.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        case 'right': 
+          if(cleanHLElems) cleanHL(cleanHLElems);
+          if(!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLRight, true);
+          if(!HLElems.right) break;
+          HLElems.right.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        default: break;
+      }
+    }
+
+    const wordContainerOfDragElem = parentComp.getParentComponent();
+    if(!wordContainerOfDragElem) throw Error('Parent container of the drag element was not found');
+    if(!(wordContainerOfDragElem instanceof WordContainer)) throw Error('Parent container of the drag element is not WordContainer');
+    wordContainerOfDragElem.setFillStatus(false);
 
     parentComp.toggleClass(this.style.wordBlockDrag, true);
-    parentComp.getNode().setPointerCapture(event.pointerId);
     moveAt(event);
 
     let elemBelowPosition = 0;
     let currentElemPart: TElemParts = 'none';
-    let currentDroppable: IDropableElems = 
+
+    const currentDroppable: IDropableElems = 
     {
       center: null,
       left: null,
@@ -808,19 +827,20 @@ export class PlayField extends Component
     const halfWidthParent = parentCord.width / 2;
     const xShiftForCordBelow = halfWidthParent - shiftX;
 
-    const onMouseMove = (event: PointerEvent) => 
+    const onMouseMove = (mouseMoveEvent: PointerEvent) => 
     {
-      moveAt(event);
+      moveAt(mouseMoveEvent);
 
-      const xCordBelow = event.clientX + xShiftForCordBelow;
-      const yCordBelow = event.clientY - shiftY;
-      parent.hidden = true;
+      const xCordBelow = mouseMoveEvent.clientX + xShiftForCordBelow;
+      const yCordBelow = mouseMoveEvent.clientY - shiftY;
+
+      parentComp.getNode().hidden = true;
       let elemBelow = document.elementFromPoint(xCordBelow, yCordBelow);
-      parent.hidden = false;
+      parentComp.getNode().hidden = false;
 
       if(!elemBelow
       || !(elemBelow.closest(`.${this.style.wordBlock}`) || elemBelow.closest(`.${this.style.wordContainer}`))
-      || (elemBelow.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode() || !elemBelow.closest(`.${this.style.initialGuess}`)))
+      || ((elemBelow.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode()) && !elemBelow.closest(`.${this.style.initialGuess}`)))
       {
         currentElemPart = 'none';
         cleanHL(this.currentLine.result.getChildren());
@@ -831,6 +851,14 @@ export class PlayField extends Component
       if(elemBelow.closest(`.${this.style.initialGuess}`))
       {
         guessBlockElemBelow = 'initial';
+        elemBelow = elemBelow.closest(`.${this.style.wordContainer}`);
+        if(!elemBelow) throw new Error('Element below initial container does not contain wordContainer. 869');
+      }
+      else
+      {
+        guessBlockElemBelow = 'result';
+        elemBelow = elemBelow.closest(`.${this.style.wordContainer}`);
+        if(!elemBelow) throw new Error('Element below result conteiner does not contain wordContainer. 877');
       }
 
       const elemBelowCord = elemBelow.getBoundingClientRect();
@@ -838,20 +866,20 @@ export class PlayField extends Component
       let elemBelowPart: TElemParts = 'none';
       switch(true)
       {
-        case event.clientX > elemBelowCord.left 
-        && event.clientX < elemBelowCord.left + EBPartWidth:
+        case (xCordBelow >= elemBelowCord.left) 
+        && (xCordBelow < (elemBelowCord.left + EBPartWidth)):
         {
           elemBelowPart = 'left';
           break;
         }
-        case event.clientX > elemBelowCord.left + EBPartWidth
-        && event.clientX < elemBelowCord.left + EBPartWidth * 4:
+        case (xCordBelow >= (elemBelowCord.left + EBPartWidth))
+        && (xCordBelow < (elemBelowCord.left + EBPartWidth * 4)):
         {
           elemBelowPart = 'center';
           break;
         }
-        case event.clientX > elemBelowCord.left + EBPartWidth * 4
-        && event.clientX < elemBelowCord.left + EBPartWidth * 5:
+        case (xCordBelow >= (elemBelowCord.left + EBPartWidth * 4))
+        && (xCordBelow < (elemBelowCord.left + EBPartWidth * 5)):
         {
           elemBelowPart = 'right';
           break;
@@ -899,87 +927,46 @@ export class PlayField extends Component
       highLighPartElem(currentDroppable, elemBelowPart, dropArr);
     }
 
-    parent.addEventListener('pointermove', onMouseMove);
+    parentComp.getNode().addEventListener('pointermove', onMouseMove);
 
     const insertDragElement = () =>
     {
-      // let updateParentComp = parentComp;
-
-      const getUpdateDragElem = (dragElem: Component, targetForUpdate: 'result' | 'initial') =>
-      {
-        let updateElem: Component = dragElem;
-        switch(targetForUpdate)
-        {
-          case 'result':
-          {
-            updateElem = dragElem.getChildren()[0];
-            dragElem.cleanInnerHTML();
-            dragElem.destroy();
-            break;
-          }
-          case 'initial':
-          {
-            if(dragElem.getNode().closest(`${this.style.wordContainer}`)) break;
-            const container = this.wordContainer.getWordContainerArr()[0];
-            container.append(dragElem);
-            updateElem = container;
-            break;
-          }
-          default: break;
-        }
-
-        return updateElem;
-      }
-
-      // if(guessBlockElemBelow !== guessBlockWordRised)
-      // {
-      //   switch(guessBlockElemBelow)
-      //   {
-      //     case 'result':
-      //     {
-      //       updateParentComp = parentComp.getChildren()[0];
-      //       parentComp.cleanInnerHTML();
-      //       parentComp.destroy();
-      //       break;
-      //     }
-      //     case 'initial':
-      //     {
-      //       const container = this.wordContainer.getWordContainerArr()[0];
-      //       container.append(parentComp);
-      //       updateParentComp = container;
-      //       break;
-      //     }
-      //     default:;
-      //   }
-        
-      // }
       const isSameGuessBlocks = guessBlockElemBelow === guessBlockWordRised;
 
       if(currentElemPart === 'center'
       && currentDroppable.center)
       {
-        // const replacingElem = this.currentLine.result.replaceChildren(elemBelowPosition, parentComp);
+        if(position === elemBelowPosition
+        && isSameGuessBlocks)
+        {
+          wordContainerOfDragElem.setFillStatus(true, parentComp);
+          return;
+        } 
+
         const replacingElem = 
         this.currentLine[guessBlockElemBelow]
-        .replaceChildren
-        (
-          elemBelowPosition, 
-          !isSameGuessBlocks ? getUpdateDragElem(parentComp, guessBlockElemBelow) : parentComp
-        );
+        .getChildren()[elemBelowPosition]
+        .getChildren()[0];
 
-        if(position === elemBelowPosition
-        && isSameGuessBlocks) return;
+        this.currentLine[guessBlockElemBelow]
+        .getChildren()[elemBelowPosition]
+        .cleanInnerHTML();
 
         this.currentLine[guessBlockWordRised]
-        .replaceChildren
-        (
-          position, 
-          !isSameGuessBlocks ? getUpdateDragElem(replacingElem, guessBlockWordRised) : replacingElem
-        );
+        .getChildren()[position]
+        .cleanInnerHTML();
 
-        // const parentCorrectOrder = this.resultGuessFill[position];
-        // this.resultGuessFill[position] = this.resultGuessFill[elemBelowPosition];
-        // this.resultGuessFill[elemBelowPosition] = parentCorrectOrder;
+        this.currentLine[guessBlockElemBelow]
+        .getChildren()[elemBelowPosition]
+        .append(parentComp);
+
+        if(replacingElem)
+        {
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[position]
+          .append(replacingElem);
+        }
+
         const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
         this[`${guessBlockWordRised}GuessFill`][position] = this[`${guessBlockElemBelow}GuessFill`][elemBelowPosition];
         this[`${guessBlockElemBelow}GuessFill`][elemBelowPosition] = parentCorrectOrder;
@@ -987,49 +974,39 @@ export class PlayField extends Component
         return;
       }
 
-      const transferVector = position - elemBelowPosition;
-      let wordContainerPosition = transferVector > 0 ? position + 1 : position;
-
       if(currentElemPart === 'right'
       && currentDroppable.center)
       {
-        // this.currentLine.result.appAfterSpecifiedChildren(elemBelowPosition, parentComp);
-        // this.currentLine.result.getChildren()[wordContainerPosition].cleanInnerHTML();
-        // this.currentLine.result.destroyOneChild(wordContainerPosition);
-
-        // const parentCorrectOrder = this.resultGuessFill[position];
-        // this.resultGuessFill = this.resultGuessFill.reduce((acc, corOrder, index) =>
-        // {
-        //   if(index === position) return acc;
-        //   if(index === elemBelowPosition)
-        //   {
-        //     acc.push(corOrder, parentCorrectOrder);
-        //     return acc;
-        //   }
-
-        //   acc.push(corOrder);
-        //   return acc;
-        // }, [] as number[]);
-
         let deletingBlockPosition = position;
 
         if(!isSameGuessBlocks)
         {
-          // TODO - сделать обработку результата = -1;
           const emptyPosition = this[`${guessBlockElemBelow}GuessFill`].lastIndexOf(0);
+          if(emptyPosition === -1) throw new Error(`Not emptyPosition found into <${guessBlockElemBelow}> block`);
+
           const vector = emptyPosition - elemBelowPosition;
           deletingBlockPosition = vector > 0 ? emptyPosition + 1 : emptyPosition;
-          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren
-          (
-            elemBelowPosition, 
-            getUpdateDragElem(parentComp, guessBlockElemBelow)
-          );
-          this.currentLine.result.destroyOneChild(deletingBlockPosition);
+          
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[position]
+          .cleanInnerHTML();
+
+          this.currentLine[guessBlockElemBelow].destroyOneChild(deletingBlockPosition);
 
           const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
           this[`${guessBlockWordRised}GuessFill`][position] = 0;
           this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
           {
+            if(emptyPosition === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
             if(index === emptyPosition) return acc;
             if(index === elemBelowPosition)
             {
@@ -1046,13 +1023,26 @@ export class PlayField extends Component
         {
           const vector = position - elemBelowPosition;
           deletingBlockPosition = vector > 0 ? position + 1 : position;
-          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(elemBelowPosition, parentComp);
-          this.currentLine[guessBlockWordRised].getChildren()[deletingBlockPosition].cleanInnerHTML();
+          
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[deletingBlockPosition]
+          .cleanInnerHTML();
+
           this.currentLine[guessBlockWordRised].destroyOneChild(deletingBlockPosition);
 
           const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
           this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
           {
+            if(position === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
             if(index === position) return acc;
             if(index === elemBelowPosition)
             {
@@ -1071,43 +1061,36 @@ export class PlayField extends Component
       if(currentElemPart === 'left'
       && currentDroppable.center)
       {
-        // this.currentLine.result.appBeforeSpecifiedChildren(elemBelowPosition, parentComp);
-        // this.currentLine.result.getChildren()[wordContainerPosition].cleanInnerHTML();
-        // this.currentLine.result.destroyOneChild(wordContainerPosition);
-
-        // const parentCorrectOrder = this.resultGuessFill[position];
-        // this.resultGuessFill = this.resultGuessFill.reduce((acc, corOrder, index) =>
-        // {
-        //   if(index === position) return acc;
-        //   if(index === elemBelowPosition)
-        //   {
-        //     acc.push(parentCorrectOrder, corOrder);
-        //     return acc;
-        //   }
-
-        //   acc.push(corOrder);
-        //   return acc;
-        // }, [] as number[]);
-
         let deletingBlockPosition = position;
 
         if(!isSameGuessBlocks)
         {
-          // TODO - сделать обработку результата = -1;
           const emptyPosition = this[`${guessBlockElemBelow}GuessFill`].indexOf(0);
+          if(emptyPosition === -1) throw new Error(`Not emptyPosition found into <${guessBlockElemBelow}> block`);
+
           const vector = emptyPosition - elemBelowPosition;
           deletingBlockPosition = vector >= 0 ? emptyPosition + 1 : emptyPosition;
-          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren
-          (
-            elemBelowPosition, 
-            getUpdateDragElem(parentComp, guessBlockElemBelow)
-          );
-          this.currentLine.result.destroyOneChild(deletingBlockPosition);
+         
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[position]
+          .cleanInnerHTML();
+
+          this.currentLine[guessBlockElemBelow].destroyOneChild(deletingBlockPosition);
 
           const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
           this[`${guessBlockWordRised}GuessFill`][position] = 0;
           this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
           {
+            if(emptyPosition === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
             if(index === emptyPosition) return acc;
             if(index === elemBelowPosition)
             {
@@ -1118,19 +1101,31 @@ export class PlayField extends Component
             acc.push(corOrder);
             return acc;
           }, [] as number[]);
-
         }
         else
         {
           const vector = position - elemBelowPosition;
           deletingBlockPosition = vector >= 0 ? position + 1 : position;
-          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(elemBelowPosition, parentComp);
-          this.currentLine[guessBlockWordRised].getChildren()[deletingBlockPosition].cleanInnerHTML();
+          
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[deletingBlockPosition]
+          .cleanInnerHTML();
+
           this.currentLine[guessBlockWordRised].destroyOneChild(deletingBlockPosition);
 
           const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
           this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
           {
+            if(position === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
             if(index === position) return acc;
             if(index === elemBelowPosition)
             {
@@ -1146,765 +1141,25 @@ export class PlayField extends Component
         return;
       }
 
-      this.currentLine.result.replaceChildren(position, parentComp);
+      wordContainerOfDragElem.setFillStatus(true, parentComp);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    if(parent.closest(`.${this.style.initialGuess}`))
+    const handlerPointerUp = () =>
     {
-      let position = 0;
-      
-      this.currentLine.initial.getChildren().find((wordContainer, index) =>
-      {
-        if(wordContainer && wordContainer.getNode() === parent) 
-        // if(wordContainer && wordContainer.getChildren()[0].getNode() === parent) 
-        {
-          position = index;
-          return true;
-        }
+      cleanHL(this.currentLine[guessBlockElemBelow].getChildren());
+      insertDragElement();
 
-        return false;
-      })
+      parentComp.getNode().removeEventListener('pointermove', onMouseMove);
+      parentComp.toggleClass(this.style.wordBlockDrag, false);
+      parentComp.removeListener('dragstart', dragstartOff);
+      parentComp.getNode().removeEventListener('pointerup', handlerPointerUp);
 
-      console.log('Position in initial =', position);
-
-      const parentComp = this.currentLine.initial.getChildren()[position].getChildren()[0];
-      const playFildCord = this.getNode().getBoundingClientRect();
-
-      const dragstartOff = (event: Event) => {event.preventDefault();}
-      parentComp.addListener('dragstart', dragstartOff);
-
-      const parentCord = parentComp.getNode().getBoundingClientRect();
-      const shiftX = event.clientX - parentCord.left;
-      const shiftY = event.clientY - parentCord.top;
-
-      const moveAt = (event: PointerEvent) =>
-      {
-        let isFlayOver = false;
-        switch(true)
-        {
-          case event.pageX < playFildCord.left: isFlayOver = true;
-          break; 
-          case event.pageX + parentCord.width > playFildCord.right: isFlayOver = true;
-          break;
-          case event.pageY < playFildCord.top: isFlayOver = true;
-          break;
-          case event.pageY + parentCord.height > playFildCord.bottom: isFlayOver = true;
-          break;
-          default: isFlayOver = false;
-        }
-        if(isFlayOver) return;
-
-        const cordX = event.pageX - playFildCord.left;
-        const cordY = event.pageY - playFildCord.top;
-        // Because of the "perspective" the Y coordinates are calculated incorrectly. 
-        // Perhaps there is another reason that I don't know.
-        // correctionCordY is used to correct these coordinates.
-        const correctionCordY = 1.03;
-
-        parentComp.getNode().style.left = cordX - shiftX + 'rem';
-        parentComp.getNode().style.top = (cordY - shiftY) * correctionCordY + 'rem';
-      }
-
-      type TElemParts = 'center' | 'right' | 'left' | 'none';
-      interface IDropableElems
-      {
-        center: Component | null,
-        left: Component | null,
-        right: Component | null,
-      }
-
-      const highLighPartElem = 
-      (
-        HLElems: IDropableElems,
-        HLPart: TElemParts, 
-        cleanHLElems?: (Component | null)[]
-      ) =>
-      {
-        switch(HLPart)
-        {
-          case 'center': 
-          {
-            if(cleanHLElems) cleanHL(cleanHLElems);
-            if(!HLElems.center) break;
-            HLElems.center.toggleClass(this.style.wordBlockHLCenter, true);
-            break;
-          };
-          case 'left': 
-          {
-            if(cleanHLElems) cleanHL(cleanHLElems);
-            if(!HLElems.center) break;
-            HLElems.center.toggleClass(this.style.wordBlockHLLeft, true);
-            if(!HLElems.left) break;
-            HLElems.left.toggleClass(this.style.wordBlockHLRight, true);
-            break;
-          };
-          case 'right': 
-          {
-            if(cleanHLElems) cleanHL(cleanHLElems);
-            if(!HLElems.center) break;
-            HLElems.center.toggleClass(this.style.wordBlockHLRight, true);
-            if(!HLElems.right) break;
-            HLElems.right.toggleClass(this.style.wordBlockHLLeft, true);
-            break;
-          };
-          default: break;
-        }
-      }
-
-      const cleanHL = (components: (Component | null)[]) =>
-      {
-        components.forEach((component) =>
-        {
-          if(!component) return;
-          component.toggleClass(this.style.wordBlockHLLeft, false);
-          component.toggleClass(this.style.wordBlockHLRight, false);
-          component.toggleClass(this.style.wordBlockHLCenter, false);
-        })
-      }
-
-      // const wordContainer = this.wordContainer.getWordContainerArr()[0];
-      // this.currentLine.result.replaceChildren(position, wordContainer);
-      // wordContainer.append(parentComp);
-  
-      parentComp.toggleClass(this.style.wordBlockDrag, true);
-      // parentComp.getNode().setPointerCapture(event.pointerId);
-      moveAt(event);
-
-      let elemBelowPosition = 0;
-      let currentElemPart: TElemParts = 'none';
-      let currentDroppable: IDropableElems = 
-      {
-        center: null,
-        left: null,
-        right: null,
-      }
-      
-      const halfWidthParent = parentCord.width / 2;
-      const xShiftForCordBelow = halfWidthParent - shiftX;
-
-      const onMouseMove = (event: PointerEvent) => 
-      {
-        moveAt(event);
-
-        const xCordBelow = event.clientX + xShiftForCordBelow;
-        const yCordBelow = event.clientY - shiftY;
-        parent.hidden = true;
-        let elemBelow = document.elementFromPoint(xCordBelow, yCordBelow);
-        parent.hidden = false;
-
-        console.log('Parent position =', position);
-        console.log('Elem Below Position =', elemBelowPosition);
-        console.log('Current Elem Part =', currentElemPart);
-        console.log('--------------------------------------');
-
-        if(!elemBelow
-        // || !(elemBelow.closest(`.${this.style.wordBlock}`) || elemBelow.closest(`.${this.style.wordContainer}`))
-        || !elemBelow.closest(`.${this.style.wordContainer}`)
-        // || elemBelow.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode())
-        || elemBelow.closest(`.${this.style.initialGuess}`) !== this.currentLine.initial.getNode())
-        {
-          currentElemPart = 'none';
-          // cleanHL(this.currentLine.result.getChildren());
-          cleanHL(this.currentLine.initial.getChildren());
-          return;
-        }
-
-        const elemBelowCord = elemBelow.getBoundingClientRect();
-        const EBPartWidth = elemBelowCord.width / 5;
-        let elemBelowPart: TElemParts = 'none';
-        switch(true)
-        {
-          case event.clientX > elemBelowCord.left 
-          && event.clientX < elemBelowCord.left + EBPartWidth:
-          {
-            elemBelowPart = 'left';
-            break;
-          }
-          case event.clientX > elemBelowCord.left + EBPartWidth
-          && event.clientX < elemBelowCord.left + EBPartWidth * 4:
-          {
-            elemBelowPart = 'center';
-            break;
-          }
-          case event.clientX > elemBelowCord.left + EBPartWidth * 4
-          && event.clientX < elemBelowCord.left + EBPartWidth * 5:
-          {
-            elemBelowPart = 'right';
-            break;
-          }
-          default: elemBelowPart = 'none';
-        }
-
-        elemBelowPosition = 0;
-        this.currentLine.result.getChildren().find((wordContainer, index) =>
-        {
-          if(wordContainer && wordContainer.getNode() === elemBelow) 
-          {
-            elemBelowPosition = index;
-            return true;
-          }
-
-          return false;
-        })
-
-        // const compBelow = this.currentLine.result.getChildren()[elemBelowPosition];
-        // const compBelowNearbyLeft = this.currentLine.result.getChildren()[elemBelowPosition - 1];
-        // const compBelowNearbyRight = this.currentLine.result.getChildren()[elemBelowPosition + 1];
-        const compBelow = this.currentLine.initial.getChildren()[elemBelowPosition];
-        const compBelowNearbyLeft = this.currentLine.initial.getChildren()[elemBelowPosition - 1];
-        const compBelowNearbyRight = this.currentLine.initial.getChildren()[elemBelowPosition + 1];
-
-        if(currentDroppable.center !== compBelow)
-        {
-          const { center, left, right } = currentDroppable;
-          const dropArr = [center, left, right];
-          cleanHL(dropArr);
-          
-          currentDroppable.center = compBelow;
-          currentDroppable.left = compBelowNearbyLeft;
-          currentDroppable.right = compBelowNearbyRight;
-          if(!currentDroppable.center) return;
-
-          highLighPartElem(currentDroppable, elemBelowPart);
-          return;
-        }
-
-        if(currentElemPart === elemBelowPart) return;
-        currentElemPart = elemBelowPart;
-
-        const { center, left, right } = currentDroppable;
-        const dropArr = [center, left, right];
-
-        highLighPartElem(currentDroppable, elemBelowPart, dropArr);
-        
-        console.log('Parent position =', position);
-        console.log('Elem Below Position =', elemBelowPosition);
-        console.log('Current Elem Part =', currentElemPart);
-        console.log('--------------------------------------');
-      }
-
-      parent.addEventListener('pointermove', onMouseMove);
-
-      const insertDragElement = () =>
-      {
-        if(currentElemPart === 'center'
-        && currentDroppable.center)
-        {
-          // const replacingElem = this.currentLine.result.replaceChildren(elemBelowPosition, parentComp);
-
-          if(position === elemBelowPosition) return;
-          // this.currentLine.result.replaceChildren(position, replacingElem);
-          const initialChildren = this.currentLine.initial.getChildren();
-          const replacingElem = initialChildren[elemBelowPosition].getChildren()[0];
-          initialChildren[elemBelowPosition].append(parentComp);
-          initialChildren[position].getChildren()[0].cleanInnerHTML();
-          if(replacingElem) initialChildren[position].append(replacingElem);
-
-          // const parentCorrectOrder = this.resultGuessFill[position];
-          // this.resultGuessFill[position] = this.resultGuessFill[elemBelowPosition];
-          // this.resultGuessFill[elemBelowPosition] = parentCorrectOrder;
-          const parentCorrectOrder = this.initialGuessFill[position];
-          this.initialGuessFill[position] = this.initialGuessFill[elemBelowPosition];
-          this.initialGuessFill[elemBelowPosition] = parentCorrectOrder;
-
-          return;
-        }
-
-        const transferVector = position - elemBelowPosition;
-        const wordContainerPosition = transferVector > 0 ? position + 1 : position;
-
-        if(currentElemPart === 'right'
-        && currentDroppable.center)
-        {
-          this.currentLine.result.appAfterSpecifiedChildren(elemBelowPosition, parentComp);
-          this.currentLine.result.getChildren()[wordContainerPosition].cleanInnerHTML();
-          this.currentLine.result.destroyOneChild(wordContainerPosition);
-
-          const parentCorrectOrder = this.resultGuessFill[position];
-          this.resultGuessFill = this.resultGuessFill.reduce((acc, corOrder, index) =>
-          {
-            if(index === position) return acc;
-            if(index === elemBelowPosition)
-            {
-              acc.push(corOrder, parentCorrectOrder);
-              return acc;
-            }
-
-            acc.push(corOrder);
-            return acc;
-          }, [] as number[]);
-
-          return;
-        }
-
-        if(currentElemPart === 'left'
-        && currentDroppable.center)
-        {
-          this.currentLine.result.appBeforeSpecifiedChildren(elemBelowPosition, parentComp);
-          this.currentLine.result.getChildren()[wordContainerPosition].cleanInnerHTML();
-          this.currentLine.result.destroyOneChild(wordContainerPosition);
-
-          const parentCorrectOrder = this.resultGuessFill[position];
-          this.resultGuessFill = this.resultGuessFill.reduce((acc, corOrder, index) =>
-          {
-            if(index === position) return acc;
-            if(index === elemBelowPosition)
-            {
-              acc.push(parentCorrectOrder, corOrder);
-              return acc;
-            }
-
-            acc.push(corOrder);
-            return acc;
-          }, [] as number[]);
-
-          return;
-        }
-
-        this.currentLine.result.replaceChildren(position, parentComp);
-      }
+      this.errorInSentence = this.getErrorsInSentence();
+      const isResultLineFill = !this.resultGuessFill.includes(0);
+      this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);
     }
 
-
-
-
-
-
-
-
-
-    if(parent.closest(`.${this.style.resultGuess}`) === this.currentLine.result.getNode())
-    {
-      let position = 0;
-      
-      this.currentLine.result.getChildren().find((wordContainer, index) =>
-      {
-        if(wordContainer && wordContainer.getNode() === parent) 
-        {
-          position = index;
-          return true;
-        }
-
-        return false;
-      })
-
-      const parentComp = this.currentLine.result.getChildren()[position];
-      const playFildCord = this.getNode().getBoundingClientRect();
-
-      const dragstartOff = (event: Event) => {event.preventDefault();}
-      parentComp.addListener('dragstart', dragstartOff);
-
-      const parentCord = parentComp.getNode().getBoundingClientRect();
-      const shiftX = event.clientX - parentCord.left;
-      const shiftY = event.clientY - parentCord.top;
-
-      const moveAt = (event: PointerEvent) =>
-      {
-        let isFlayOver = false;
-        switch(true)
-        {
-          case event.pageX < playFildCord.left: isFlayOver = true;
-          break; 
-          case event.pageX + parentCord.width > playFildCord.right: isFlayOver = true;
-          break;
-          case event.pageY < playFildCord.top: isFlayOver = true;
-          break;
-          case event.pageY + parentCord.height > playFildCord.bottom: isFlayOver = true;
-          break;
-          default: isFlayOver = false;
-        }
-        if(isFlayOver) return;
-
-        const cordX = event.pageX - playFildCord.left;
-        const cordY = event.pageY - playFildCord.top;
-        // Because of the "perspective" the Y coordinates are calculated incorrectly. 
-        // Perhaps there is another reason that I don't know.
-        // correctionCordY is used to correct these coordinates.
-        const correctionCordY = 1.03;
-
-        parentComp.getNode().style.left = cordX - shiftX + 'rem';
-        parentComp.getNode().style.top = (cordY - shiftY) * correctionCordY + 'rem';
-      }
-
-      type TElemParts = 'center' | 'right' | 'left' | 'none';
-      interface IDropableElems
-      {
-        center: Component | null,
-        left: Component | null,
-        right: Component | null,
-      }
-
-      const highLighPartElem = 
-      (
-        HLElems: IDropableElems,
-        HLPart: TElemParts, 
-        cleanHLElems?: (Component | null)[]
-      ) =>
-      {
-        switch(HLPart)
-        {
-          case 'center': 
-          {
-            if(cleanHLElems) cleanHL(cleanHLElems);
-            if(!HLElems.center) break;
-            HLElems.center.toggleClass(this.style.wordBlockHLCenter, true);
-            break;
-          };
-          case 'left': 
-          {
-            if(cleanHLElems) cleanHL(cleanHLElems);
-            if(!HLElems.center) break;
-            HLElems.center.toggleClass(this.style.wordBlockHLLeft, true);
-            if(!HLElems.left) break;
-            HLElems.left.toggleClass(this.style.wordBlockHLRight, true);
-            break;
-          };
-          case 'right': 
-          {
-            if(cleanHLElems) cleanHL(cleanHLElems);
-            if(!HLElems.center) break;
-            HLElems.center.toggleClass(this.style.wordBlockHLRight, true);
-            if(!HLElems.right) break;
-            HLElems.right.toggleClass(this.style.wordBlockHLLeft, true);
-            break;
-          };
-          default: break;
-        }
-      }
-
-      const cleanHL = (components: (Component | null)[]) =>
-      {
-        components.forEach((component) =>
-        {
-          if(!component) return;
-          component.toggleClass(this.style.wordBlockHLLeft, false);
-          component.toggleClass(this.style.wordBlockHLRight, false);
-          component.toggleClass(this.style.wordBlockHLCenter, false);
-        })
-      }
-
-      const wordContainer = this.wordContainer.getWordContainerArr()[0];
-      this.currentLine.result.replaceChildren(position, wordContainer);
-      wordContainer.append(parentComp);
-  
-      parentComp.toggleClass(this.style.wordBlockDrag, true);
-      parentComp.getNode().setPointerCapture(event.pointerId);
-      moveAt(event);
-
-      let elemBelowPosition = 0;
-      let currentElemPart: TElemParts = 'none';
-      let currentDroppable: IDropableElems = 
-      {
-        center: null,
-        left: null,
-        right: null,
-      }
-      
-      const halfWidthParent = parentCord.width / 2;
-      const xShiftForCordBelow = halfWidthParent - shiftX;
-
-      const onMouseMove = (event: PointerEvent) => 
-      {
-        moveAt(event);
-
-        const xCordBelow = event.clientX + xShiftForCordBelow;
-        const yCordBelow = event.clientY - shiftY;
-        parent.hidden = true;
-        let elemBelow = document.elementFromPoint(xCordBelow, yCordBelow);
-        parent.hidden = false;
-
-        console.log('Parent position =', position);
-        console.log('Elem Below Position =', elemBelowPosition);
-        console.log('Current Elem Part =', currentElemPart);
-        console.log('--------------------------------------');
-
-        if(!elemBelow
-        || !(elemBelow.closest(`.${this.style.wordBlock}`) || elemBelow.closest(`.${this.style.wordContainer}`))
-        || elemBelow.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode())
-        {
-          currentElemPart = 'none';
-          cleanHL(this.currentLine.result.getChildren());
-          return;
-        }
-
-        const elemBelowCord = elemBelow.getBoundingClientRect();
-        const EBPartWidth = elemBelowCord.width / 5;
-        let elemBelowPart: TElemParts = 'none';
-        switch(true)
-        {
-          case event.clientX > elemBelowCord.left 
-          && event.clientX < elemBelowCord.left + EBPartWidth:
-          {
-            elemBelowPart = 'left';
-            break;
-          }
-          case event.clientX > elemBelowCord.left + EBPartWidth
-          && event.clientX < elemBelowCord.left + EBPartWidth * 4:
-          {
-            elemBelowPart = 'center';
-            break;
-          }
-          case event.clientX > elemBelowCord.left + EBPartWidth * 4
-          && event.clientX < elemBelowCord.left + EBPartWidth * 5:
-          {
-            elemBelowPart = 'right';
-            break;
-          }
-          default: elemBelowPart = 'none';
-        }
-
-        elemBelowPosition = 0;
-        this.currentLine.result.getChildren().find((wordContainer, index) =>
-        {
-          if(wordContainer && wordContainer.getNode() === elemBelow) 
-          {
-            elemBelowPosition = index;
-            return true;
-          }
-
-          return false;
-        })
-
-        const compBelow = this.currentLine.result.getChildren()[elemBelowPosition];
-        const compBelowNearbyLeft = this.currentLine.result.getChildren()[elemBelowPosition - 1];
-        const compBelowNearbyRight = this.currentLine.result.getChildren()[elemBelowPosition + 1];
-
-        if(currentDroppable.center !== compBelow)
-        {
-          const { center, left, right } = currentDroppable;
-          const dropArr = [center, left, right];
-          cleanHL(dropArr);
-          
-          currentDroppable.center = compBelow;
-          currentDroppable.left = compBelowNearbyLeft;
-          currentDroppable.right = compBelowNearbyRight;
-          if(!currentDroppable.center) return;
-
-          highLighPartElem(currentDroppable, elemBelowPart);
-          return;
-        }
-
-        if(currentElemPart === elemBelowPart) return;
-        currentElemPart = elemBelowPart;
-
-        const { center, left, right } = currentDroppable;
-        const dropArr = [center, left, right];
-
-        highLighPartElem(currentDroppable, elemBelowPart, dropArr);
-        
-        console.log('Parent position =', position);
-        console.log('Elem Below Position =', elemBelowPosition);
-        console.log('Current Elem Part =', currentElemPart);
-        console.log('--------------------------------------');
-        // console.log('EBPartWidth =', EBPartWidth);
-        // console.log('event.clientY =', event.clientY);
-        // console.log('elemBelowCord.left =', elemBelowCord.left);
-        // console.log(elemBelowPart);
-        // console.log(elemBelow);
-        // div.style.left = xCordBelow + 'rem';
-        // div.style.top = yCordBelow + 'rem';
-        // div.style.left = event.clientX + 'rem';
-        // div.style.top = event.clientY + 'rem';
-        // console.log('cord below = X =', xCordBelow, ', Y =', yCordBelow);
-        // console.log('parent cord =', parent.getBoundingClientRect());
-      }
-
-      parent.addEventListener('pointermove', onMouseMove);
-
-      const insertDragElement = () =>
-      {
-        if(currentElemPart === 'center'
-        && currentDroppable.center)
-        {
-          const replacingElem = this.currentLine.result.replaceChildren(elemBelowPosition, parentComp);
-
-          if(position === elemBelowPosition) return;
-          this.currentLine.result.replaceChildren(position, replacingElem);
-
-          const parentCorrectOrder = this.resultGuessFill[position];
-          this.resultGuessFill[position] = this.resultGuessFill[elemBelowPosition];
-          this.resultGuessFill[elemBelowPosition] = parentCorrectOrder;
-
-          return;
-        }
-
-        const transferVector = position - elemBelowPosition;
-        const wordContainerPosition = transferVector > 0 ? position + 1 : position;
-
-        if(currentElemPart === 'right'
-        && currentDroppable.center)
-        {
-          this.currentLine.result.appAfterSpecifiedChildren(elemBelowPosition, parentComp);
-          this.currentLine.result.getChildren()[wordContainerPosition].cleanInnerHTML();
-          this.currentLine.result.destroyOneChild(wordContainerPosition);
-
-          const parentCorrectOrder = this.resultGuessFill[position];
-          this.resultGuessFill = this.resultGuessFill.reduce((acc, corOrder, index) =>
-          {
-            if(index === position) return acc;
-            if(index === elemBelowPosition)
-            {
-              acc.push(corOrder, parentCorrectOrder);
-              return acc;
-            }
-
-            acc.push(corOrder);
-            return acc;
-          }, [] as number[]);
-
-          return;
-        }
-
-        if(currentElemPart === 'left'
-        && currentDroppable.center)
-        {
-          this.currentLine.result.appBeforeSpecifiedChildren(elemBelowPosition, parentComp);
-          this.currentLine.result.getChildren()[wordContainerPosition].cleanInnerHTML();
-          this.currentLine.result.destroyOneChild(wordContainerPosition);
-
-          const parentCorrectOrder = this.resultGuessFill[position];
-          this.resultGuessFill = this.resultGuessFill.reduce((acc, corOrder, index) =>
-          {
-            if(index === position) return acc;
-            if(index === elemBelowPosition)
-            {
-              acc.push(parentCorrectOrder, corOrder);
-              return acc;
-            }
-
-            acc.push(corOrder);
-            return acc;
-          }, [] as number[]);
-
-          return;
-        }
-
-        this.currentLine.result.replaceChildren(position, parentComp);
-      }
-
-      // console.log('Parent position =', position);
-      // console.log('Elem Below Position =', elemBelowPosition);
-      // console.log('Current Elem Part =', currentElemPart);
-      // console.log('--------------------------------------');
-
-      const handlerPointerUp = (event: PointerEvent) =>
-      {
-        
-        cleanHL(this.currentLine.result.getChildren());
-        insertDragElement();
-        // this.currentLine.result.replaceChildren(position, parentComp);
-        parent.removeEventListener('pointermove', onMouseMove);
-        parentComp.toggleClass(this.style.wordBlockDrag, false);
-        parentComp.removeListener('dragstart', dragstartOff);
-        parent.removeEventListener('pointerup', handlerPointerUp);
-      }
-
-      parent.addEventListener('pointerup', handlerPointerUp);
-    }
-
-
-    /*
-    // let guessBlock: HTMLElement | null = null;
-    // const initial = parent.closest<HTMLElement>(`.${this.style.initialGuess}`);
-    // const result = parent.closest<HTMLElement>(`.${this.style.resultGuess}`);
-    // guessBlock = initial ? initial : result;
-    // if(guessBlock === null) return;
-
-    const playFildCord = this.getNode().getBoundingClientRect();
-
-    const dragstartOff = (event: Event) => { event.preventDefault(); }
-    parent.addEventListener('dragstart', dragstartOff);
-
-    // const guessBlockCord = guessBlock.getBoundingClientRect();
-    const parentCord = parent.getBoundingClientRect();
-    const shiftX = event.clientX - parentCord.left;
-    const shiftY = event.clientY - parentCord.top;
-
-    // console.log('shiftX = ', shiftX);
-    // console.log('shiftY = ', shiftY);
-
-    const moveAt = (event: PointerEvent) =>
-    {
-      let isFlayOver = false;
-      switch(true)
-      {
-        case event.pageX < playFildCord.left: isFlayOver = true;
-        break; 
-        case event.pageX + parentCord.width > playFildCord.right: isFlayOver = true;
-        break;
-        case event.pageY < playFildCord.top: isFlayOver = true;
-        break;
-        case event.pageY + parentCord.height > playFildCord.bottom: isFlayOver = true;
-        break;
-        default: isFlayOver = false;
-      }
-
-      // console.log('isFlayOver =', isFlayOver);
-      // console.log('moveAt event =', event);
-
-      if(isFlayOver) return;
-
-      const cordX = event.pageX - playFildCord.left;
-      const cordY = event.pageY - playFildCord.top;
-
-      // 1.022503
-      // console.log('cordX = ', cordX);
-      // console.log('cordY = ', cordY);
-      
-      // For some reason, unknown to me, the block is shifted higher than it should be 
-      // in the Y coordinate. This coefficient is used to correct the position.
-      const correctionCordY = 1.03;
-
-      parent.style.left = cordX - shiftX + 'rem';
-      parent.style.top = (cordY - shiftY) * correctionCordY + 'rem';
-      // parent.style.left = cordX - shiftX + 'rem';
-      // parent.style.top = (cordY - shiftY) + 'rem';
-      // parent.style.left = cordX + 'rem';
-      // parent.style.top = cordY + 'rem';
-
-      // console.log('parentCordInFlay = ', parent.getBoundingClientRect());
-    }
-
-    // console.log('parentCord = ', parentCord);
-    // console.log('playFildCord = ', playFildCord);
-    // console.log('event = ', event);
-    // console.log('guessBlock = ', guessBlock);
-
-    parent.classList.add(this.style.wordBlockDrag);
-    // document.body.append(parent);
-    moveAt(event);
-
-    const onMouseMove = (event: PointerEvent) => 
-    {
-      moveAt(event);
-    }
-
-    parent.addEventListener('pointermove', onMouseMove);
-
-    const handlerPointerUp = (event: PointerEvent) =>
-    {
-      // console.log('in handlerPointerUp');
-
-      parent.removeEventListener('pointermove', onMouseMove);
-      parent.classList.remove(this.style.wordBlockDrag);
-      parent.removeEventListener('dragstart', dragstartOff);
-      parent.removeEventListener('pointerup', handlerPointerUp);
-    }
-
-    parent.addEventListener('pointerup', handlerPointerUp);
-    */
+    parentComp.getNode().addEventListener('pointerup', handlerPointerUp);
   }
 
   protected handlerPointerDown = (event: Event) =>
