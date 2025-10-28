@@ -1240,4 +1240,5 @@ export class PlayField extends Component
     this.removeListener('click', this.handlerClickWordBlock);
     super.destroy();
   }
+  
 }
