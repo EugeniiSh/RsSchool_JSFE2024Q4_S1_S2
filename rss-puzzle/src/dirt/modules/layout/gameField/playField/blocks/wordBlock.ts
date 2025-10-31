@@ -5,6 +5,7 @@ export interface IWordBlockOptions
   className: string[],
   text: string,
   pieceClassName: string[],
+  pieceLeftClassName: string[],
 }
 
 export class WordBlock extends Component
@@ -15,7 +16,13 @@ export class WordBlock extends Component
 
   protected pieceClassName: string[];
 
+  protected pieceLeftClassName: string[];
+
   protected isWidthSet: boolean;
+
+  protected pieceRight: Component;
+
+  protected pieceLeft: Component;
 
   constructor
   (
@@ -23,6 +30,7 @@ export class WordBlock extends Component
       className,
       text,
       pieceClassName,
+      pieceLeftClassName,
     }: IWordBlockOptions
   )
   {
@@ -30,6 +38,7 @@ export class WordBlock extends Component
     this.className = className;
     this.word = text;
     this.pieceClassName = pieceClassName;
+    this.pieceLeftClassName = pieceLeftClassName;
     this.isWidthSet = false;
 
     const piece = new Component
@@ -41,7 +50,30 @@ export class WordBlock extends Component
       }
     );
 
+    const pieceLeft = new Component
+    (
+      { 
+        tag: 'div', 
+        className: this.pieceLeftClassName, 
+        text: '',
+      }
+    );
+
+    this.pieceRight = piece;
+    this.pieceLeft = pieceLeft;
+
     this.append(piece);
+    this.append(pieceLeft);
+  }
+
+  public getPieceRight(): Component
+  {
+    return this.pieceRight;
+  }
+
+  public getPieceLeft(): Component
+  {
+    return this.pieceLeft;
   }
 
   public setIsWidthSet(flag: boolean): void
@@ -62,6 +94,7 @@ export class WordBlock extends Component
         className: this.className, 
         text: word,
         pieceClassName: this.pieceClassName,
+        pieceLeftClassName: this.pieceLeftClassName,
       }
     )
   }

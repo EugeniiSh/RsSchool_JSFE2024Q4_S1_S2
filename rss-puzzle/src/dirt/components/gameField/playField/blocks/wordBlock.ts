@@ -6,6 +6,7 @@ const wordBlockOptions: IWordBlockOptions =
   className: [style['word-block']],
   text: '',
   pieceClassName: [style['word-block__piece']],
+  pieceLeftClassName: [style['word-block__piece_left']],
 }
 
 export default new WordBlock(wordBlockOptions);
