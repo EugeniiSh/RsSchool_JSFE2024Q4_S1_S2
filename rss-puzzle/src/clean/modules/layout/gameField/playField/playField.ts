@@ -30,13 +30,19 @@ export interface IPlayFieldStyleList {
   wordContainer: string;
   wordContainerFilled: string;
   wordBlock: string;
-  wordBlockPiece: string;
   statusCorrect: string;
   statusError: string;
+  statusFirst: string;
+  wordBlockPiece: string;
+  wordBlockPieceStatusCorrect: string;
+  wordBlockPieceStatusError: string;
+  wordBlockPieceLeftStatusCorrect: string;
+  wordBlockPieceLeftStatusError: string;
   wordBlockDrag: string;
   wordBlockHLLeft: string;
   wordBlockHLRight: string;
   wordBlockHLCenter: string;
+  hiddenBlock: string;
 }
 
 export interface IFetchDataOptions {
@@ -225,6 +231,8 @@ export class PlayField extends Component {
         wordContainerChild.setIsWidthSet(true);
         elem.setFillStatus(true, wordContainerChild);
       }
+
+      wordElem.style.flexGrow = '';
     });
   }
 
@@ -326,9 +334,22 @@ export class PlayField extends Component {
   }
 
   protected getConvertSentenceIntoLayout(sentence: string[]): WordContainer[] {
-    const result = sentence.map((word) => {
+    const result = sentence.map((word, index, arr) => {
       const wordContainer = this.wordContainer.getWordContainerArr()[0];
-      wordContainer.append(this.wordBlock.getBlockWithWord(word));
+      const wordBlock = this.wordBlock.getBlockWithWord(word);
+      wordContainer.append(wordBlock);
+
+      wordContainer.getNode().style.flexGrow = `${word.length}`;
+
+      if (index === 0) {
+        wordBlock.getPieceLeft().toggleClass(this.style.hiddenBlock, true);
+        wordBlock.toggleClass(this.style.statusFirst);
+      }
+
+      if (index === arr.length - 1) {
+        wordBlock.getPieceRight().toggleClass(this.style.hiddenBlock, true);
+      }
+
       return wordContainer;
     });
 
@@ -338,19 +359,46 @@ export class PlayField extends Component {
   public toggleWordValidationHighligh(isHighligh: boolean): void {
     const wordContainerList = this.currentLine.result.getChildren();
 
-    if (isHighligh) {
-      const errors = this.errorInSentence;
-      wordContainerList.forEach((wordContainer, index) => {
-        if (errors.includes(index)) {
-          wordContainer
-            .getChildren()[0]
-            .toggleClass(this.style.statusError, true);
+    const setHLWordBlock = (
+      wordBlock: Component,
+      highLight: 'correct' | 'error',
+      isSet: boolean,
+    ): void => {
+      const HL =
+        highLight === 'correct'
+          ? {
+              wordBlock: this.style.statusCorrect,
+              piece: this.style.wordBlockPieceStatusCorrect,
+              pieceLeft: this.style.wordBlockPieceLeftStatusCorrect,
+            }
+          : {
+              wordBlock: this.style.statusError,
+              piece: this.style.wordBlockPieceStatusError,
+              pieceLeft: this.style.wordBlockPieceLeftStatusError,
+            };
+
+      wordBlock.toggleClass(HL.wordBlock, isSet);
+      wordBlock.getChildren().forEach((child, index) => {
+        if (index === 0) {
+          child.toggleClass(HL.piece, isSet);
           return;
         }
 
-        wordContainer
-          .getChildren()[0]
-          .toggleClass(this.style.statusCorrect, true);
+        child.toggleClass(HL.pieceLeft, isSet);
+      });
+    };
+
+    if (isHighligh) {
+      const errors = this.errorInSentence;
+      wordContainerList.forEach((wordContainer, index) => {
+        const wordBlock = wordContainer.getChildren()[0];
+
+        if (errors.includes(index)) {
+          setHLWordBlock(wordBlock, 'error', true);
+          return;
+        }
+
+        setHLWordBlock(wordBlock, 'correct', true);
       });
 
       if (errors.length === 0) {
@@ -364,8 +412,8 @@ export class PlayField extends Component {
     wordContainerList.forEach((wordContainer) => {
       const wordBlock = wordContainer.getChildren()[0];
       if (wordBlock) {
-        wordBlock.toggleClass(this.style.statusError, false);
-        wordBlock.toggleClass(this.style.statusCorrect, false);
+        setHLWordBlock(wordBlock, 'error', false);
+        setHLWordBlock(wordBlock, 'correct', false);
       }
     });
 
@@ -1167,6 +1215,8 @@ export class PlayField extends Component {
       parentComp.toggleClass(this.style.wordBlockDrag, false);
       parentComp.removeListener('dragstart', dragstartOff);
       parentComp.getNode().removeEventListener('pointerup', handlerPointerUp);
+      parentComp.getNode().style.left = `0rem`;
+      parentComp.getNode().style.top = `0rem`;
 
       this.errorInSentence = this.getErrorsInSentence();
       const isResultLineFill = !this.resultGuessFill.includes(0);

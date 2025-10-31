@@ -22,13 +22,19 @@ const playFieldStyle: IPlayFieldStyleList =
   wordContainer: styleBlocks['word-container'],
   wordContainerFilled: styleBlocks['word-container__filled'],
   wordBlock: styleBlocks['word-block'],
-  wordBlockPiece: styleBlocks['word-block__piece'],
   statusCorrect: styleBlocks['word-block__status_correct'],
   statusError: styleBlocks['word-block__status_error'],
+  statusFirst: styleBlocks['word-block__status_first'],
+  wordBlockPiece: styleBlocks['word-block__piece'],
+  wordBlockPieceStatusCorrect: styleBlocks['word-block__piece__status_correct'],
+  wordBlockPieceStatusError: styleBlocks['word-block__piece__status_error'],
+  wordBlockPieceLeftStatusCorrect: styleBlocks['word-block__piece_left__status_correct'],
+  wordBlockPieceLeftStatusError: styleBlocks['word-block__piece_left__status_error'],
   wordBlockDrag: styleBlocks['word-block__drag'],
   wordBlockHLLeft: styleBlocks['word-block__hl_left'],
   wordBlockHLRight: styleBlocks['word-block__hl_right'],
   wordBlockHLCenter: styleBlocks['word-block__hl_center'],
+  hiddenBlock: styleBlocks['hidden-block'],
 }
 
 const playFieldOptions: IPlayFieldOption =
