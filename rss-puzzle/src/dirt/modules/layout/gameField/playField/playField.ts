@@ -7,7 +7,7 @@ import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
 import collapsEffect from '../../../effects/collapse/collapse';
 
-import { IPuzzleWordsData ,IPuzzleGameData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
+import { IPuzzleWordsData ,IPuzzleLevelData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
 import { PuzzleGameStorage, IStorageGameProgress, ILastlevelData } from '../../../storage/local';
 import { TCustomEventList } from '../../../events/custom';
  
@@ -97,7 +97,7 @@ export class PlayField extends Component
 
   protected eventList: TCustomEventList;
 
-  protected contentData: IPuzzleGameData | null; 
+  protected contentData: IPuzzleLevelData | null; 
 
   protected wordCount: number;
 
