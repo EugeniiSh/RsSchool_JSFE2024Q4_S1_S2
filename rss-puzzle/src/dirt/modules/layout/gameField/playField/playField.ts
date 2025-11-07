@@ -5,6 +5,7 @@ import { ResultLine } from './blocks/resultLine';
 import { WordContainer } from './blocks/wordContainer';
 import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
+import { type SupportField } from '../../../shared/index';
 import collapsEffect from '../../../effects/collapse/collapse';
 
 import { IPuzzleWordsData ,IPuzzleLevelData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
@@ -89,7 +90,9 @@ export class PlayField extends Component
 
   protected wordBlock: WordBlock;
 
-  protected buttonContainer: ButtonContainer
+  protected buttonContainer: ButtonContainer;
+
+  protected supportField: SupportField | null;
 
   protected externalStorage: PuzzleGameExternalStorage;
 
@@ -146,6 +149,7 @@ export class PlayField extends Component
     this.wordContainer = wordContainer;
     this.wordBlock = wordBlock;
     this.buttonContainer = buttonContainer;
+    this.supportField = null;
     this.externalStorage = externalStorage;
     this.localStorage = localStorage;
     this.eventList = eventList;
@@ -464,6 +468,8 @@ export class PlayField extends Component
     this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
     this.currentButtonBlock.changeStatusCheckButton(false);
     this.currentButtonBlock.toggleVisibleMotivationButton('check');
+
+    if(this.supportField) this.supportField.updateSupportField();
   }
 
   public async collectSentenceInRightOrder(): Promise<void>
@@ -1285,6 +1291,11 @@ export class PlayField extends Component
     playField.appendChildren([resultContainer, initialContainer, buttonContainer]);
 
     return {playField, renderInfo};
+  }
+
+  public setSupportField(newSupportField: SupportField): void
+  {
+    this.supportField = newSupportField;
   }
 
   destroy() 

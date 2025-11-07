@@ -1,0 +1,20 @@
+.translation-block
+{
+  border: none;
+
+  &__header
+  {
+    text-transform: capitalize;
+    text-shadow: 0 0 6rem var(--main-brown-light);
+  }
+
+  &__content
+  {
+    border: none;
+  }
+}
+
+.able-translation
+{
+  border: none;
+}
