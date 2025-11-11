@@ -1,6 +1,6 @@
 import * as style from './translation-style.module.scss';
 import { TranslationBlock, ITranslationBlockStyleList, ITranslationBlockOption } from '../../../../../modules/layout/gameField/supportField/blocks/translation/translation';
-import TranslationAble from './able';
+import TranslationText from './textTranslation';
 
 
 const translationBlockStyleList: ITranslationBlockStyleList =
@@ -15,7 +15,7 @@ const translationBlockOption: ITranslationBlockOption =
   className: [style['translation-block']],
   text: '',
   style: translationBlockStyleList,
-  ableTranslation: TranslationAble,
+  textTranslation: TranslationText,
 }
 
 export default new TranslationBlock(translationBlockOption);

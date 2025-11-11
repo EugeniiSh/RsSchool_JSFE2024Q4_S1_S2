@@ -14,7 +14,28 @@
   }
 }
 
-.able-translation
+.text-translation
 {
   border: none;
+}
+
+.text-block
+{
+  border: none;
+}
+
+.button-block
+{
+  width: 20rem;
+  height: 20rem;
+
+  &__able
+  {
+    background-color: green;
+  }
+
+  &__disable
+  {
+    background-color: red;
+  }
 }

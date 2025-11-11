@@ -1,5 +1,5 @@
 import { Component } from '../../../../common/component';
-import { AbleTranslation } from './able';
+import { TextTranslation } from './textTranslation';
 
 export interface ITranslationBlockStyleList
 {
@@ -13,7 +13,7 @@ export interface ITranslationBlockOption
   className: string[];
   text: string;
   style: ITranslationBlockStyleList;
-  ableTranslation: AbleTranslation;
+  textTranslation: TextTranslation;
 }
 
 export class TranslationBlock extends Component
@@ -24,7 +24,7 @@ export class TranslationBlock extends Component
 
   protected content: Component;
 
-  protected ableTranslation: AbleTranslation;
+  protected textTranslation: TextTranslation;
 
   constructor
   (
@@ -32,14 +32,14 @@ export class TranslationBlock extends Component
       className,
       text,
       style,
-      ableTranslation
+      textTranslation
     }: ITranslationBlockOption
   )
   {
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
-    this.ableTranslation = ableTranslation;
+    this.textTranslation = textTranslation.getTextTranslation();
 
     const header = new Component
     (
@@ -58,7 +58,7 @@ export class TranslationBlock extends Component
         text: ''
       },
 
-      this.ableTranslation.getAbleTranslation('')
+      this.textTranslation
     );
 
     this.append(header);
@@ -67,8 +67,7 @@ export class TranslationBlock extends Component
 
   public updateTranslation(newTranslationText: string): void
   {
-    this.content.destroyChildren();
-    this.content.append(this.ableTranslation.getAbleTranslation(newTranslationText));
+    this.textTranslation.updateTextTranslation(newTranslationText);
   }
 
   public getTranslationBlock(): TranslationBlock
@@ -79,7 +78,7 @@ export class TranslationBlock extends Component
         className: this.className,
         text: '',
         style: this.style,
-        ableTranslation: this.ableTranslation,
+        textTranslation: this.textTranslation.getTextTranslation(),
       }
     )
   }
