@@ -5,6 +5,9 @@ export interface ITextTranslationStyleList
 {
   textTranslation: string;
   textBlock: string;
+  textBlockVisible: string;
+  textBlockHidden: string;
+  textBlockStatusActive: string;
   buttonBlock: string;
   buttonBlockAble: string;
   buttonBlockDisable: string;
@@ -29,6 +32,10 @@ export class TextTranslation extends Component
 
   protected textBlock: Component;
 
+  protected visibleText: Component;
+
+  protected hiddenText: Component;
+
   protected buttonBlock: CommonButton;
 
   constructor
@@ -46,13 +53,33 @@ export class TextTranslation extends Component
     this.currentText = text;
     this.isVisible = true;
 
+    this.visibleText = new Component
+    (
+      {
+        tag: 'div',
+        className: [style.textBlockVisible],
+        text: this.currentText,
+      }
+    );
+
+    this.hiddenText = new Component
+    (
+      {
+        tag: 'div',
+        className: [style.textBlockHidden],
+        text: this.currentText,
+      }
+    );
+
     this.textBlock = new Component
     (
       {
         tag: 'div',
         className: [style.textBlock],
         text: this.currentText,
-      }
+      },
+      this.visibleText,
+      this.hiddenText
     );
 
     const buttonBlockOption: ICommonButtonOptions =
@@ -78,14 +105,16 @@ export class TextTranslation extends Component
   {
     if(this.isVisible)
     {
-      this.textBlock.setTextContent('*'.repeat(this.currentText.length));
+      this.hiddenText.toggleClass(this.style.textBlockStatusActive, true);
+      this.visibleText.toggleClass(this.style.textBlockStatusActive, false);
       this.buttonBlock.toggleClass(this.style.buttonBlockDisable, true);
       this.buttonBlock.toggleClass(this.style.buttonBlockAble, false);
       this.isVisible = false;
       return;
     }
 
-    this.textBlock.setTextContent(this.currentText);
+    this.hiddenText.toggleClass(this.style.textBlockStatusActive, false);
+    this.visibleText.toggleClass(this.style.textBlockStatusActive, true);
     this.buttonBlock.toggleClass(this.style.buttonBlockDisable, false);
     this.buttonBlock.toggleClass(this.style.buttonBlockAble, true);
     this.isVisible = true;
@@ -93,7 +122,8 @@ export class TextTranslation extends Component
 
   public updateTextTranslation(newTextTranslation: string): void
   {
-    this.textBlock.setTextContent(newTextTranslation);
+    this.visibleText.setTextContent(newTextTranslation);
+    this.hiddenText.setTextContent(newTextTranslation.replace(/[^\s]/g, '*'));
     this.currentText = newTextTranslation;
     this.isVisible = true;
     this.toggleVisible();

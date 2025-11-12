@@ -5,6 +5,9 @@ const textTranslationStyleList: ITextTranslationStyleList =
 {
   textTranslation: style['text-translation'],
   textBlock: style['text-block'],
+  textBlockVisible: style['text-block__visible'],
+  textBlockHidden: style['text-block__hidden'],
+  textBlockStatusActive: style['text-block__status_active'],
   buttonBlock: style['button-block'],
   buttonBlockAble: style['button-block__able'],
   buttonBlockDisable: style['button-block__disable'],
