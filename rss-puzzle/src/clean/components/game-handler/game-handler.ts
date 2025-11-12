@@ -1,5 +1,4 @@
 import * as style from './game-handler-style.module.scss';
-import { Component } from '../../modules/layout/common/component';
 import {
   GameHandler,
   TCustomEventListeners,
@@ -67,19 +66,11 @@ function loadHandler(this: GameHandler) {
 
 function startHandler(this: GameHandler) {
   const userData = this.localStorage.getValue();
-  const gameFieldInterface = this.gameFieldHandler.getGameFieldInterface(
+  const [supportField, playField] = this.gameFieldHandler.getGameFieldInterface(
     userData.game,
   );
 
-  this.book.turnPage(
-    style['turn-over'],
-    new Component({
-      tag: 'div',
-      className: [style['new-content']],
-      text: 'First Page',
-    }),
-    gameFieldInterface[0],
-  );
+  this.book.turnPage(style['turn-over'], supportField, playField);
 }
 
 const customEventListeners: TCustomEventListeners = {

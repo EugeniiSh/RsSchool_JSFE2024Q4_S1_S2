@@ -8,7 +8,7 @@ export interface IPuzzleWordsData
   wordTranslate: string
 }
 
-export interface IPuzzleLevelData
+export interface IPuzzleRoundData
 {
   id: string,
   name: string,
@@ -18,15 +18,15 @@ export interface IPuzzleLevelData
   year: string
 }
 
-export interface IPuzzleLevel
+export interface IPuzzleRound
 {
-  levelData: IPuzzleLevelData,
+  roundData: IPuzzleRoundData,
   words: IPuzzleWordsData[]
 }
 
-export interface IPuzzleGameData
+export interface IPuzzleLevelData
 {
-  rounds: IPuzzleLevel[],
+  rounds: IPuzzleRound[],
   roundsCount: number,
 }
 
@@ -38,15 +38,15 @@ export class PuzzleGameExternalStorage
 
   private userPath: string;
 
-  protected cache: Map<TNumberOfLevel, IPuzzleGameData>;
+  protected cache: Map<TNumberOfLevel, IPuzzleLevelData>;
 
   constructor(user: string)
   {
     this.userPath = `${this.initialPath}${user.toLowerCase()}/`;
-    this.cache = new Map<TNumberOfLevel, IPuzzleGameData>()
+    this.cache = new Map<TNumberOfLevel, IPuzzleLevelData>();
   }
 
-  public async getData(level: TNumberOfLevel): Promise<IPuzzleGameData>
+  public async getData(level: TNumberOfLevel): Promise<IPuzzleLevelData>
   {
     if(this.cache.has(level))
     {
@@ -56,15 +56,15 @@ export class PuzzleGameExternalStorage
     }
 
     const respons = fetch(`${this.userPath}rss-puzzle-data/main/data/wordCollectionLevel${level}.json`);
-    const gameData = await respons.then(res => res.json()) as IPuzzleGameData;
+    const gameData = await respons.then(res => res.json()) as IPuzzleLevelData;
     this.cache.set(level, gameData);
 
     return gameData
   }
 
-  public getImagePath(levelData: IPuzzleLevelData): string
+  public getImagePath(roundData: IPuzzleRoundData): string
   {
-    return `${this.userPath}rss-puzzle-data/main/images/${levelData.imageSrc}`;
+    return `${this.userPath}rss-puzzle-data/main/images/${roundData.imageSrc}`;
   }
 
   public getAudioPath(wordData: IPuzzleWordsData): string

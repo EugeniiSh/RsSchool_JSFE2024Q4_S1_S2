@@ -51,15 +51,15 @@
 
   height: var(--size-height-word-block);
 
-  padding: 0 0.3em 0 0.4em;
+  padding: 0 0.05em 0 0.4em;
 
   background-color: inherit;
   box-shadow: inset 0rem 0rem 1rem 1rem var(--pupil-eye);
 
   clip-path: polygon(
     0% 0%,
-    120% 0%,
-    120% 100%,
+    140% 0%,
+    140% 100%,
     0% 100%,
     calc(var(--size-circle-piece-half) * 0)
       calc(
