@@ -1,0 +1,19 @@
+.switch-translation
+{
+  border: none;
+}
+
+.button
+{
+  border: none;
+
+  &-able
+  {
+    background-color: green;
+  }
+
+  &-disable
+  {
+    background-color: red;
+  }
+}
