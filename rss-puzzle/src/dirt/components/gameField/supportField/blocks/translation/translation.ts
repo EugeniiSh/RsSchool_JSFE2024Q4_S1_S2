@@ -9,6 +9,8 @@ const translationBlockStyleList: ITranslationBlockStyleList =
   header: style['translation-block__header'],
   content: style['translation-block__content'],
   disableBlock: style['disable-block'],
+  wrapper: style.wrapper,
+  disableContent: style['disable-content'],
 }
 
 const translationBlockOption: ITranslationBlockOption =

@@ -44,7 +44,7 @@ export class SwitchTranslation extends Component
     (
       {
         className: [this.style.button, this.style.buttonAble],
-        text: 'Aa',
+        text: 'aa',
         items: [],
         clickListener: () => {this.handlerClickTextButton()}
       }

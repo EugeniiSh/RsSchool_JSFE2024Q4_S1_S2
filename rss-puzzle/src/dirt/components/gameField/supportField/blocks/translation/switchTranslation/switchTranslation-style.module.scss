@@ -1,19 +1,60 @@
 .switch-translation
 {
-  border: none;
+  display: flex;
+  justify-content: center;
+
+  margin-top: 3%;
 }
 
 .button
 {
+  height: 1.6em;
+  width: 1.6em;
+
+  background-color: transparent;
   border: none;
+  border-radius: 15%;
+  box-shadow: 0rem 2rem 2rem 2rem var(--main-brown-middle);
+
+  font-size: 1em;
+  font-family: "Lora", serif;
+  font-optical-sizing: auto;
+
+  text-transform: capitalize;
+  text-shadow: -0.5rem 1rem 1rem var(--main-brown-middle);
+
+  transition-property: box-shadow, transform;
+  transition-duration: 0.3s, 0.1s;
+
+  cursor: pointer;
 
   &-able
   {
-    background-color: green;
+    border: none;
+
+    @media (hover: hover)
+    {
+      &:hover
+      {
+        box-shadow: 0rem 2rem 3rem 1rem var(--iris-eye);
+      }
+    }
   }
 
   &-disable
   {
-    background-color: red;
+    transform: translate(-1%, 5%);
+    box-shadow: 0rem 0.5rem 2rem 1rem var(--main-brown-middle);
+    opacity: 0.5;
+
+    @media (hover: hover)
+    {
+      &:hover
+      {
+        box-shadow: 0rem 0.5rem 3rem 1rem var(--iris-eye);
+      }
+    }
   }
+
+  
 }

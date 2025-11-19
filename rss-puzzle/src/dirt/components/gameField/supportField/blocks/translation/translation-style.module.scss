@@ -24,6 +24,26 @@
   }
 }
 
+.wrapper
+{
+  position: relative;
+  width: 100%;
+}
+
+.disable-content
+{
+  position: absolute;
+  inset: 0;
+
+  font-style: normal;
+  text-align: center;
+
+  opacity: 0.5;
+
+  transition-property: opacity, visibility;
+  transition-duration: 0.3s;
+}
+
 .disable-block
 {
   opacity: 0;

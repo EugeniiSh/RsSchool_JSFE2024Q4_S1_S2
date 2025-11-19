@@ -8,6 +8,8 @@ export interface ITranslationBlockStyleList
   header: string;
   content: string;
   disableBlock: string;
+  wrapper: string;
+  disableContent: string;
 }
 
 export interface ITranslationBlockOption
@@ -26,6 +28,8 @@ export class TranslationBlock extends Component
   protected style: ITranslationBlockStyleList;
 
   protected content: Component;
+
+  protected diableTextTranslation: Component;
 
   protected textTranslation: TextTranslation;
 
@@ -72,6 +76,26 @@ export class TranslationBlock extends Component
       this.switchTranslation
     );
 
+    this.diableTextTranslation = new Component
+    (
+      {
+        tag: 'div',
+        className: [this.style.disableContent, this.style.disableBlock],
+        text: 'text hint disable'
+      }
+    );
+
+    const wrapperTextTranslation = new Component
+    (
+      {
+        tag: 'div',
+        className: [this.style.wrapper],
+        text: ''
+      },
+      this.textTranslation,
+      this.diableTextTranslation
+    );
+
     this.content = new Component
     (
       {
@@ -79,8 +103,7 @@ export class TranslationBlock extends Component
         className: [this.style.content],
         text: ''
       },
-
-      this.textTranslation
+      wrapperTextTranslation
     );
 
     this.append(header);
@@ -92,10 +115,12 @@ export class TranslationBlock extends Component
     if(this.isTextVisible)
     {
       this.textTranslation.toggleClass(this.style.disableBlock, false);
+      this.diableTextTranslation.toggleClass(this.style.disableBlock, true);
       return;
     }
 
     this.textTranslation.toggleClass(this.style.disableBlock, true);
+    this.diableTextTranslation.toggleClass(this.style.disableBlock, false);
   }
 
 
@@ -104,18 +129,21 @@ export class TranslationBlock extends Component
     if(forceVisible)
     {
       this.textTranslation.toggleClass(this.style.disableBlock, false);
+      this.diableTextTranslation.toggleClass(this.style.disableBlock, true);
       return;
     }
 
     if(this.isTextVisible)
     {
       this.textTranslation.toggleClass(this.style.disableBlock, true);
+      this.diableTextTranslation.toggleClass(this.style.disableBlock, false);
       this.switchTranslation.toggleStatusTextButton(false);
       this.isTextVisible = false;
       return;
     }
 
     this.textTranslation.toggleClass(this.style.disableBlock, false);
+    this.diableTextTranslation.toggleClass(this.style.disableBlock, true);
     this.switchTranslation.toggleStatusTextButton(true);
     this.isTextVisible = true;
   }
