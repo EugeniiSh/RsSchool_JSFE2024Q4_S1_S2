@@ -32,8 +32,6 @@ export class SupportField extends Component
 
   protected localStorage: PuzzleGameStorage;
 
-  protected currentTranslationBlock: TranslationBlock;
-
   protected  playField: PlayField | null;
 
   constructor
@@ -51,13 +49,17 @@ export class SupportField extends Component
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
-    this.translationBlock = translationBlock;
+    this.translationBlock = translationBlock.getTranslationBlock();
     this.externalStorage = externalStorage;
     this.localStorage = localStorage;
     this.playField = null;
 
-    this.currentTranslationBlock = this.translationBlock.getTranslationBlock();
-    this.append(this.currentTranslationBlock);
+    this.append(this.translationBlock);
+  }
+
+  public showHints(): void
+  {
+    this.translationBlock.toggleTextTranslationVisibility(true);
   }
 
   public setPlayField(newPlayField: PlayField): void
@@ -76,7 +78,7 @@ export class SupportField extends Component
     .words[playerProgress.last.sentense]
     .textExampleTranslate;
 
-    this.currentTranslationBlock.updateTranslation(newTranslationText);
+    this.translationBlock.updateTranslation(newTranslationText);
   }
 
   public getSupportField(): SupportField
@@ -87,10 +89,11 @@ export class SupportField extends Component
         className: this.className,
         text: '',
         style: this.style,
-        translationBlock: this.translationBlock,
+        translationBlock: this.translationBlock.getTranslationBlock(),
         externalStorage: this.externalStorage,
         localStorage: this.localStorage,
       }
     )
   }
 }
+

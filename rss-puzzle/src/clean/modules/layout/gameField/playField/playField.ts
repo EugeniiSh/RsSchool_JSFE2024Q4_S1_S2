@@ -408,6 +408,7 @@ export class PlayField extends Component {
       if (errors.length === 0) {
         this.currentButtonBlock.changeStatusNextButton(errors.length === 0);
         this.currentButtonBlock.toggleVisibleMotivationButton('next');
+        if (this.supportField) this.supportField.showHints();
       }
 
       return;
