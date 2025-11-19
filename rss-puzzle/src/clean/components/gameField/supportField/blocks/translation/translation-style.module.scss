@@ -21,77 +21,25 @@
   }
 }
 
-.text-translation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2%;
+.wrapper {
+  position: relative;
+  width: 100%;
 }
 
-.text-block {
-  position: relative;
-
-  width: 60%;
+.disable-content {
+  position: absolute;
+  inset: 0;
 
   font-style: normal;
   text-align: center;
 
-  &__visible {
-    text-shadow: 0 0 6rem var(--main-brown-light);
-
-    opacity: 0;
-    visibility: hidden;
-
-    transition: 0.3s;
-  }
-
-  &__hidden {
-    position: absolute;
-
-    inset: 0;
-
-    opacity: 0;
-    visibility: hidden;
-
-    transition: 0.3s;
-  }
-
-  &__status_active {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-.button-block {
-  --size-width-height: calc(var(--cover-width) * 0.07);
-  width: var(--size-width-height);
-  height: var(--size-width-height);
-
-  background-color: transparent;
-  border: none;
-
   opacity: 0.5;
 
-  transition-property: opacity;
-  transition-duration: 0.2s;
+  transition-property: opacity, visibility;
+  transition-duration: 0.3s;
+}
 
-  cursor: pointer;
-
-  &__able {
-    background-image: url(../../../../../../assets/images/eye-open.png);
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-
-  &__disable {
-    background-image: url(../../../../../../assets/images/eye-closed.png);
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-
-  @media (hover: hover) {
-    &:hover {
-      opacity: 1;
-    }
-  }
+.disable-block {
+  opacity: 0;
+  visibility: hidden;
 }

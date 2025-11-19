@@ -4,12 +4,16 @@ import {
   ITranslationBlockStyleList,
   ITranslationBlockOption,
 } from '../../../../../modules/layout/gameField/supportField/blocks/translation/translation';
-import TranslationText from './textTranslation';
+import TranslationText from './textTranslation/textTranslation';
+import TranslationSwitch from './switchTranslation/switchTranslation';
 
 const translationBlockStyleList: ITranslationBlockStyleList = {
   translationBlock: style['translation-block'],
   header: style['translation-block__header'],
   content: style['translation-block__content'],
+  disableBlock: style['disable-block'],
+  wrapper: style.wrapper,
+  disableContent: style['disable-content'],
 };
 
 const translationBlockOption: ITranslationBlockOption = {
@@ -17,6 +21,7 @@ const translationBlockOption: ITranslationBlockOption = {
   text: '',
   style: translationBlockStyleList,
   textTranslation: TranslationText,
+  switchTranslation: TranslationSwitch,
 };
 
 export default new TranslationBlock(translationBlockOption);

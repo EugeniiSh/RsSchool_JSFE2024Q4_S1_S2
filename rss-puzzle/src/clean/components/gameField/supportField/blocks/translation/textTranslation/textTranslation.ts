@@ -1,9 +1,9 @@
-import * as style from './translation-style.module.scss';
+import * as style from './textTranslation-style.module.scss';
 import {
   TextTranslation,
   ITextTranslationOption,
   ITextTranslationStyleList,
-} from '../../../../../modules/layout/gameField/supportField/blocks/translation/textTranslation';
+} from '../../../../../../modules/layout/gameField/supportField/blocks/translation/textTranslation';
 
 const textTranslationStyleList: ITextTranslationStyleList = {
   textTranslation: style['text-translation'],
