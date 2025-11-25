@@ -1,0 +1,103 @@
+.audio-player
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: flex;
+
+  width: 300px;
+  height: 200px;
+
+  background-color: grey;
+  border: none;
+}
+
+
+.volume-container{
+  border: none;
+}
+.volume-button{
+  width: 30px;
+  height: 30px;
+  background-color: green;
+  border: none;
+}
+.volume-line{
+  display: flex;
+  align-items: end;
+
+  width: 25px;
+  height: 90px;
+  background-color: rgb(53, 184, 53);
+  border: none;
+}
+.volume-line-persent{
+  width: 100%;
+  background-color: rgb(65, 226, 65);
+  border: none;
+  pointer-events: none;
+}
+
+
+.progress-container{
+  border: none;
+}
+.progress-line{
+  width: 90px;
+  height: 25px;
+  background-color: rgb(53, 116, 184);
+  border: none;
+}
+.progress-persent{
+  height: 100%;
+  background-color: rgb(122, 172, 226);
+  border: none;
+  pointer-events: none;
+}
+.total-time{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(122, 200, 226);
+  border: none;
+}
+.current-time{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(122, 200, 226);
+  border: none;
+}
+
+
+.buttons-container{
+  border: none;
+}
+.btn{
+  border: none;
+}
+.button-prev{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(255, 238, 1);
+  border: none;
+}
+.button-play{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(255, 1, 1);
+  border: none;
+}
+.button-next{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(255, 166, 1);
+  border: none;
+}
+.playing{
+  background-color: rgb(243, 207, 207);
+  border: none;
+}
+.active-mute-volume{
+  background-color: rgb(161, 244, 161);
+  border: none;
+}
