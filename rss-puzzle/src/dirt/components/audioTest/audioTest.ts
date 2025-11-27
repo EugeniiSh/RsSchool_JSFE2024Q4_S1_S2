@@ -24,7 +24,6 @@ const audioPlayerStyleList: IAudioPlayerStyleList =
 
 const audioPlayerOption: IAudioPlayerOption = 
 {
-  // tag: 'div',
   className: [style['audio-player']],
   text: '',
   style: audioPlayerStyleList,
