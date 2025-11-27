@@ -72,13 +72,14 @@ export class SupportField extends Component
     const playerProgress = this.localStorage.getValue().game;
     const contentData = await this.externalStorage.getData(playerProgress.last.level);
 
-    const newTranslationText = 
-    contentData
+    const lastSentence = contentData
     .rounds[playerProgress.last.round]
-    .words[playerProgress.last.sentense]
-    .textExampleTranslate;
+    .words[playerProgress.last.sentense];
 
-    this.translationBlock.updateTranslation(newTranslationText);
+    const newTranslationText = lastSentence.textExampleTranslate;
+    const newAudioTranslation = this.externalStorage.getAudioPath(lastSentence);
+
+    this.translationBlock.updateTranslation(newTranslationText, newAudioTranslation);
   }
 
   public getSupportField(): SupportField

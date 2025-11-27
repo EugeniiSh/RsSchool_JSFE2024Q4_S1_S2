@@ -1,4 +1,5 @@
 import { Component } from '../../../../common/component';
+import { AudioTranslation } from './audioTranslation';
 import { TextTranslation } from './textTranslation';
 import { SwitchTranslation } from './switchTranslation';
 
@@ -15,6 +16,7 @@ export interface ITranslationBlockOption {
   className: string[];
   text: string;
   style: ITranslationBlockStyleList;
+  audioTranslation: AudioTranslation;
   textTranslation: TextTranslation;
   switchTranslation: SwitchTranslation;
 }
@@ -28,6 +30,8 @@ export class TranslationBlock extends Component {
 
   protected diableTextTranslation: Component;
 
+  protected audioTranslation: AudioTranslation;
+
   protected textTranslation: TextTranslation;
 
   protected switchTranslation: SwitchTranslation;
@@ -38,12 +42,14 @@ export class TranslationBlock extends Component {
     className,
     text,
     style,
+    audioTranslation,
     textTranslation,
     switchTranslation,
   }: ITranslationBlockOption) {
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
+    this.audioTranslation = audioTranslation.getAudioTranslation();
     this.textTranslation = textTranslation.getTextTranslation();
     this.switchTranslation = switchTranslation.getSwitchTranslation();
     this.switchTranslation.setHandlerClickTextButton(
@@ -83,12 +89,22 @@ export class TranslationBlock extends Component {
       this.diableTextTranslation,
     );
 
+    const wrapperAudioTranslation = new Component(
+      {
+        tag: 'div',
+        className: [this.style.wrapper],
+        text: '',
+      },
+      this.audioTranslation,
+    );
+
     this.content = new Component(
       {
         tag: 'div',
         className: [this.style.content],
         text: '',
       },
+      wrapperAudioTranslation,
       wrapperTextTranslation,
     );
 
@@ -128,9 +144,14 @@ export class TranslationBlock extends Component {
     this.isTextVisible = true;
   };
 
-  public updateTranslation(newTranslationText: string): void {
+  public updateTranslation(
+    newTranslationText: string,
+    newAudioTranslation: string,
+  ): void {
     this.textTranslation.updateTextTranslation(newTranslationText);
     this.setCurrentVisibilityTextTranslation();
+
+    this.audioTranslation.updateAudioTranslation(newAudioTranslation);
   }
 
   public getTranslationBlock(): TranslationBlock {
@@ -138,6 +159,7 @@ export class TranslationBlock extends Component {
       className: this.className,
       text: '',
       style: this.style,
+      audioTranslation: this.audioTranslation.getAudioTranslation(),
       textTranslation: this.textTranslation.getTextTranslation(),
       switchTranslation: this.switchTranslation.getSwitchTranslation(),
     });

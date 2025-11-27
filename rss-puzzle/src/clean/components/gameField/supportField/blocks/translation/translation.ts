@@ -4,6 +4,7 @@ import {
   ITranslationBlockStyleList,
   ITranslationBlockOption,
 } from '../../../../../modules/layout/gameField/supportField/blocks/translation/translation';
+import TranslationAudio from './audioTranslation/audioTranslation';
 import TranslationText from './textTranslation/textTranslation';
 import TranslationSwitch from './switchTranslation/switchTranslation';
 
@@ -20,6 +21,7 @@ const translationBlockOption: ITranslationBlockOption = {
   className: [style['translation-block']],
   text: '',
   style: translationBlockStyleList,
+  audioTranslation: TranslationAudio,
   textTranslation: TranslationText,
   switchTranslation: TranslationSwitch,
 };
