@@ -1,5 +1,6 @@
-import * as style from './audioTest-style.module.scss';
-import { AudioPlayer, IAudioPlayerOption, IAudioPlayerStyleList } from '../../modules/audio/audioPlayer';
+import * as style from './audioTranslation-style.module.scss';
+import { AudioPlayer, IAudioPlayerOption, IAudioPlayerStyleList } from '../../../../../../modules/audio/audioPlayer';
+import { AudioTranslation, IAudioTranslationOption, IAudioTranslationStyleList } from '../../../../../../modules/layout/gameField/supportField/blocks/translation/audioTranslation';
 
 const audioPlayerStyleList: IAudioPlayerStyleList =
 {
@@ -22,9 +23,8 @@ const audioPlayerStyleList: IAudioPlayerStyleList =
   activeMuteVolume: style['active-mute-volume'],
 }
 
-const audioPlayerOption: IAudioPlayerOption = 
+const audioPlayerOption: IAudioPlayerOption =
 {
-  // tag: 'div',
   className: [style['audio-player']],
   text: '',
   style: audioPlayerStyleList,
@@ -33,9 +33,24 @@ const audioPlayerOption: IAudioPlayerOption =
   buttons: true,
   volumeVector: 'height',
   progressVector:'width',
-  songs: ['https://raw.githubusercontent.com/eugeniish/rss-puzzle-data/main/files/01_0001_example.mp3', 'https://raw.githubusercontent.com/eugeniish/rss-puzzle-data/main/files/01_0002_example.mp3'], 
-  autoPlay: true,
+  songs: [], 
+  autoPlay: false,
   loop: false,
 }
 
-export default new AudioPlayer(audioPlayerOption);
+const translationAudioPlayer = new AudioPlayer(audioPlayerOption);
+
+const audioTranslationStyleList: IAudioTranslationStyleList =
+{
+  audioTranslation: style['audio-translation'],
+} 
+
+const audioTranslationOption: IAudioTranslationOption =
+{
+  className: [style['audio-translation']],
+  text: '',
+  style:audioTranslationStyleList,
+  audioPlayer: translationAudioPlayer,
+}
+
+export default new AudioTranslation(audioTranslationOption);

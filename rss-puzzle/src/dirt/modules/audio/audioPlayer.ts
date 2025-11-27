@@ -42,7 +42,6 @@ export interface IAudioPlayerComponents
 
 export interface IAudioPlayerOption
 {
-  tag: string;
   className: string[];
   text: string;
   style: IAudioPlayerStyleList; // Стили для всех элементов плеера
@@ -58,6 +57,8 @@ export interface IAudioPlayerOption
 
 export class AudioPlayer extends Component
 {
+  protected className: string[];
+
   protected style: IAudioPlayerStyleList;
 
   protected volume: boolean;
@@ -72,7 +73,7 @@ export class AudioPlayer extends Component
 
   protected songIndex: number;
 
-  protected songs: string[]; 
+  protected songs: string[];
 
   protected autoPlay: boolean; 
 
@@ -85,7 +86,6 @@ export class AudioPlayer extends Component
   constructor
   (
     {
-      tag,
       className,
       text,
       style,
@@ -100,7 +100,8 @@ export class AudioPlayer extends Component
     }: IAudioPlayerOption
   )
   {
-    super({tag, className, text});
+    super({tag: 'div', className, text});
+    this.className = className;
     this.style = style;
     this.volume = volume;
     this.progress = progress;
@@ -184,6 +185,12 @@ export class AudioPlayer extends Component
   {
     this.toggleClass(this.style.playing, true);
     this.dom.audioNode.play();
+  }
+
+  public stopSong(): void
+  {
+    this.toggleClass(this.style.playing, false);
+    this.dom.audioNode.load();
   }
 
   public pauseSong(): void
@@ -387,6 +394,32 @@ export class AudioPlayer extends Component
       // Зацикливание. Повторение трека после его окончания
       this.dom.audioTag.addListener('ended', () => this.playSong());
     }
-    
+
+    if(!this.autoPlay && !this.loop)
+    {
+      // Перемотка на начало трека после его завершения
+      this.dom.audioTag.addListener('ended', () => this.stopSong());
+    }
+  }
+
+  // Создание аудио плеера с теми же настройками и стилями
+  public getAudioPlayer(): AudioPlayer
+  {
+    return new AudioPlayer
+    (
+      {
+        className: this.className,
+        text: '',
+        style: this.style,
+        volume: this.volume, 
+        progress: this.progress, 
+        buttons: this.buttons, 
+        volumeVector: this.volumeVector, 
+        progressVector: this.progressVector,
+        songs: this.songs, 
+        autoPlay: this.autoPlay, 
+        loop: this.loop,
+      }
+    )
   }
 }
