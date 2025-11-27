@@ -64,12 +64,18 @@ export class SupportField extends Component {
       playerProgress.last.level,
     );
 
-    const newTranslationText =
+    const lastSentence =
       contentData.rounds[playerProgress.last.round].words[
         playerProgress.last.sentense
-      ].textExampleTranslate;
+      ];
 
-    this.translationBlock.updateTranslation(newTranslationText);
+    const newTranslationText = lastSentence.textExampleTranslate;
+    const newAudioTranslation = this.externalStorage.getAudioPath(lastSentence);
+
+    this.translationBlock.updateTranslation(
+      newTranslationText,
+      newAudioTranslation,
+    );
   }
 
   public getSupportField(): SupportField {
