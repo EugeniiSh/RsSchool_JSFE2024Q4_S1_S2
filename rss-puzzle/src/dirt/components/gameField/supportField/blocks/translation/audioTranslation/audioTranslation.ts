@@ -31,7 +31,7 @@ const audioPlayerOption: IAudioPlayerOption =
   volume: true,
   progress: true,
   buttons: true,
-  volumeVector: 'height',
+  volumeVector: 'width',
   progressVector:'width',
   songs: [], 
   autoPlay: false,
