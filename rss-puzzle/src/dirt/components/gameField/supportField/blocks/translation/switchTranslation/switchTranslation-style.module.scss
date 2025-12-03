@@ -2,6 +2,7 @@
 {
   display: flex;
   justify-content: center;
+  gap: 15%;
 
   margin-top: 3%;
 }
@@ -16,6 +17,8 @@
   border-radius: 15%;
   box-shadow: 0rem 2rem 2rem 2rem var(--main-brown-middle);
 
+  font-size: 1em;
+
   transition-property: box-shadow, transform;
   transition-duration: 0.3s, 0.1s;
 
@@ -23,7 +26,6 @@
 
   &-text
   {
-    font-size: 1em;
     font-family: "Lora", serif;
     font-optical-sizing: auto;
 
@@ -33,8 +35,12 @@
 
   &-audio
   {
-    background-color: red;
-    border: none;
+    padding: 1%;
+
+    background-image: url(../../../../../../../assets/images/audio-1.png);
+    background-repeat: no-repeat;
+    background-size: 80%;
+    background-position: center;
   }
 
   &-able
