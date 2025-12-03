@@ -7,6 +7,8 @@ const switchTranslationStyleList: ISwitchTranslationStyleList =
   button: style.button,
   buttonAble: style['button-able'],
   buttonDisable: style['button-disable'],
+  buttonText: style['button-text'],
+  buttonAudio: style['button-audio'],
 }
 
 const switchTranslationOption: ISwitchTranslationOption =

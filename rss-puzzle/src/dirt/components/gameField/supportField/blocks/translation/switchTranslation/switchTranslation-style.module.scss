@@ -2,6 +2,7 @@
 {
   display: flex;
   justify-content: center;
+  gap: 15%;
 
   margin-top: 3%;
 }
@@ -17,16 +18,30 @@
   box-shadow: 0rem 2rem 2rem 2rem var(--main-brown-middle);
 
   font-size: 1em;
-  font-family: "Lora", serif;
-  font-optical-sizing: auto;
-
-  text-transform: capitalize;
-  text-shadow: -0.5rem 1rem 1rem var(--main-brown-middle);
 
   transition-property: box-shadow, transform;
   transition-duration: 0.3s, 0.1s;
 
   cursor: pointer;
+
+  &-text
+  {
+    font-family: "Lora", serif;
+    font-optical-sizing: auto;
+
+    text-transform: capitalize;
+    text-shadow: -0.5rem 1rem 1rem var(--main-brown-middle);
+  }
+
+  &-audio
+  {
+    padding: 1%;
+
+    background-image: url(../../../../../../../assets/images/audio-1.png);
+    background-repeat: no-repeat;
+    background-size: 80%;
+    background-position: center;
+  }
 
   &-able
   {
