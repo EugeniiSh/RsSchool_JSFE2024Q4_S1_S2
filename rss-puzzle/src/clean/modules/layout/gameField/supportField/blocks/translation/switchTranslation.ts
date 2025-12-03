@@ -6,6 +6,8 @@ export interface ISwitchTranslationStyleList {
   button: string;
   buttonAble: string;
   buttonDisable: string;
+  buttonText: string;
+  buttonAudio: string;
 }
 
 export interface ISwitchTranslationOption {
@@ -21,16 +23,25 @@ export class SwitchTranslation extends Component {
 
   protected textButton: CommonButton;
 
+  protected audioButton: CommonButton;
+
   protected handlerClickTextButton: () => void;
+
+  protected handlerClickAudioButton: () => void;
 
   constructor({ className, text, style }: ISwitchTranslationOption) {
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
     this.handlerClickTextButton = () => {};
+    this.handlerClickAudioButton = () => {};
 
     this.textButton = new CommonButton({
-      className: [this.style.button, this.style.buttonAble],
+      className: [
+        this.style.button,
+        this.style.buttonAble,
+        this.style.buttonText,
+      ],
       text: 'aa',
       items: [],
       clickListener: () => {
@@ -38,11 +49,29 @@ export class SwitchTranslation extends Component {
       },
     });
 
+    this.audioButton = new CommonButton({
+      className: [
+        this.style.button,
+        this.style.buttonAble,
+        this.style.buttonAudio,
+      ],
+      text: '',
+      items: [],
+      clickListener: () => {
+        this.handlerClickAudioButton();
+      },
+    });
+
     this.append(this.textButton);
+    this.append(this.audioButton);
   }
 
   public setHandlerClickTextButton(func: () => void): void {
     this.handlerClickTextButton = func;
+  }
+
+  public setHandlerClickAudioButton(func: () => void): void {
+    this.handlerClickAudioButton = func;
   }
 
   public toggleStatusTextButton(status: boolean): void {
@@ -54,6 +83,17 @@ export class SwitchTranslation extends Component {
 
     this.textButton.toggleClass(this.style.buttonAble, true);
     this.textButton.toggleClass(this.style.buttonDisable, false);
+  }
+
+  public toggleStatusAudioButton(status: boolean): void {
+    if (!status) {
+      this.audioButton.toggleClass(this.style.buttonAble, false);
+      this.audioButton.toggleClass(this.style.buttonDisable, true);
+      return;
+    }
+
+    this.audioButton.toggleClass(this.style.buttonAble, true);
+    this.audioButton.toggleClass(this.style.buttonDisable, false);
   }
 
   public getSwitchTranslation(): SwitchTranslation {

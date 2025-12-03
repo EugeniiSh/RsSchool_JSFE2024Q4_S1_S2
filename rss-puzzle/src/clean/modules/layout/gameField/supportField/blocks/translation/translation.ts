@@ -28,15 +28,19 @@ export class TranslationBlock extends Component {
 
   protected content: Component;
 
+  protected textTranslation: TextTranslation;
+
   protected diableTextTranslation: Component;
 
   protected audioTranslation: AudioTranslation;
 
-  protected textTranslation: TextTranslation;
+  protected diableAudioTranslation: Component;
 
   protected switchTranslation: SwitchTranslation;
 
   protected isTextVisible: boolean;
+
+  protected isAudioVisible: boolean;
 
   constructor({
     className,
@@ -55,7 +59,11 @@ export class TranslationBlock extends Component {
     this.switchTranslation.setHandlerClickTextButton(
       this.toggleTextTranslationVisibility,
     );
+    this.switchTranslation.setHandlerClickAudioButton(
+      this.toggleAudioTranslationVisibility,
+    );
     this.isTextVisible = true;
+    this.isAudioVisible = true;
 
     const header = new Component(
       {
@@ -89,6 +97,12 @@ export class TranslationBlock extends Component {
       this.diableTextTranslation,
     );
 
+    this.diableAudioTranslation = new Component({
+      tag: 'div',
+      className: [this.style.disableContent, this.style.disableBlock],
+      text: 'audio hint disable',
+    });
+
     const wrapperAudioTranslation = new Component(
       {
         tag: 'div',
@@ -96,6 +110,7 @@ export class TranslationBlock extends Component {
         text: '',
       },
       this.audioTranslation,
+      this.diableAudioTranslation,
     );
 
     this.content = new Component(
@@ -123,6 +138,17 @@ export class TranslationBlock extends Component {
     this.diableTextTranslation.toggleClass(this.style.disableBlock, false);
   }
 
+  protected setCurrentVisibilityAudioTranslation() {
+    if (this.isAudioVisible) {
+      this.audioTranslation.toggleClass(this.style.disableBlock, false);
+      this.diableAudioTranslation.toggleClass(this.style.disableBlock, true);
+      return;
+    }
+
+    this.audioTranslation.toggleClass(this.style.disableBlock, true);
+    this.diableAudioTranslation.toggleClass(this.style.disableBlock, false);
+  }
+
   public toggleTextTranslationVisibility = (forceVisible: boolean = false) => {
     if (forceVisible) {
       this.textTranslation.toggleClass(this.style.disableBlock, false);
@@ -144,6 +170,27 @@ export class TranslationBlock extends Component {
     this.isTextVisible = true;
   };
 
+  public toggleAudioTranslationVisibility = (forceVisible: boolean = false) => {
+    if (forceVisible) {
+      this.audioTranslation.toggleClass(this.style.disableBlock, false);
+      this.diableAudioTranslation.toggleClass(this.style.disableBlock, true);
+      return;
+    }
+
+    if (this.isAudioVisible) {
+      this.audioTranslation.toggleClass(this.style.disableBlock, true);
+      this.diableAudioTranslation.toggleClass(this.style.disableBlock, false);
+      this.switchTranslation.toggleStatusAudioButton(false);
+      this.isAudioVisible = false;
+      return;
+    }
+
+    this.audioTranslation.toggleClass(this.style.disableBlock, false);
+    this.diableAudioTranslation.toggleClass(this.style.disableBlock, true);
+    this.switchTranslation.toggleStatusAudioButton(true);
+    this.isAudioVisible = true;
+  };
+
   public updateTranslation(
     newTranslationText: string,
     newAudioTranslation: string,
@@ -152,6 +199,7 @@ export class TranslationBlock extends Component {
     this.setCurrentVisibilityTextTranslation();
 
     this.audioTranslation.updateAudioTranslation(newAudioTranslation);
+    this.setCurrentVisibilityAudioTranslation();
   }
 
   public getTranslationBlock(): TranslationBlock {

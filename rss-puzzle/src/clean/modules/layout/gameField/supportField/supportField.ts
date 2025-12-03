@@ -52,6 +52,7 @@ export class SupportField extends Component {
 
   public showHints(): void {
     this.translationBlock.toggleTextTranslationVisibility(true);
+    this.translationBlock.toggleAudioTranslationVisibility(true);
   }
 
   public setPlayField(newPlayField: PlayField): void {
