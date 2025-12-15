@@ -3,6 +3,10 @@
   width: var(--size-width-result);
   height: var(--size-height-result);
 
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 0rem 0rem;
+
   border-image-source: url(../../../../../assets/images/border-2.png);
   border-image-slice: 30%;
   border-image-width: 10%;
@@ -12,6 +16,10 @@
 
 .initial-container
 {
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 0rem 0rem;
+
   background-color: var(--main-brown-light);
 }
 
@@ -26,6 +34,10 @@
 
   width: var(--size-width-result);
   height: calc(var(--size-height-result) * 0.1);
+
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 0rem 0rem;
 
   background-color: var(--main-brown-light);
 
@@ -48,6 +60,11 @@
 .word-container
 {
   flex: 1;
+
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 0rem 0rem;
+
   background-color: inherit;
   cursor: pointer;
 
@@ -66,6 +83,10 @@
   height: var(--size-height-word-block);
 
   padding: 0 0.05em 0 0.4em;
+
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: var(--size-width-result) var(--size-height-result);
 
   background-color: inherit;
   box-shadow: inset 0rem 0rem 1rem 1rem var(--pupil-eye);
@@ -97,7 +118,7 @@
   line-height: 1.75;
   letter-spacing: -0.05em;
   text-align: center;
-  text-shadow: 0rem 0rem 6rem var(--pupil-eye);
+  text-shadow: -0.4rem -0.4rem 0rem var(--milk);
 
   touch-action: none;
   cursor: pointer;
@@ -138,8 +159,7 @@
 
   &__hl_right
   {
-    box-shadow: inset -1rem 0rem 0rem 0.3rem var(--main-black-opacity05), 
-    // box-shadow:  
+    box-shadow: inset -1rem 0rem 0rem 0.3rem var(--main-black-opacity05),  
     inset -6rem 0rem 6rem 1rem var(--main-blue), 
     inset 0rem 0rem 1rem 1rem var(--main-blue),
     0rem -6rem 3rem -2rem var(--main-blue),
@@ -183,6 +203,11 @@
 
   border-radius: 50%;
   box-shadow: inset -1rem 0rem 1rem 0rem var(--pupil-eye);
+
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: var(--size-width-result) var(--size-height-result);
+
   background-color: inherit;
 
   clip-path: rect(0 100% 100% 34%);

@@ -243,6 +243,34 @@ export class PlayField extends Component
     })
   }
 
+  static calculateAndSetBgImgPosition(sentence: WordContainer[], sentenceIndex: number): void
+  {
+    let accWidthRatio = 0;
+
+    sentence.forEach((wordContainer) =>
+    {
+      const wordBlock = wordContainer.getChildren()[0] as WordBlock;
+      const wordBlockNode = wordBlock.getNode();
+      const piece = wordBlock.getPieceRight();
+      const pieceNode = piece.getNode();
+      const wordBlockWidthRatio = parseFloat(wordBlockNode.style.getPropertyValue('--size-width-ratio'));
+
+      const wordBlockWidth = wordBlockNode.offsetWidth;
+      const wordBlockHeight = wordBlockNode.offsetHeight;
+      const pieceWidth = pieceNode.offsetWidth;
+      const pieceHeight = pieceNode.offsetHeight;
+
+      const heightRatio = 0.1 * sentenceIndex;
+      const pieceBgPosXRatio = wordBlockWidthRatio * ((wordBlockWidth - pieceWidth / 2) / wordBlockWidth) + accWidthRatio;
+      const pieceBgPosYRatio = 0.1 * (((wordBlockHeight / 2) - (pieceHeight / 2)) / wordBlockHeight) + heightRatio;
+
+      wordBlockNode.style.backgroundPosition = `calc(var(--size-width-result) * ${accWidthRatio} * -1) calc(var(--size-height-result) * ${heightRatio} * -1)`;
+      pieceNode.style.backgroundPosition = `calc(var(--size-width-result) * ${pieceBgPosXRatio} * -1) calc(var(--size-height-result) * ${pieceBgPosYRatio} * -1)`;
+
+      accWidthRatio += wordBlockWidthRatio;
+    });
+  }
+
 
   public async renderGameFieldContent(this: PlayField, contentInfo: IRenderContentInfo): Promise<void>
   {
@@ -259,7 +287,7 @@ export class PlayField extends Component
     this.renderRoundSentenceGroup(roundSentenceGroup);
   }
 
-  protected renderCurrentSentence(currentSentence: WordContainer[])
+  protected renderCurrentSentence(currentSentence: WordContainer[], sentenceIndex: number)
   {
     const { shuffleSentence, shuffleOrderWords } = PlayField.getShuffleElementArr(currentSentence);
     this.setCurrentSentence(currentSentence, shuffleOrderWords);
@@ -270,6 +298,7 @@ export class PlayField extends Component
     this.currentResultContainer.append(this.currentLine.result);
 
     PlayField.calculateAndSetBlockWidth(this.currentLine.initial, shuffleSentence);
+    PlayField.calculateAndSetBgImgPosition(currentSentence, sentenceIndex);
   }
 
   protected renderRoundSentenceGroup(sentenceGroup: WordContainer[][])
@@ -283,7 +312,7 @@ export class PlayField extends Component
       if(lastSentence === index)
       {
         this.currentLine.result = resultLine;
-        this.renderCurrentSentence(sentence);
+        this.renderCurrentSentence(sentence, index);
       }
       else
       {
@@ -291,6 +320,7 @@ export class PlayField extends Component
         this.currentResultContainer.append(resultLine);
 
         PlayField.calculateAndSetBlockWidth(resultLine, sentence);
+        PlayField.calculateAndSetBgImgPosition(sentence, index);
       }
     })
   }
@@ -463,7 +493,7 @@ export class PlayField extends Component
     
     const sentenceInLayout = this.getConvertSentenceIntoLayout(nextSentence);
     this.currentLine.result = this.resultLine.getResultLine();
-    this.renderCurrentSentence(sentenceInLayout);
+    this.renderCurrentSentence(sentenceInLayout, nextSentenceNum);
 
     this.errorInSentence = this.getErrorsInSentence();
     this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
