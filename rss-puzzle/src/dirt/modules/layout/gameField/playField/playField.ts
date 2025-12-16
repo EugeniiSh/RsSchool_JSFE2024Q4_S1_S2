@@ -271,12 +271,20 @@ export class PlayField extends Component
     });
   }
 
+  static setBgImagePath(component: Component, path: string): void
+  {
+    const node = component.getNode();
+    node.style.backgroundImage = `url(${path})`;
+  }
+
 
   public async renderGameFieldContent(this: PlayField, contentInfo: IRenderContentInfo): Promise<void>
   {
     const lastGameData = contentInfo.playerProgress.last;
     this.contentData = await this.externalStorage.getData(lastGameData.level);
-    const lastRoundSentenceList = this.contentData.rounds[lastGameData.round].words;
+    const lastRound = this.contentData.rounds[lastGameData.round];
+    const lastRoundSentenceList = lastRound.words;
+    const roundImagePath = this.externalStorage.getImagePath(lastRound.levelData);
 
     this.currentResultContainer = contentInfo.result;
     this.currentLine.initial = contentInfo.initial;
@@ -285,6 +293,8 @@ export class PlayField extends Component
     
     const roundSentenceGroup = this.getRoundSentenceGroup(lastRoundSentenceList, lastGameData.sentense);
     this.renderRoundSentenceGroup(roundSentenceGroup);
+
+    PlayField.setBgImagePath(this, roundImagePath);
   }
 
   protected renderCurrentSentence(currentSentence: WordContainer[], sentenceIndex: number)
