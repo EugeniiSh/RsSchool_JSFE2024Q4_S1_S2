@@ -20,7 +20,7 @@ export interface IPuzzleRoundData
 
 export interface IPuzzleRound
 {
-  roundData: IPuzzleRoundData,
+  levelData: IPuzzleRoundData,
   words: IPuzzleWordsData[]
 }
 
