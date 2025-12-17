@@ -74,6 +74,8 @@ export type TPlayFieldMethods = Pick<
   | 'toggleWordValidationHighligh'
 >
 
+export type TStatusForBgImg = 'on' | 'off';
+
 export class PlayField extends Component
 {
   protected className: string[];
@@ -275,6 +277,22 @@ export class PlayField extends Component
   {
     const node = component.getNode();
     node.style.backgroundImage = `url(${path})`;
+  }
+
+  public setStatusBgImgForCurrentLine(status: TStatusForBgImg): void
+  {
+    const resultNode = this.currentLine.result.getNode();
+    const initialNode = this.currentLine.initial.getNode();
+
+    if(status === 'on')
+    {
+      resultNode.style.backgroundImage = 'inherit';
+      initialNode.style.backgroundImage = 'inherit';
+      return;
+    }
+
+    resultNode.style.backgroundImage = 'linear-gradient(transparent)';
+    initialNode.style.backgroundImage = 'linear-gradient(transparent)';
   }
 
 
@@ -494,6 +512,7 @@ export class PlayField extends Component
 
     this.localStorage.setValue(userData);
     this.toggleWordValidationHighligh(false);
+    this.setStatusBgImgForCurrentLine('on');
 
     const nextSentence = this.contentData
     .rounds[currentRound]

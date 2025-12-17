@@ -3,6 +3,8 @@ import { AudioTranslation } from './audioTranslation';
 import { TextTranslation } from './textTranslation';
 import { SwitchTranslation } from './switchTranslation';
 
+import { type TStatusForBgImg } from '../../../../../shared/index';
+
 export interface ITranslationBlockStyleList
 {
   translationBlock: string;
@@ -45,6 +47,10 @@ export class TranslationBlock extends Component
 
   protected isAudioVisible: boolean;
 
+  protected isImgVisible: boolean;
+
+  protected imageHintToggle: (status: TStatusForBgImg) => void;
+
   constructor
   (
     {
@@ -65,8 +71,11 @@ export class TranslationBlock extends Component
     this.switchTranslation = switchTranslation.getSwitchTranslation();
     this.switchTranslation.setHandlerClickTextButton(this.toggleTextTranslationVisibility);
     this.switchTranslation.setHandlerClickAudioButton(this.toggleAudioTranslationVisibility);
+    this.switchTranslation.setHandlerClickImgButton(this.toggleImgHintVisibility)
     this.isTextVisible = true;
     this.isAudioVisible = true;
+    this.isImgVisible = true;
+    this.imageHintToggle = () => {};
 
     const header = new Component
     (
@@ -169,6 +178,17 @@ export class TranslationBlock extends Component
     this.diableAudioTranslation.toggleClass(this.style.disableBlock, false);
   }
 
+  protected setCurrentVisibilityImgHint()
+  {
+    if(this.isImgVisible)
+    {
+      this.imageHintToggle('on');
+      return;
+    }
+
+    this.imageHintToggle('off');
+  }
+
 
   public toggleTextTranslationVisibility = (forceVisible: boolean = false) =>
   {
@@ -218,6 +238,26 @@ export class TranslationBlock extends Component
     this.isAudioVisible = true;
   }
 
+  public toggleImgHintVisibility = () =>
+  {
+    if(this.isImgVisible)
+    {
+      this.imageHintToggle('off');
+      this.switchTranslation.toggleStatusImgButton(false);
+      this.isImgVisible = false;
+      return;
+    }
+
+    this.imageHintToggle('on');
+    this.switchTranslation.toggleStatusImgButton(true);
+    this.isImgVisible = true;
+  }
+
+  public setImageHintToggle(func: (status: TStatusForBgImg) => void)
+  {
+    this.imageHintToggle = func;
+  }
+
   public updateTranslation(newTranslationText: string, newAudioTranslation: string): void
   {
     this.textTranslation.updateTextTranslation(newTranslationText);
@@ -225,6 +265,8 @@ export class TranslationBlock extends Component
 
     this.audioTranslation.updateAudioTranslation(newAudioTranslation);
     this.setCurrentVisibilityAudioTranslation();
+
+    this.setCurrentVisibilityImgHint();
   }
 
   public getTranslationBlock(): TranslationBlock
