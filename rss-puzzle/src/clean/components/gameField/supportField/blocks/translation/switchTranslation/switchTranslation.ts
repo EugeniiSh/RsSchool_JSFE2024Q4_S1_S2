@@ -12,6 +12,7 @@ const switchTranslationStyleList: ISwitchTranslationStyleList = {
   buttonDisable: style['button-disable'],
   buttonText: style['button-text'],
   buttonAudio: style['button-audio'],
+  buttonImg: style['button-img'],
 };
 
 const switchTranslationOption: ISwitchTranslationOption = {
