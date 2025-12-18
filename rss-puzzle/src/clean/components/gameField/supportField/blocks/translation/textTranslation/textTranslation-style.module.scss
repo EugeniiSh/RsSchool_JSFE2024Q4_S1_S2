@@ -11,10 +11,12 @@
 .text-block {
   position: relative;
 
-  width: 60%;
+  width: 50%;
 
   font-style: normal;
   text-align: center;
+
+  transform: translateX(10%);
 
   &__visible {
     text-shadow: 0 0 6rem var(--main-brown-light);
@@ -54,6 +56,8 @@
 
   transition-property: opacity;
   transition-duration: 0.2s;
+
+  transform: translateX(80%);
 
   cursor: pointer;
 

@@ -1,6 +1,6 @@
 import { Component } from '../../common/component';
 import { TranslationBlock } from './blocks/translation/translation';
-import { type PlayField } from '../../../shared/index';
+import { type PlayField, type TStatusForBgImg } from '../../../shared/index';
 
 import { PuzzleGameExternalStorage } from '../../../storage/external';
 import { PuzzleGameStorage } from '../../../storage/local';
@@ -50,6 +50,7 @@ export class SupportField extends Component
     this.className = className;
     this.style = style;
     this.translationBlock = translationBlock.getTranslationBlock();
+    this.translationBlock.setImageHintToggle(this.changeStatusBgImgPlayFieldCurrentLine);
     this.externalStorage = externalStorage;
     this.localStorage = localStorage;
     this.playField = null;
@@ -61,12 +62,20 @@ export class SupportField extends Component
   {
     this.translationBlock.toggleTextTranslationVisibility(true);
     this.translationBlock.toggleAudioTranslationVisibility(true);
+
+    this.changeStatusBgImgPlayFieldCurrentLine('on');
   }
 
   public setPlayField(newPlayField: PlayField): void
   {
     this.playField = newPlayField;
   }
+
+  public changeStatusBgImgPlayFieldCurrentLine = (status: TStatusForBgImg) =>
+  {
+    if(this.playField) this.playField.setStatusBgImgForCurrentLine(status);
+  }
+
 
   public async updateSupportField(): Promise<void>
   {
