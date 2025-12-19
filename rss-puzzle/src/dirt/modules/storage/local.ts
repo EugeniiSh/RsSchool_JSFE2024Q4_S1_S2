@@ -133,3 +133,4 @@ export class PuzzleGameStorage
     this.setValue(this.startValue);
   }
 }
+
