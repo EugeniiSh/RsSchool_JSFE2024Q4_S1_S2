@@ -3,6 +3,7 @@ import { TranslationBlock, ITranslationBlockStyleList, ITranslationBlockOption }
 import TranslationAudio from './audioTranslation/audioTranslation';
 import TranslationText from './textTranslation/textTranslation';
 import TranslationSwitch from './switchTranslation/switchTranslation';
+import storageLocal from '../../../../storage/local';
 
 const translationBlockStyleList: ITranslationBlockStyleList =
 {
@@ -22,6 +23,7 @@ const translationBlockOption: ITranslationBlockOption =
   audioTranslation: TranslationAudio,
   textTranslation: TranslationText,
   switchTranslation: TranslationSwitch,
+  localStorage: storageLocal,
 }
 
 export default new TranslationBlock(translationBlockOption);
