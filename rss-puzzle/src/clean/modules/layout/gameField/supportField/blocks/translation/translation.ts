@@ -2,6 +2,10 @@ import { Component } from '../../../../common/component';
 import { AudioTranslation } from './audioTranslation';
 import { TextTranslation } from './textTranslation';
 import { SwitchTranslation } from './switchTranslation';
+import {
+  PuzzleGameStorage,
+  ITranslationHintsStatus,
+} from '../../../../../storage/local';
 
 import { type TStatusForBgImg } from '../../../../../shared/index';
 
@@ -21,7 +25,10 @@ export interface ITranslationBlockOption {
   audioTranslation: AudioTranslation;
   textTranslation: TextTranslation;
   switchTranslation: SwitchTranslation;
+  localStorage: PuzzleGameStorage;
 }
+
+export type TTranslationHintsStatusKeys = keyof ITranslationHintsStatus;
 
 export class TranslationBlock extends Component {
   protected className: string[];
@@ -48,6 +55,8 @@ export class TranslationBlock extends Component {
 
   protected imageHintToggle: (status: TStatusForBgImg) => void;
 
+  protected localStorage: PuzzleGameStorage;
+
   constructor({
     className,
     text,
@@ -55,6 +64,7 @@ export class TranslationBlock extends Component {
     audioTranslation,
     textTranslation,
     switchTranslation,
+    localStorage,
   }: ITranslationBlockOption) {
     super({ tag: 'div', className, text });
     this.className = className;
@@ -71,10 +81,16 @@ export class TranslationBlock extends Component {
     this.switchTranslation.setHandlerClickImgButton(
       this.toggleImgHintVisibility,
     );
-    this.isTextVisible = true;
-    this.isAudioVisible = true;
-    this.isImgVisible = true;
+
     this.imageHintToggle = () => {};
+    this.localStorage = localStorage;
+
+    const { textHint, audioHint, imageHint } =
+      this.localStorage.getValue().game.translateHints;
+
+    this.isTextVisible = textHint;
+    this.isAudioVisible = audioHint;
+    this.isImgVisible = imageHint;
 
     const header = new Component(
       {
@@ -142,31 +158,37 @@ export class TranslationBlock extends Component {
     if (this.isTextVisible) {
       this.textTranslation.toggleClass(this.style.disableBlock, false);
       this.diableTextTranslation.toggleClass(this.style.disableBlock, true);
+      this.switchTranslation.toggleStatusTextButton(true);
       return;
     }
 
     this.textTranslation.toggleClass(this.style.disableBlock, true);
     this.diableTextTranslation.toggleClass(this.style.disableBlock, false);
+    this.switchTranslation.toggleStatusTextButton(false);
   }
 
   protected setCurrentVisibilityAudioTranslation() {
     if (this.isAudioVisible) {
       this.audioTranslation.toggleClass(this.style.disableBlock, false);
       this.diableAudioTranslation.toggleClass(this.style.disableBlock, true);
+      this.switchTranslation.toggleStatusAudioButton(true);
       return;
     }
 
     this.audioTranslation.toggleClass(this.style.disableBlock, true);
     this.diableAudioTranslation.toggleClass(this.style.disableBlock, false);
+    this.switchTranslation.toggleStatusAudioButton(false);
   }
 
   protected setCurrentVisibilityImgHint() {
     if (this.isImgVisible) {
       this.imageHintToggle('on');
+      this.switchTranslation.toggleStatusImgButton(true);
       return;
     }
 
     this.imageHintToggle('off');
+    this.switchTranslation.toggleStatusImgButton(false);
   }
 
   public toggleTextTranslationVisibility = (forceVisible: boolean = false) => {
@@ -181,6 +203,9 @@ export class TranslationBlock extends Component {
       this.diableTextTranslation.toggleClass(this.style.disableBlock, false);
       this.switchTranslation.toggleStatusTextButton(false);
       this.isTextVisible = false;
+
+      this.updateHintStatusInLocalStorage('textHint', false);
+
       return;
     }
 
@@ -188,6 +213,8 @@ export class TranslationBlock extends Component {
     this.diableTextTranslation.toggleClass(this.style.disableBlock, true);
     this.switchTranslation.toggleStatusTextButton(true);
     this.isTextVisible = true;
+
+    this.updateHintStatusInLocalStorage('textHint', true);
   };
 
   public toggleAudioTranslationVisibility = (forceVisible: boolean = false) => {
@@ -202,6 +229,9 @@ export class TranslationBlock extends Component {
       this.diableAudioTranslation.toggleClass(this.style.disableBlock, false);
       this.switchTranslation.toggleStatusAudioButton(false);
       this.isAudioVisible = false;
+
+      this.updateHintStatusInLocalStorage('audioHint', false);
+
       return;
     }
 
@@ -209,6 +239,8 @@ export class TranslationBlock extends Component {
     this.diableAudioTranslation.toggleClass(this.style.disableBlock, true);
     this.switchTranslation.toggleStatusAudioButton(true);
     this.isAudioVisible = true;
+
+    this.updateHintStatusInLocalStorage('audioHint', true);
   };
 
   public toggleImgHintVisibility = () => {
@@ -216,16 +248,30 @@ export class TranslationBlock extends Component {
       this.imageHintToggle('off');
       this.switchTranslation.toggleStatusImgButton(false);
       this.isImgVisible = false;
+
+      this.updateHintStatusInLocalStorage('imageHint', false);
+
       return;
     }
 
     this.imageHintToggle('on');
     this.switchTranslation.toggleStatusImgButton(true);
     this.isImgVisible = true;
+
+    this.updateHintStatusInLocalStorage('imageHint', true);
   };
 
   public setImageHintToggle(func: (status: TStatusForBgImg) => void) {
     this.imageHintToggle = func;
+  }
+
+  protected updateHintStatusInLocalStorage(
+    hintName: TTranslationHintsStatusKeys,
+    hintStatus: boolean,
+  ): void {
+    const localStorageData = this.localStorage.getValue();
+    localStorageData.game.translateHints[hintName] = hintStatus;
+    this.localStorage.setValue(localStorageData);
   }
 
   public updateTranslation(
@@ -249,6 +295,7 @@ export class TranslationBlock extends Component {
       audioTranslation: this.audioTranslation.getAudioTranslation(),
       textTranslation: this.textTranslation.getTextTranslation(),
       switchTranslation: this.switchTranslation.getSwitchTranslation(),
+      localStorage: this.localStorage,
     });
   }
 }
