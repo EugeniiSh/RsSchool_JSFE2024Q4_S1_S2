@@ -18,10 +18,17 @@ export interface ILastlevelData {
   sentense: number;
 }
 
+export interface ITranslationHintsStatus {
+  textHint: boolean;
+  audioHint: boolean;
+  imageHint: boolean;
+}
+
 export type TProgressData = Record<TNumberOfLevel, IStorageLevelProgress>;
 
 export interface IStorageGameProgress {
   last: ILastlevelData;
+  translateHints: ITranslationHintsStatus;
   progress: TProgressData;
 }
 
@@ -61,6 +68,12 @@ export class PuzzleGameStorage {
         level: 1,
         round: 0,
         sentense: 0,
+      },
+
+      translateHints: {
+        textHint: true,
+        audioHint: true,
+        imageHint: true,
       },
 
       progress: progressData,
