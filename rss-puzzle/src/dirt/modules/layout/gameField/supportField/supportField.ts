@@ -1,5 +1,6 @@
 import { Component } from '../../common/component';
 import { TranslationBlock } from './blocks/translation/translation';
+import { DifficultyBlock } from './blocks/difficulty/difficulty';
 import { type PlayField, type TStatusForBgImg } from '../../../shared/index';
 
 import { PuzzleGameExternalStorage } from '../../../storage/external';
@@ -15,6 +16,7 @@ export interface ISupportFieldOption
   className: string[];
   text: string;
   style: ISupportFieldStyleList;
+  difficultyBlock: DifficultyBlock;
   translationBlock: TranslationBlock;
   externalStorage: PuzzleGameExternalStorage;
   localStorage: PuzzleGameStorage;
@@ -25,6 +27,8 @@ export class SupportField extends Component
   protected className: string[];
 
   protected style: ISupportFieldStyleList;
+
+  protected difficultyBlock: DifficultyBlock;
 
   protected translationBlock: TranslationBlock;
 
@@ -40,6 +44,7 @@ export class SupportField extends Component
       className,
       text,
       style,
+      difficultyBlock,
       translationBlock,
       externalStorage,
       localStorage,
@@ -49,12 +54,14 @@ export class SupportField extends Component
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
+    this.difficultyBlock = difficultyBlock.getDifficultyBlock();
     this.translationBlock = translationBlock.getTranslationBlock();
     this.translationBlock.setImageHintToggle(this.changeStatusBgImgPlayFieldCurrentLine);
     this.externalStorage = externalStorage;
     this.localStorage = localStorage;
     this.playField = null;
 
+    this.append(this.difficultyBlock);
     this.append(this.translationBlock);
   }
 
@@ -100,6 +107,7 @@ export class SupportField extends Component
         className: this.className,
         text: '',
         style: this.style,
+        difficultyBlock: this.difficultyBlock.getDifficultyBlock(),
         translationBlock: this.translationBlock.getTranslationBlock(),
         externalStorage: this.externalStorage,
         localStorage: this.localStorage,
