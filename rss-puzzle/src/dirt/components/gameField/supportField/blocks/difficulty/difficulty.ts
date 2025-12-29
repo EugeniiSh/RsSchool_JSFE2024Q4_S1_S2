@@ -5,8 +5,6 @@ import Loader from '../../../../loader/loader';
 const difficultyStyleList: IDifficultyBlockStyleList =
 {
   difficultyBlock: style['difficulty-block'],
-  loadLoader: style['load-loader'],
-  deleteLoader: style['delete-loader'],
 }
 
 const difficultyOption: IDifficultyBlockOption =
