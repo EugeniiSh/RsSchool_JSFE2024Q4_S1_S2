@@ -1,6 +1,7 @@
 import * as style from './difficulty-style.module.scss';
 import { DifficultyBlock, IDifficultyBlockOption, IDifficultyBlockStyleList } from '../../../../../modules/layout/gameField/supportField/blocks/difficulty/difficulty';
 import Loader from '../../../../loader/loader';
+import DifficultyLevels from './difficultyLevels/difficultyLevels';
 
 const difficultyStyleList: IDifficultyBlockStyleList =
 {
@@ -13,6 +14,7 @@ const difficultyOption: IDifficultyBlockOption =
   text: '',
   style: difficultyStyleList,
   loader: Loader,
+  difficultyLevels: DifficultyLevels,
 }
 
 export default new DifficultyBlock(difficultyOption);

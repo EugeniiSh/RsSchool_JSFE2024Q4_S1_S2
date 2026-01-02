@@ -1,5 +1,6 @@
 import { Component } from '../../../../common/component';
 import { Loader } from '../../../../../loader/loader';
+import { DifficultyLevels } from './difficultyLevels';
 
 export interface IDifficultyBlockStyleList
 {
@@ -12,6 +13,7 @@ export interface IDifficultyBlockOption
   text: string;
   style: IDifficultyBlockStyleList;
   loader: Loader;
+  difficultyLevels: DifficultyLevels;
 }
 
 export class DifficultyBlock extends Component
@@ -24,6 +26,8 @@ export class DifficultyBlock extends Component
 
   protected activeLoader: Loader | null;
 
+  protected difficultyLevels: DifficultyLevels;
+
   constructor
   (
     {
@@ -31,6 +35,7 @@ export class DifficultyBlock extends Component
       text,
       style,
       loader,
+      difficultyLevels,
     }: IDifficultyBlockOption
   )
   {
@@ -39,6 +44,9 @@ export class DifficultyBlock extends Component
     this.style = style;
     this.loader = loader;
     this.activeLoader = null;
+    this.difficultyLevels = difficultyLevels.getDifficultyLevels();
+
+    this.append(this.difficultyLevels);
   }
 
   protected loadLoader(): void
@@ -70,6 +78,7 @@ export class DifficultyBlock extends Component
         text: '',
         style: this.style,
         loader: this.loader,
+        difficultyLevels: this.difficultyLevels.getDifficultyLevels(),
       }
     )
   }
