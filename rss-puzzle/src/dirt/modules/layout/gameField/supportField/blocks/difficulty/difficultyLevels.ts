@@ -56,8 +56,6 @@ export class DifficultyLevels extends Component
   {
     this.content.forEach((elementContent, index) =>
     {
-      if(index === 0) return;
-      
       if(elementContent === activBlockDescription)
       {
         this.levelBlocks[index].toggleClass(this.style.levelBlockActive, true);

@@ -1,0 +1,15 @@
+.rounds-container
+{
+  position: relative;
+  top: -4rem;
+
+  width: 100%;
+  height: 80%;
+
+  background-image: url(../../../../../../../assets/images/post-card.png);
+  background-position: center center;
+
+  box-shadow: 0 2rem 12rem 2rem var(--main-brown-middle);
+
+  border: 2rem solid var(--main-brown-middle);
+}
