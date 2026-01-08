@@ -97,6 +97,7 @@ export class SupportField extends Component
     const newAudioTranslation = this.externalStorage.getAudioPath(lastSentence);
 
     this.translationBlock.updateTranslation(newTranslationText, newAudioTranslation);
+    this.difficultyBlock.updateDifficulty();
   }
 
   public getSupportField(): SupportField

@@ -1,5 +1,5 @@
 import { Component } from '../../../../common/component';
-import { Loader } from '../../../../../loader/loader';
+import { PuzzleGameStorage } from '../../../../../storage/local';
 import { DifficultyLevels } from './difficultyLevels';
 import { DifficultyRounds } from './difficultyRounds';
 
@@ -13,7 +13,7 @@ export interface IDifficultyBlockOption
   className: string[];
   text: string;
   style: IDifficultyBlockStyleList;
-  loader: Loader;
+  localStorage: PuzzleGameStorage;
   difficultyLevels: DifficultyLevels;
   difficultyRounds: DifficultyRounds;
 }
@@ -24,13 +24,13 @@ export class DifficultyBlock extends Component
 
   protected style: IDifficultyBlockStyleList;
 
-  protected loader: Loader;
-
-  protected activeLoader: Loader | null;
+  protected localStorage: PuzzleGameStorage;
 
   protected difficultyLevels: DifficultyLevels;
 
   protected difficultyRounds: DifficultyRounds;
+
+  protected isFirstRenderDifficultyBlock: boolean;
 
   constructor
   (
@@ -38,7 +38,7 @@ export class DifficultyBlock extends Component
       className,
       text,
       style,
-      loader,
+      localStorage,
       difficultyLevels,
       difficultyRounds,
     }: IDifficultyBlockOption
@@ -47,33 +47,27 @@ export class DifficultyBlock extends Component
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
-    this.loader = loader;
-    this.activeLoader = null;
+    this.localStorage = localStorage;
     this.difficultyLevels = difficultyLevels.getDifficultyLevels();
     this.difficultyRounds = difficultyRounds.getDifficultyRounds();
+    this.isFirstRenderDifficultyBlock = true;
+
+    this.difficultyLevels.setRenderRoundFunc(this.difficultyRounds.renderCurrentDifficultyRounds);
 
     this.append(this.difficultyLevels);
     this.append(this.difficultyRounds);
   }
 
-  protected loadLoader(): void
+  public updateDifficulty(): void
   {
-    this.deleteLoader();
+    if(!this.isFirstRenderDifficultyBlock) return;
+    this.isFirstRenderDifficultyBlock = false;
 
-    this.activeLoader = this.loader.getLoader();
-    this.append(this.activeLoader);
+    const playerProgress = this.localStorage.getValue();
+    const lastLevel = playerProgress.game.last.level;
 
-    this.activeLoader.start();
-  }
-
-  protected deleteLoader(): void
-  {
-    if(this.activeLoader)
-    {
-      this.activeLoader.stop();
-      this.activeLoader.destroy();
-      this.activeLoader = null;
-    } 
+    this.difficultyLevels.setActiveLevelBlock(lastLevel);
+    this.difficultyRounds.renderCurrentDifficultyRounds(lastLevel);
   }
 
   public getDifficultyBlock(): DifficultyBlock
@@ -84,7 +78,7 @@ export class DifficultyBlock extends Component
         className: this.className,
         text: '',
         style: this.style,
-        loader: this.loader,
+        localStorage: this.localStorage,
         difficultyLevels: this.difficultyLevels.getDifficultyLevels(),
         difficultyRounds: this.difficultyRounds.getDifficultyRounds(),
       }

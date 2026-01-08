@@ -15,7 +15,8 @@ export interface IDifficultyLevelsOption
 }
 
 type TLevelBlocksContent = ['Level', 'I', 'II', 'III', 'IV', 'V', 'VI'];
-type TSingleLevelBlockContent = TLevelBlocksContent[number];
+type StringToNumber<T extends string> = T extends `${infer N extends number}` ? N : never;
+export type TSingleLevelBlockIndex = StringToNumber<keyof TLevelBlocksContent & `${number}`>;
 
 export class DifficultyLevels extends Component
 {
@@ -26,6 +27,8 @@ export class DifficultyLevels extends Component
   protected content: TLevelBlocksContent;
 
   protected levelBlocks: Component[];
+
+  protected renderRounds: (clickBlockNumber: TSingleLevelBlockIndex) => void
 
   constructor
   (
@@ -41,28 +44,36 @@ export class DifficultyLevels extends Component
     this.style = style;
 
     this.content = ['Level', 'I', 'II', 'III', 'IV', 'V', 'VI'];
-    this.levelBlocks = this.content.map((textContent) =>
+    this.levelBlocks = this.content.map((textContent, index) =>
     {
       const block = new Component({ tag: 'div', className: [this.style.levelBlock], text: '' });
       block.setAttribute('data-description', textContent);
+      block.setAttribute('data-number', `${index}`);
       return block;
     });
+
+    this.renderRounds = () => {};
 
     this.appendChildren(this.levelBlocks);
     this.addListener('click', (event) => this.clickHandler(event));
   }
 
-  protected setActiveLevelBlock(activBlockDescription: TSingleLevelBlockContent): void
+  public setRenderRoundFunc(func: (clickBlockNumber: TSingleLevelBlockIndex) => void): void
   {
-    this.content.forEach((elementContent, index) =>
+    this.renderRounds = func;
+  }
+
+  public setActiveLevelBlock(activBlockIndex: TSingleLevelBlockIndex): void
+  {
+    this.levelBlocks.forEach((block, index) =>
     {
-      if(elementContent === activBlockDescription)
+      if(activBlockIndex === index)
       {
-        this.levelBlocks[index].toggleClass(this.style.levelBlockActive, true);
+        block.toggleClass(this.style.levelBlockActive, true);
         return;
       }
 
-      this.levelBlocks[index].toggleClass(this.style.levelBlockActive, false);
+      block.toggleClass(this.style.levelBlockActive, false);
     })
   }
 
@@ -74,10 +85,14 @@ export class DifficultyLevels extends Component
     const levelBlock = event.target.closest(`.${this.style.levelBlock}`) as HTMLElement | null;
     if(!levelBlock) return;
 
-    const clickBlockDescription = levelBlock.dataset.description as TSingleLevelBlockContent | undefined;
-    if(!clickBlockDescription) throw new Error('No block description on click element');
+    const clickBlockIndexAsString = levelBlock.dataset.number;
+    if(!clickBlockIndexAsString) throw new Error('No block number on click element');
 
-    this.setActiveLevelBlock(clickBlockDescription);
+    const clickBlockIndexAsNumber = Number(clickBlockIndexAsString) as TSingleLevelBlockIndex;
+    if(!clickBlockIndexAsNumber) throw new Error('Incorrect value clickBlockNumber');
+
+    this.setActiveLevelBlock(clickBlockIndexAsNumber);
+    this.renderRounds(clickBlockIndexAsNumber);
   }
 
   public getDifficultyLevels(): DifficultyLevels

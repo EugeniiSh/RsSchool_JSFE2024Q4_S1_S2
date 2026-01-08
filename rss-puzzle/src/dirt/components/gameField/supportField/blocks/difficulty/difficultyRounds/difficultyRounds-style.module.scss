@@ -13,3 +13,26 @@
 
   border: 2rem solid var(--main-brown-middle);
 }
+
+.wrapper
+{
+  width: 100%;
+  height: 100%;
+}
+
+.rounds-button-wrapper
+{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+
+  border: 1rem solid black;
+}
+
+.rounds-button
+{
+  width: 15rem;
+  height: 15rem;
+
+  background-color: green;
+}
