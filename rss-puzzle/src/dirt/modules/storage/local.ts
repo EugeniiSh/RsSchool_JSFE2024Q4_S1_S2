@@ -38,6 +38,7 @@ export interface IStorageGameProgress
 }
 
 export type TStorageValue = TFieldsValue & { isNew: boolean, game: IStorageGameProgress };
+export type TLastLevelAndRound = Omit<ILastlevelData, 'sentense'>;
 
 export class PuzzleGameStorage
 {

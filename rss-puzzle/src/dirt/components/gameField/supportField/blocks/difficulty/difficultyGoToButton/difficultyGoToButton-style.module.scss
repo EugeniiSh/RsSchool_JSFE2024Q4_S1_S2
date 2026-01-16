@@ -1,0 +1,27 @@
+.button-container
+{
+  border: 1rem solid salmon;
+  background-color: grey;
+
+  opacity: 0.5;
+  
+  @media (hover: hover)
+  {
+    cursor: auto;
+  }
+}
+
+.button-text
+{
+  color: aquamarine;
+}
+
+.active
+{
+  opacity: 1;
+  
+  @media (hover: hover)
+  {
+    cursor: pointer;
+  }
+}

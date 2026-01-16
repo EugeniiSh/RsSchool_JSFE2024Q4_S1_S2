@@ -4,6 +4,7 @@ import DifficultyBlock from './blocks/difficulty/difficulty';
 import TranslationBlock from './blocks/translation/translation';
 import storageExternal from '../../storage/external';
 import storageLocal from '../../storage/local';
+import { customEventList } from '../../events/custom';
 
 const supportFieldStyle: ISupportFieldStyleList =
 {
@@ -19,6 +20,7 @@ const supportFieldOption: ISupportFieldOption =
   translationBlock: TranslationBlock,
   externalStorage: storageExternal,
   localStorage: storageLocal,
+  eventList: customEventList,
 }
 
 export default new SupportField(supportFieldOption);

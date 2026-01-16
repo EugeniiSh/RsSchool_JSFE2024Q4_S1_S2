@@ -2,13 +2,14 @@ import { Component } from '../../../../common/component';
 import { Loader } from '../../../../../loader/loader';
 import { PuzzleGameExternalStorage } from '../../../../../storage/external';
 import { type TSingleLevelBlockIndex } from './difficultyLevels';
+import { type TChildElementName } from './difficulty';
 
 export interface IDifficultyRoundsStyleList
 {
   roundsContainer: string;
-  wrapper: string;
-  roundsButtonWrapper: string;
+  roundsHint: string;
   roundsButton: string;
+  activeButton: string;
 }
 
 export interface IDifficultyRoundsOption
@@ -34,6 +35,10 @@ export class DifficultyRounds extends Component
 
   protected activeRequestID: number;
 
+  protected currentActiveRoundButtonIndex: number;
+
+  protected updateDifficultyFrom: (source: TChildElementName) => void
+
   constructor
   (
     {
@@ -52,6 +57,10 @@ export class DifficultyRounds extends Component
     this.externalStorage = externalStorage;
     this.activeLoader = null;
     this.activeRequestID = 1;
+    this.currentActiveRoundButtonIndex = 0; 
+    this.updateDifficultyFrom = () => {};
+
+    this.addListener('click', (event) => this.clickHandler(event));
   }
 
   protected loadLoader(): void
@@ -72,13 +81,36 @@ export class DifficultyRounds extends Component
     } 
   }
 
+  public setUpdateDifficultyFrom(func: (source: TChildElementName) => void): void
+  {
+    this.updateDifficultyFrom = func;
+  }
+
+  protected setActiveRoundButton(newActiveRoundButtonIndex: number): void
+  {
+    const allRoundButtons = this.getChildren();
+    const activeButton = allRoundButtons[newActiveRoundButtonIndex];
+    const oldActiveButton = allRoundButtons[this.currentActiveRoundButtonIndex];
+
+    if(!activeButton) throw new Error('Unable to find the active button');
+    if(oldActiveButton) oldActiveButton.toggleClass(this.style.activeButton, false);
+
+    activeButton.toggleClass(this.style.activeButton, true);
+    this.currentActiveRoundButtonIndex = newActiveRoundButtonIndex;
+  }
+
+  public getActiveRoundButtonIndex(): number
+  {
+    return this.currentActiveRoundButtonIndex;
+  }
+
   protected getRoundsButtons(roundsCount: number): Component[]
   {
     const roundsArr: Component[] = [];
 
-    for(let i = 1; i <= roundsCount; i += 1)
+    for(let i = 0; i < roundsCount; i += 1)
     {
-      const roundButton = new Component({ tag: 'div', className: [this.style.roundsButton], text: `${i}` });
+      const roundButton = new Component({ tag: 'div', className: [this.style.roundsButton], text: `${i + 1}` });
       roundButton.setAttribute('data-round-number', `${i}`);
       roundsArr.push(roundButton);
     }
@@ -86,25 +118,28 @@ export class DifficultyRounds extends Component
     return roundsArr;
   }
 
-  protected getRoundsInterface(roundsCount: number): Component
-  {
-    const wrapper = new Component({ tag: 'div', className: [this.style.wrapper], text: '' });
-    const roundsButtonWrapper = new Component({ tag: 'div', className: [this.style.roundsButtonWrapper], text: '' });
-
-    roundsButtonWrapper.appendChildren(this.getRoundsButtons(roundsCount));
-    wrapper.append(roundsButtonWrapper);
-
-    return wrapper;
-  }
-
   protected getRoundsHint(): Component
   {
-    const wrapper = new Component({ tag: 'div', className: [this.style.wrapper], text: '' });
-    const hint = new Component({ tag: 'div', className: [this.style.wrapper], text: 'Choice Round' });
+    const hint = new Component({ tag: 'div', className: [this.style.roundsHint], text: 'Choice Round' });
+    return hint;
+  }
 
-    wrapper.append(hint);
+  protected clickHandler(event: Event): void
+  {
+    if(event.target === null) return;
+    if(!(event.target instanceof HTMLElement)) return;
 
-    return wrapper;
+    const roundButton = event.target.closest(`.${this.style.roundsButton}`) as HTMLElement | null;
+    if(!roundButton) return;
+
+    const clickBlockIndexAsString = roundButton.dataset.roundNumber;
+    if(!clickBlockIndexAsString) throw new Error('No block number on click element');
+
+    const clickBlockIndexAsNumber = Number(clickBlockIndexAsString);
+    if(!clickBlockIndexAsNumber && clickBlockIndexAsNumber !== 0) throw new Error('Incorrect value clickBlockNumber');
+
+    this.setActiveRoundButton(clickBlockIndexAsNumber);
+    this.updateDifficultyFrom('round');
   }
 
   public renderCurrentDifficultyRounds = async (gameLevel: TSingleLevelBlockIndex): Promise<void> =>
@@ -126,13 +161,13 @@ export class DifficultyRounds extends Component
     this.loadLoader();
 
     const levelData = await this.externalStorage.getData(gameLevel);
-    const roundInterface = this.getRoundsInterface(levelData.roundsCount);
+    const roundsButtons = this.getRoundsButtons(levelData.roundsCount);
 
     if(this.activeRequestID !== currentRequestID) return; 
 
     this.deleteActiveLoader();
     this.cleanInnerHTML();
-    this.append(roundInterface);
+    this.appendChildren(roundsButtons);
   }
 
   public getDifficultyRounds(): DifficultyRounds

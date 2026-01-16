@@ -3,8 +3,12 @@
   position: relative;
   top: -4rem;
 
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+
   width: 100%;
-  height: 80%;
+  height: 70%;
 
   background-image: url(../../../../../../../assets/images/post-card.png);
   background-position: center center;
@@ -14,19 +18,10 @@
   border: 2rem solid var(--main-brown-middle);
 }
 
-.wrapper
+.rounds-hint
 {
   width: 100%;
   height: 100%;
-}
-
-.rounds-button-wrapper
-{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-
-  border: 1rem solid black;
 }
 
 .rounds-button
@@ -35,4 +30,9 @@
   height: 15rem;
 
   background-color: green;
+}
+
+.active-button
+{
+  background-color: red;
 }

@@ -4,7 +4,8 @@ import { DifficultyBlock } from './blocks/difficulty/difficulty';
 import { type PlayField, type TStatusForBgImg } from '../../../shared/index';
 
 import { PuzzleGameExternalStorage } from '../../../storage/external';
-import { PuzzleGameStorage } from '../../../storage/local';
+import { PuzzleGameStorage, type TStorageValue, type TLastLevelAndRound } from '../../../storage/local';
+import { TCustomEventList } from '../../../events/custom';
 
 export interface ISupportFieldStyleList
 {
@@ -20,6 +21,7 @@ export interface ISupportFieldOption
   translationBlock: TranslationBlock;
   externalStorage: PuzzleGameExternalStorage;
   localStorage: PuzzleGameStorage;
+  eventList: TCustomEventList;
 }
 
 export class SupportField extends Component
@@ -36,6 +38,8 @@ export class SupportField extends Component
 
   protected localStorage: PuzzleGameStorage;
 
+  protected eventList: TCustomEventList;
+
   protected  playField: PlayField | null;
 
   constructor
@@ -48,6 +52,7 @@ export class SupportField extends Component
       translationBlock,
       externalStorage,
       localStorage,
+      eventList,
     }: ISupportFieldOption
   )
   {
@@ -55,10 +60,12 @@ export class SupportField extends Component
     this.className = className;
     this.style = style;
     this.difficultyBlock = difficultyBlock.getDifficultyBlock();
+    this.difficultyBlock.setGoToChoosedRoundFunc(this.goToChoosedRound);
     this.translationBlock = translationBlock.getTranslationBlock();
     this.translationBlock.setImageHintToggle(this.changeStatusBgImgPlayFieldCurrentLine);
     this.externalStorage = externalStorage;
     this.localStorage = localStorage;
+    this.eventList = eventList;
     this.playField = null;
 
     this.append(this.difficultyBlock);
@@ -76,6 +83,16 @@ export class SupportField extends Component
   public setPlayField(newPlayField: PlayField): void
   {
     this.playField = newPlayField;
+  }
+
+  public goToChoosedRound = (userData: TStorageValue, newLastGame: TLastLevelAndRound): void =>
+  {
+    if(this.playField)
+    {
+      this.playField.mutableUpdateUserGameProgress(userData.game, 'custom-choice', newLastGame);
+      this.localStorage.setValue(userData);
+      this.dispatchSomeEvent(this.eventList.start());
+    } 
   }
 
   public changeStatusBgImgPlayFieldCurrentLine = (status: TStatusForBgImg) =>
@@ -112,6 +129,7 @@ export class SupportField extends Component
         translationBlock: this.translationBlock.getTranslationBlock(),
         externalStorage: this.externalStorage,
         localStorage: this.localStorage,
+        eventList: this.eventList,
       }
     )
   }

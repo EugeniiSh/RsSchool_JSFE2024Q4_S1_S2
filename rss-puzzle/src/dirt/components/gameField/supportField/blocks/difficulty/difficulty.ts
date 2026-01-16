@@ -3,6 +3,7 @@ import { DifficultyBlock, IDifficultyBlockOption, IDifficultyBlockStyleList } fr
 import LocalStorage from '../../../../storage/local';
 import DifficultyLevels from './difficultyLevels/difficultyLevels';
 import DifficultyRounds from './difficultyRounds/difficultyRounds';
+import DifficultyGoToButton from './difficultyGoToButton/difficultyGoToButton';
 
 const difficultyStyleList: IDifficultyBlockStyleList =
 {
@@ -17,6 +18,7 @@ const difficultyOption: IDifficultyBlockOption =
   localStorage: LocalStorage,
   difficultyLevels: DifficultyLevels,
   difficultyRounds: DifficultyRounds,
+  goToButton: DifficultyGoToButton,
 }
 
 export default new DifficultyBlock(difficultyOption);

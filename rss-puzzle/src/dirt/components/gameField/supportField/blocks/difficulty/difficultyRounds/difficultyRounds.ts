@@ -6,9 +6,9 @@ import { DifficultyRounds, IDifficultyRoundsOption, IDifficultyRoundsStyleList }
 const difficultyRoundsStyleList: IDifficultyRoundsStyleList =
 {
   roundsContainer: style['rounds-container'],
-  wrapper: style.wrapper,
-  roundsButtonWrapper: style['rounds-button-wrapper'],
+  roundsHint: style['rounds-hint'],
   roundsButton: style['rounds-button'],
+  activeButton: style['active-button'],
 }
 
 const difficultyRoundsOption: IDifficultyRoundsOption =

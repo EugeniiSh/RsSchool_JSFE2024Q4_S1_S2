@@ -1,4 +1,5 @@
 import { Component } from '../../../../common/component';
+import { type TChildElementName } from './difficulty';
 
 export interface IDifficultyLevelsStyleList
 {
@@ -28,7 +29,9 @@ export class DifficultyLevels extends Component
 
   protected levelBlocks: Component[];
 
-  protected renderRounds: (clickBlockNumber: TSingleLevelBlockIndex) => void
+  protected activeLevelBlockIndex: TSingleLevelBlockIndex;
+
+  protected updateDifficultyFrom: (source: TChildElementName) => void
 
   constructor
   (
@@ -52,15 +55,17 @@ export class DifficultyLevels extends Component
       return block;
     });
 
-    this.renderRounds = () => {};
+    this.activeLevelBlockIndex = 0;
+
+    this.updateDifficultyFrom = () => {};
 
     this.appendChildren(this.levelBlocks);
     this.addListener('click', (event) => this.clickHandler(event));
   }
 
-  public setRenderRoundFunc(func: (clickBlockNumber: TSingleLevelBlockIndex) => void): void
+  public setUpdateDifficultyFrom(func: (source: TChildElementName) => void): void
   {
-    this.renderRounds = func;
+    this.updateDifficultyFrom = func;
   }
 
   public setActiveLevelBlock(activBlockIndex: TSingleLevelBlockIndex): void
@@ -70,11 +75,17 @@ export class DifficultyLevels extends Component
       if(activBlockIndex === index)
       {
         block.toggleClass(this.style.levelBlockActive, true);
+        this.activeLevelBlockIndex = index;
         return;
       }
 
       block.toggleClass(this.style.levelBlockActive, false);
     })
+  }
+
+  public getActiveLevelBlockIndex(): TSingleLevelBlockIndex
+  {
+    return this.activeLevelBlockIndex;
   }
 
   protected clickHandler(event: Event): void
@@ -89,10 +100,10 @@ export class DifficultyLevels extends Component
     if(!clickBlockIndexAsString) throw new Error('No block number on click element');
 
     const clickBlockIndexAsNumber = Number(clickBlockIndexAsString) as TSingleLevelBlockIndex;
-    if(!clickBlockIndexAsNumber) throw new Error('Incorrect value clickBlockNumber');
+    if(Number.isNaN(clickBlockIndexAsNumber)) throw new Error('Incorrect value clickBlockNumber');
 
     this.setActiveLevelBlock(clickBlockIndexAsNumber);
-    this.renderRounds(clickBlockIndexAsNumber);
+    this.updateDifficultyFrom('level');
   }
 
   public getDifficultyLevels(): DifficultyLevels
