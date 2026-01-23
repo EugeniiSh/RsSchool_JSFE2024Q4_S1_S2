@@ -1,0 +1,79 @@
+.levels-container
+{
+  position: relative;
+  display: flex;
+
+  width: 100%;
+  height: 10%;
+}
+
+.level-block
+{
+  position: relative;
+
+  height: 100%;
+  width: 13%;
+
+  transform: skewX(-20deg);
+  transform-origin: center bottom;
+
+  border-left: 2rem solid var(--main-brown-middle);
+  border-bottom: 2rem solid var(--main-brown-middle);
+
+  overflow: hidden;
+  cursor: pointer;
+
+  &:nth-child(n + 2)
+  {
+    margin-left: -2%;
+  }
+
+  &::before
+  {
+    content: '';
+    position: absolute;
+    inset: 0;
+
+    transform: skewX(35deg);
+    transform-origin: center bottom;
+
+    background-image: url(../../../../../../../assets/images/post-card.png);
+    background-position: center center;
+
+    border-right: 2rem solid var(--main-brown-middle);
+    border-top: 2rem solid var(--main-brown-middle);
+  }
+
+  &::after
+  {
+    content: attr(data-description);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: skewX(20deg) translate(-40%, -50%);
+    transform-origin: center bottom;
+
+    transition-property: text-shadow;
+    transition-duration: 0.3s;
+  }
+
+  &_active
+  {
+    border-bottom: 2rem solid transparent;
+    z-index: 999;
+  }
+
+  @media (hover: hover)
+  {
+    &:hover::after
+    {
+      text-shadow: 
+      1rem 1rem 0 var(--iris-eye), 
+      -1rem -1rem 0 var(--iris-eye),
+      2rem 2rem 0 var(--main-black), 
+      -2rem -2rem 0 var(--main-black),
+      ;
+    }
+  }
+}

@@ -9,7 +9,7 @@ import { type SupportField } from '../../../shared/index';
 import collapsEffect from '../../../effects/collapse/collapse';
 
 import { IPuzzleWordsData ,IPuzzleLevelData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
-import { PuzzleGameStorage, IStorageGameProgress, ILastlevelData } from '../../../storage/local';
+import { PuzzleGameStorage, IStorageGameProgress, TLastLevelAndRound } from '../../../storage/local';
 import { TCustomEventList } from '../../../events/custom';
  
 export interface IPlayFieldStyleList
@@ -560,11 +560,11 @@ export class PlayField extends Component
     this.dispatchSomeEvent(this.eventList.anableUI());
   }
 
-  protected mutableUpdateUserGameProgress
+  public mutableUpdateUserGameProgress
   (
     gameProgress: IStorageGameProgress, 
     action: 'next-sentence' | 'custom-choice',
-    newLastGame?: Omit<ILastlevelData, 'sentence'>
+    newLastGame?: TLastLevelAndRound
   ): void
   {
     switch(action)

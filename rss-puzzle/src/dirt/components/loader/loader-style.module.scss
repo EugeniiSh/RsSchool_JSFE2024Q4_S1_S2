@@ -1,0 +1,146 @@
+.loader
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+.wrapper
+{
+  --size-wrapper-wh: min(50px, 50%);
+  --size-border: 50px;
+  
+  position: relative;
+
+  height: var(--size-wrapper-wh);
+  aspect-ratio: 1 / 1;
+
+  animation-play-state: paused;
+}
+
+.part
+{
+  position: absolute;
+  top: 0;
+  left: 50%;
+  
+  width: 0;
+  height: 0;
+
+  border-top: calc(var(--size-border) / 2) solid var(--main-brown-middle);
+  border-left: calc(var(--size-border) / 4) solid transparent;
+  border-right: calc(var(--size-border) / 4) solid transparent;
+
+  border-top-left-radius: 50% 20%;
+  border-top-right-radius: 50% 20%;
+
+  opacity: 0.1;
+
+  transform: translateX(-50%);
+  transform-origin: center bottom;
+
+  animation: fadeInFadeOut 5s infinite;
+  animation-play-state: inherit;
+
+  &::after
+  {
+    position: absolute;
+    top: calc(var(--size-border) / 2 * -1);
+    left: 0;
+
+    font-size: calc(var(--size-border) / 4);
+    text-shadow: 1px 1px 0 var(--milk);
+
+    transform: translateX(-50%);
+  }
+}
+
+.part1
+{
+  &::after
+  {
+    content: 'L';
+  }
+}
+
+.part2
+{
+  transform: translateX(-50%) rotate(51deg);
+  animation-delay: 0.7142s;
+
+  &::after
+  {
+    content: 'o';
+    transform: translateX(-50%) rotate(-51deg);
+  }
+}
+
+.part3
+{
+  transform: translateX(-50%) rotate(102deg);
+  animation-delay: 1.4274s;
+
+  &::after
+  {
+    content: 'a';
+    transform: translateX(-50%) rotate(-102deg);
+  }
+}
+
+.part4
+{
+  transform: translateX(-50%) rotate(153deg);
+  animation-delay: 2.1426s;
+
+  &::after
+  {
+    content: 'd';
+    transform: translateX(-50%) rotate(-153deg);
+  }
+}
+
+.part5
+{
+  transform: translateX(-50%) rotate(204deg);
+  animation-delay: 2.8568s;
+
+  &::after
+  {
+    content: 'i';
+    transform: translateX(-50%) rotate(-204deg);
+  }
+}
+
+.part6
+{
+  transform: translateX(-50%) rotate(255deg);
+  animation-delay: 3.571s;
+
+  &::after
+  {
+    content: 'n';
+    transform: translateX(-50%) rotate(-255deg);
+  }
+}
+
+.part7
+{
+  transform: translateX(-50%) rotate(308deg);
+  animation-delay: 4.2852s;
+
+  &::after
+  {
+    content: 'g';
+    transform: translateX(-50%) rotate(-307deg);
+  }
+}
+
+@keyframes fadeInFadeOut
+{
+  0% { opacity: 0.1; }
+  14.28% { opacity: 1; }
+  100% { opacity: 0.1; }
+}

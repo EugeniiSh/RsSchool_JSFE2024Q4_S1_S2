@@ -9,11 +9,19 @@ function sparkEffect(element: Component): void
     if(event.target !== element.getNode()) return;
 
     element.toggleClass(style['spark-effect'], false);
-    element.removeListener('animationend', removeSpark)
+    element.removeListener('animationend', removeSpark);
+  }
+
+  if(element.getClassList()[style['spark-effect']])
+  {
+    element.toggleClass(style['spark-effect'], false);
   }
 
   element.addListener('animationend', removeSpark);
-  element.toggleClass(style['spark-effect'], true);
+  requestAnimationFrame(() =>
+  {
+    element.toggleClass(style['spark-effect'], true);
+  })
 }
 
 export default sparkEffect;

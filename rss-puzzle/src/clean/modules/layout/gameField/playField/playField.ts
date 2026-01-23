@@ -17,7 +17,7 @@ import {
 import {
   PuzzleGameStorage,
   IStorageGameProgress,
-  ILastlevelData,
+  TLastLevelAndRound,
 } from '../../../storage/local';
 import { TCustomEventList } from '../../../events/custom';
 
@@ -565,10 +565,10 @@ export class PlayField extends Component {
     this.dispatchSomeEvent(this.eventList.anableUI());
   }
 
-  protected mutableUpdateUserGameProgress(
+  public mutableUpdateUserGameProgress(
     gameProgress: IStorageGameProgress,
     action: 'next-sentence' | 'custom-choice',
-    newLastGame?: Omit<ILastlevelData, 'sentence'>,
+    newLastGame?: TLastLevelAndRound,
   ): void {
     switch (action) {
       case 'next-sentence': {
