@@ -1,0 +1,43 @@
+.button-container {
+  display: flex;
+  gap: 0.3em;
+
+  padding: 0.2em 0.4em;
+
+  background-image: url(../../../../../../../assets/images/post-card.png);
+  background-position: center center;
+
+  box-shadow: 0rem 1rem 1rem 2rem var(--main-brown-middle);
+
+  transform: translateY(55%);
+  opacity: 0.5;
+
+  transition-property: box-shadow, transform;
+  transition-duration: 0.3s, 0.3s;
+
+  cursor: auto;
+}
+
+.button-text {
+  text-shadow: -0.5rem 1rem 1rem var(--main-grey);
+  text-transform: capitalize;
+}
+
+.active {
+  box-shadow: 0rem 2rem 2rem 2rem var(--main-brown-middle);
+  transform: translateY(50%);
+  opacity: 1;
+  cursor: pointer;
+
+  &:active {
+    transform: translateY(55%);
+    transition-property: box-shadow, transform;
+    transition-duration: 0.1s, 0.1s;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: 0rem 3rem 3rem 1rem var(--iris-eye);
+    }
+  }
+}
