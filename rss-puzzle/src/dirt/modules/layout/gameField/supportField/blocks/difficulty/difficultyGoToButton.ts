@@ -3,6 +3,8 @@ import { type TNumberOfLevel } from '../../../../../storage/external';
 import { type TLastLevelAndRound } from '../../../../../storage/local';
 import { type TChildElementName } from './difficulty';
 
+import effectSpark from '../../../../../effects/spark/spark';
+
 export interface IDifficultyGoToButtonStyleList
 {
   buttonContainer: string;
@@ -15,6 +17,7 @@ export interface IDifficultyGoToButtonOption
   className: string[];
   text: string;
   style: IDifficultyGoToButtonStyleList;
+  sparkEffect: typeof effectSpark;
 }
 
 export class DifficultyGoToButton extends Component
@@ -22,6 +25,8 @@ export class DifficultyGoToButton extends Component
   protected className: string[];
 
   protected style: IDifficultyGoToButtonStyleList;
+
+  protected sparkEffect: typeof effectSpark;
 
   protected activeStatus: boolean;
 
@@ -45,12 +50,14 @@ export class DifficultyGoToButton extends Component
       className,
       text,
       style,
+      sparkEffect,
     }: IDifficultyGoToButtonOption
   )
   {
     super({ tag: 'div', className, text  });
     this.className = className;
     this.style = style;
+    this.sparkEffect = sparkEffect;
     this.activeStatus = false;
     this.currentLevel = 1;
     this.currentRound = 0;
@@ -84,6 +91,8 @@ export class DifficultyGoToButton extends Component
     this.currentRound = round;
     this.goToRoundNumberBlock.setTextContent(`${round + 1}`);
     this.goToLevelNumberBlock.setTextContent(`${level}`);
+    this.sparkEffect(this.goToRoundNumberBlock);
+    this.sparkEffect(this.goToLevelNumberBlock);
   }
 
   public getGoToButtonContent(): TLastLevelAndRound
@@ -122,6 +131,7 @@ export class DifficultyGoToButton extends Component
         className: this.className,
         text: '',
         style: this.style,
+        sparkEffect: this.sparkEffect,
       }
     )
   }
