@@ -9,6 +9,9 @@ const difficultyRoundsStyleList: IDifficultyRoundsStyleList =
   roundsHint: style['rounds-hint'],
   roundsButton: style['rounds-button'],
   activeButton: style['active-button'],
+  completeRound: style['complete-round'],
+  inProgressRound: style['in-progress-round'],
+  currentRound: style['current-round'],
 }
 
 const difficultyRoundsOption: IDifficultyRoundsOption =

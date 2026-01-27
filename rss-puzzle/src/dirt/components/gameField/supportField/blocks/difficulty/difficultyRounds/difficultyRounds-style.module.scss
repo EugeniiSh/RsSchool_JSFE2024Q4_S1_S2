@@ -67,3 +67,20 @@
     }
   }
 }
+
+.complete-round
+{
+  border-radius: 50%;
+}
+
+.in-progress-round
+{
+  border-top-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.current-round
+{
+  outline: 0.1em solid var(--main-brown-middle);
+  outline-offset: -0.2em;
+}

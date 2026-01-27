@@ -1,6 +1,7 @@
 import { Component } from '../../../../common/component';
 import { Loader } from '../../../../../loader/loader';
 import { PuzzleGameExternalStorage } from '../../../../../storage/external';
+import { type IStorageLevelProgress } from '../../../../../storage/local';
 import { type TSingleLevelBlockIndex } from './difficultyLevels';
 import { type TChildElementName } from './difficulty';
 
@@ -10,6 +11,9 @@ export interface IDifficultyRoundsStyleList
   roundsHint: string;
   roundsButton: string;
   activeButton: string;
+  completeRound: string;
+  inProgressRound: string;
+  currentRound: string;
 }
 
 export interface IDifficultyRoundsOption
@@ -118,6 +122,45 @@ export class DifficultyRounds extends Component
     return roundsArr;
   }
 
+  public visualUpdateRoundsStatus
+  (
+    levelProgress: IStorageLevelProgress, 
+    lastRound: number, 
+    isCurrentRound: boolean
+  ): void
+  {
+    const roundsButtons = this.getChildren();
+    const roundsProgress = levelProgress.roundProgress;
+    roundsButtons.forEach((roundButton, index) =>
+    {
+      const currentRoundStatus = roundsProgress[index];
+
+      if(!currentRoundStatus) return;
+
+      let newStatusStyle =  currentRoundStatus.isComplete
+      ? this.style.completeRound 
+      : null;
+
+      if(!newStatusStyle)
+      {
+        newStatusStyle = currentRoundStatus.completeSentence.length !== 0
+        ? this.style.inProgressRound
+        : null;
+      }
+
+      requestAnimationFrame(() => 
+      {
+        if(!newStatusStyle) return;
+        roundButton.toggleClass(newStatusStyle, true);
+      });
+    });
+
+    if(isCurrentRound)
+    {
+      roundsButtons[lastRound].toggleClass(this.style.currentRound, true);
+    }
+  }
+
   protected getRoundsHint(): Component
   {
     const hint = new Component({ tag: 'div', className: [this.style.roundsHint], text: 'Choice Round' });
@@ -142,7 +185,7 @@ export class DifficultyRounds extends Component
     this.updateDifficultyFrom('round');
   }
 
-  public renderCurrentDifficultyRounds = async (gameLevel: TSingleLevelBlockIndex): Promise<void> =>
+  public renderCurrentDifficultyRounds = async (gameLevel: TSingleLevelBlockIndex): Promise<0 | 1> =>
   {
     if(gameLevel === 0)
     {
@@ -150,7 +193,7 @@ export class DifficultyRounds extends Component
       this.deleteActiveLoader();
       this.cleanInnerHTML();
       this.append(this.getRoundsHint());
-      return;
+      return 1;
     }
 
     this.activeRequestID += 1;
@@ -163,11 +206,13 @@ export class DifficultyRounds extends Component
     const levelData = await this.externalStorage.getData(gameLevel);
     const roundsButtons = this.getRoundsButtons(levelData.roundsCount);
 
-    if(this.activeRequestID !== currentRequestID) return; 
+    if(this.activeRequestID !== currentRequestID) return 0; 
 
     this.deleteActiveLoader();
     this.cleanInnerHTML();
     this.appendChildren(roundsButtons);
+
+    return 1;
   }
 
   public getDifficultyRounds(): DifficultyRounds
