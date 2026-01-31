@@ -21,6 +21,14 @@
   overflow: hidden;
   cursor: pointer;
 
+  &:first-child {
+    width: 18%;
+
+    &::after {
+      left: 45%;
+    }
+  }
+
   &:nth-child(n + 2) {
     margin-left: -2%;
   }

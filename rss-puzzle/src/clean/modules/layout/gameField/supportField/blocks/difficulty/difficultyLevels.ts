@@ -13,7 +13,7 @@ export interface IDifficultyLevelsOption {
   style: IDifficultyLevelsStyleList;
 }
 
-type TLevelBlocksContent = ['Level', 'I', 'II', 'III', 'IV', 'V', 'VI'];
+type TLevelBlocksContent = ['Readme', 'I', 'II', 'III', 'IV', 'V', 'VI'];
 type StringToNumber<T extends string> = T extends `${infer N extends number}`
   ? N
   : never;
@@ -39,7 +39,7 @@ export class DifficultyLevels extends Component {
     this.className = className;
     this.style = style;
 
-    this.content = ['Level', 'I', 'II', 'III', 'IV', 'V', 'VI'];
+    this.content = ['Readme', 'I', 'II', 'III', 'IV', 'V', 'VI'];
     this.levelBlocks = this.content.map((textContent, index) => {
       const block = new Component({
         tag: 'div',

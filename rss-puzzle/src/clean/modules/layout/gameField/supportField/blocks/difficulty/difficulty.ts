@@ -87,9 +87,24 @@ export class DifficultyBlock extends Component {
     const currentRound = this.difficultyRounds.getActiveRoundButtonIndex();
 
     switch (updateSource) {
-      case 'level':
-        this.difficultyRounds.renderCurrentDifficultyRounds(currentLevel);
+      case 'level': {
+        const renderStatus =
+          this.difficultyRounds.renderCurrentDifficultyRounds(currentLevel);
+        renderStatus.then((status) => {
+          if (status === 0) return;
+          if (currentLevel === 0) return;
+
+          const currentLevelProgress =
+            playerProgress.game.progress[currentLevel];
+          const isCurrentRound = currentLevel === lastLevel;
+          this.difficultyRounds.visualUpdateRoundsStatus(
+            currentLevelProgress,
+            lastRound,
+            isCurrentRound,
+          );
+        });
         break;
+      }
 
       case 'round': {
         if (currentLevel === 0) {
@@ -115,8 +130,20 @@ export class DifficultyBlock extends Component {
         this.isFirstRenderDifficultyBlock = false;
 
         this.difficultyLevels.setActiveLevelBlock(lastLevel);
-        this.difficultyRounds.renderCurrentDifficultyRounds(lastLevel);
         this.goToButton.setGoToButtonContent(lastLevel, lastRound);
+
+        const renderStatus =
+          this.difficultyRounds.renderCurrentDifficultyRounds(lastLevel);
+        renderStatus.then((status) => {
+          if (status === 0) return;
+
+          const currentLevelProgress = playerProgress.game.progress[lastLevel];
+          this.difficultyRounds.visualUpdateRoundsStatus(
+            currentLevelProgress,
+            lastRound,
+            true,
+          );
+        });
       }
     }
   };

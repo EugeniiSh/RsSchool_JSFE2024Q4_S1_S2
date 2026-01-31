@@ -1,6 +1,7 @@
 import { Component } from '../../../../common/component';
 import { Loader } from '../../../../../loader/loader';
 import { PuzzleGameExternalStorage } from '../../../../../storage/external';
+import { type IStorageLevelProgress } from '../../../../../storage/local';
 import { type TSingleLevelBlockIndex } from './difficultyLevels';
 import { type TChildElementName } from './difficulty';
 
@@ -10,6 +11,17 @@ export interface IDifficultyRoundsStyleList
   roundsHint: string;
   roundsButton: string;
   activeButton: string;
+  completeRound: string;
+  inProgressRound: string;
+  currentRound: string;
+  legendWrapper: string;
+  legendBlock: string;
+  legendBlockOpen: string;
+  legendRow: string;
+  legendHeader: string;
+  legendHeaderText: string;
+  legendHeaderImage: string;
+  legendHeaderImageOpen: string;
 }
 
 export interface IDifficultyRoundsOption
@@ -37,6 +49,8 @@ export class DifficultyRounds extends Component
 
   protected currentActiveRoundButtonIndex: number;
 
+  protected hintLegendStatus: boolean;
+
   protected updateDifficultyFrom: (source: TChildElementName) => void
 
   constructor
@@ -58,6 +72,7 @@ export class DifficultyRounds extends Component
     this.activeLoader = null;
     this.activeRequestID = 1;
     this.currentActiveRoundButtonIndex = 0; 
+    this.hintLegendStatus = false;
     this.updateDifficultyFrom = () => {};
 
     this.addListener('click', (event) => this.clickHandler(event));
@@ -118,9 +133,111 @@ export class DifficultyRounds extends Component
     return roundsArr;
   }
 
+  public visualUpdateRoundsStatus
+  (
+    levelProgress: IStorageLevelProgress, 
+    lastRound: number, 
+    isCurrentRound: boolean
+  ): void
+  {
+    const roundsButtons = this.getChildren();
+    const roundsProgress = levelProgress.roundProgress;
+    roundsButtons.forEach((roundButton, index) =>
+    {
+      const currentRoundStatus = roundsProgress[index];
+
+      if(!currentRoundStatus) return;
+
+      let newStatusStyle =  currentRoundStatus.isComplete
+      ? this.style.completeRound 
+      : null;
+
+      if(!newStatusStyle)
+      {
+        newStatusStyle = currentRoundStatus.completeSentence.length !== 0
+        ? this.style.inProgressRound
+        : null;
+      }
+
+      requestAnimationFrame(() => 
+      {
+        if(!newStatusStyle) return;
+        roundButton.toggleClass(newStatusStyle, true);
+      });
+    });
+
+    if(isCurrentRound)
+    {
+      roundsButtons[lastRound].toggleClass(this.style.currentRound, true);
+    }
+  }
+
   protected getRoundsHint(): Component
   {
-    const hint = new Component({ tag: 'div', className: [this.style.roundsHint], text: 'Choice Round' });
+    const textData = 
+    [
+      'Select the desired level from the numbers in the top row. (I, II, III, IV, V, VI)',
+      'After selecting a level, you will see the available rounds for that level.',
+      'Select one and click the Go To... button below.'
+    ];
+    const textRows = textData.map((textHint) => new Component({ tag: 'div', className: [], text: textHint }));
+    
+    
+    const legendHeaderText = new Component({ tag: 'div', className: [this.style.legendHeaderText], text: 'legend:'});
+    const legendHeaderImage = new Component({ tag: 'div', className: [this.style.legendHeaderImage], text: ''});
+    const legendHeader = new Component({ tag: 'div', className: [this.style.legendHeader], text: ''});
+    legendHeader.appendChildren([legendHeaderText, legendHeaderImage]);
+
+    const legentData = 
+    [
+      ['current round', this.style.currentRound],
+      ['in progress round', this.style.inProgressRound],
+      ['complete round', this.style.completeRound],
+      ['selected round to proceed to', this.style.activeButton]
+    ];
+    const legentRows = legentData.map(([description, style]) =>
+    {
+      const legendButton = this.getRoundsButtons(1)[0];
+      legendButton.toggleClass(style, true);
+
+      const legendText = new Component({ tag: 'div', className: [], text: description });
+
+      const legendRow = new Component({ tag: 'div', className: [this.style.legendRow], text: '' });
+      legendRow.appendChildren([legendButton, legendText]);
+
+      return legendRow;
+    });
+
+
+    const legendBlock = new Component({ tag: 'div', className: [this.style.legendBlock], text: ''});
+    legendBlock.appendChildren([legendHeader, ...legentRows]);
+    legendBlock.addListener('click', (event: Event) =>
+    {
+      if(event.target === null) return;
+      if(!(event.target instanceof HTMLElement)) return;
+
+      const legendHeaderBlock = event.target.closest(`.${this.style.legendHeader}`) as HTMLElement | null;
+      if(!legendHeaderBlock) return;
+
+      if(this.hintLegendStatus)
+      {
+        legendBlock.toggleClass(this.style.legendBlockOpen, false);
+        legendHeaderImage.toggleClass(this.style.legendHeaderImageOpen, false);
+        this.hintLegendStatus = false;
+        return;
+      }
+
+      legendBlock.toggleClass(this.style.legendBlockOpen, true);
+      legendHeaderImage.toggleClass(this.style.legendHeaderImageOpen, true);
+      this.hintLegendStatus = true;
+    })
+
+    const legendWrapper = new Component({ tag: 'div', className: [this.style.legendWrapper], text: ''});
+    legendWrapper.append(legendBlock);
+
+    const hint = new Component({ tag: 'div', className: [this.style.roundsHint], text: '' });
+    hint.appendChildren([...textRows, legendWrapper]);
+
     return hint;
   }
 
@@ -128,7 +245,8 @@ export class DifficultyRounds extends Component
   {
     if(event.target === null) return;
     if(!(event.target instanceof HTMLElement)) return;
-
+    if(event.target.closest(`.${this.style.roundsHint}`)) return;
+    
     const roundButton = event.target.closest(`.${this.style.roundsButton}`) as HTMLElement | null;
     if(!roundButton) return;
 
@@ -142,7 +260,7 @@ export class DifficultyRounds extends Component
     this.updateDifficultyFrom('round');
   }
 
-  public renderCurrentDifficultyRounds = async (gameLevel: TSingleLevelBlockIndex): Promise<void> =>
+  public renderCurrentDifficultyRounds = async (gameLevel: TSingleLevelBlockIndex): Promise<0 | 1> =>
   {
     if(gameLevel === 0)
     {
@@ -150,7 +268,7 @@ export class DifficultyRounds extends Component
       this.deleteActiveLoader();
       this.cleanInnerHTML();
       this.append(this.getRoundsHint());
-      return;
+      return 1;
     }
 
     this.activeRequestID += 1;
@@ -163,11 +281,13 @@ export class DifficultyRounds extends Component
     const levelData = await this.externalStorage.getData(gameLevel);
     const roundsButtons = this.getRoundsButtons(levelData.roundsCount);
 
-    if(this.activeRequestID !== currentRequestID) return; 
+    if(this.activeRequestID !== currentRequestID) return 0; 
 
     this.deleteActiveLoader();
     this.cleanInnerHTML();
     this.appendChildren(roundsButtons);
+
+    return 1;
   }
 
   public getDifficultyRounds(): DifficultyRounds
