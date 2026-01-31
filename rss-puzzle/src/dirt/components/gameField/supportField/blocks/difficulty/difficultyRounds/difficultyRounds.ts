@@ -12,6 +12,14 @@ const difficultyRoundsStyleList: IDifficultyRoundsStyleList =
   completeRound: style['complete-round'],
   inProgressRound: style['in-progress-round'],
   currentRound: style['current-round'],
+  legendWrapper: style['legend-wrapper'],
+  legendBlock: style['legend-block'],
+  legendBlockOpen: style['legend-block_open'],
+  legendRow: style['legend-row'],
+  legendHeader: style['legend-header'],
+  legendHeaderText: style['legend-header-text'],
+  legendHeaderImage: style['legend-header-image'],
+  legendHeaderImageOpen: style['legend-header-image_open'],
 }
 
 const difficultyRoundsOption: IDifficultyRoundsOption =

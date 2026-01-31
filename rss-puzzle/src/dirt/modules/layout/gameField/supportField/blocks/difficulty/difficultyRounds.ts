@@ -14,6 +14,14 @@ export interface IDifficultyRoundsStyleList
   completeRound: string;
   inProgressRound: string;
   currentRound: string;
+  legendWrapper: string;
+  legendBlock: string;
+  legendBlockOpen: string;
+  legendRow: string;
+  legendHeader: string;
+  legendHeaderText: string;
+  legendHeaderImage: string;
+  legendHeaderImageOpen: string;
 }
 
 export interface IDifficultyRoundsOption
@@ -41,6 +49,8 @@ export class DifficultyRounds extends Component
 
   protected currentActiveRoundButtonIndex: number;
 
+  protected hintLegendStatus: boolean;
+
   protected updateDifficultyFrom: (source: TChildElementName) => void
 
   constructor
@@ -62,6 +72,7 @@ export class DifficultyRounds extends Component
     this.activeLoader = null;
     this.activeRequestID = 1;
     this.currentActiveRoundButtonIndex = 0; 
+    this.hintLegendStatus = false;
     this.updateDifficultyFrom = () => {};
 
     this.addListener('click', (event) => this.clickHandler(event));
@@ -163,7 +174,70 @@ export class DifficultyRounds extends Component
 
   protected getRoundsHint(): Component
   {
-    const hint = new Component({ tag: 'div', className: [this.style.roundsHint], text: 'Choice Round' });
+    const textData = 
+    [
+      'Select the desired level from the numbers in the top row. (I, II, III, IV, V, VI)',
+      'After selecting a level, you will see the available rounds for that level.',
+      'Select one and click the Go To... button below.'
+    ];
+    const textRows = textData.map((textHint) => new Component({ tag: 'div', className: [], text: textHint }));
+    
+    
+    const legendHeaderText = new Component({ tag: 'div', className: [this.style.legendHeaderText], text: 'legend:'});
+    const legendHeaderImage = new Component({ tag: 'div', className: [this.style.legendHeaderImage], text: ''});
+    const legendHeader = new Component({ tag: 'div', className: [this.style.legendHeader], text: ''});
+    legendHeader.appendChildren([legendHeaderText, legendHeaderImage]);
+
+    const legentData = 
+    [
+      ['current round', this.style.currentRound],
+      ['in progress round', this.style.inProgressRound],
+      ['complete round', this.style.completeRound],
+      ['selected round to proceed to', this.style.activeButton]
+    ];
+    const legentRows = legentData.map(([description, style]) =>
+    {
+      const legendButton = this.getRoundsButtons(1)[0];
+      legendButton.toggleClass(style, true);
+
+      const legendText = new Component({ tag: 'div', className: [], text: description });
+
+      const legendRow = new Component({ tag: 'div', className: [this.style.legendRow], text: '' });
+      legendRow.appendChildren([legendButton, legendText]);
+
+      return legendRow;
+    });
+
+
+    const legendBlock = new Component({ tag: 'div', className: [this.style.legendBlock], text: ''});
+    legendBlock.appendChildren([legendHeader, ...legentRows]);
+    legendBlock.addListener('click', (event: Event) =>
+    {
+      if(event.target === null) return;
+      if(!(event.target instanceof HTMLElement)) return;
+
+      const legendHeaderBlock = event.target.closest(`.${this.style.legendHeader}`) as HTMLElement | null;
+      if(!legendHeaderBlock) return;
+
+      if(this.hintLegendStatus)
+      {
+        legendBlock.toggleClass(this.style.legendBlockOpen, false);
+        legendHeaderImage.toggleClass(this.style.legendHeaderImageOpen, false);
+        this.hintLegendStatus = false;
+        return;
+      }
+
+      legendBlock.toggleClass(this.style.legendBlockOpen, true);
+      legendHeaderImage.toggleClass(this.style.legendHeaderImageOpen, true);
+      this.hintLegendStatus = true;
+    })
+
+    const legendWrapper = new Component({ tag: 'div', className: [this.style.legendWrapper], text: ''});
+    legendWrapper.append(legendBlock);
+
+    const hint = new Component({ tag: 'div', className: [this.style.roundsHint], text: '' });
+    hint.appendChildren([...textRows, legendWrapper]);
+
     return hint;
   }
 
@@ -171,7 +245,8 @@ export class DifficultyRounds extends Component
   {
     if(event.target === null) return;
     if(!(event.target instanceof HTMLElement)) return;
-
+    if(event.target.closest(`.${this.style.roundsHint}`)) return;
+    
     const roundButton = event.target.closest(`.${this.style.roundsButton}`) as HTMLElement | null;
     if(!roundButton) return;
 
