@@ -19,11 +19,6 @@
   border: 2rem solid var(--main-brown-middle);
 }
 
-.rounds-hint {
-  width: 100%;
-  height: 100%;
-}
-
 .rounds-button {
   --size-width-height: calc(var(--cover-width) * 0.053);
   width: var(--size-width-height);
@@ -56,6 +51,148 @@
   @media (hover: hover) {
     &:hover {
       box-shadow: 0rem 0rem 3rem 1rem var(--iris-eye);
+    }
+  }
+}
+
+.complete-round {
+  border-radius: 50%;
+}
+
+.in-progress-round {
+  border-top-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.current-round {
+  outline: 0.1em solid var(--main-brown-middle);
+  outline-offset: -0.2em;
+}
+
+.rounds-hint {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+
+  width: 100%;
+  height: 100%;
+}
+
+.legend-wrapper {
+  position: absolute;
+  top: -10%;
+
+  width: 100%;
+  height: 114%;
+
+  border-bottom: 2rem solid var(--main-brown);
+
+  border-bottom-left-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+
+  overflow: hidden;
+}
+
+.legend-block {
+  position: absolute;
+  top: 98.6%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+
+  width: 100%;
+
+  padding: 2%;
+
+  border: 2rem solid var(--main-brown-middle);
+
+  background-image: url(../../../../../../../assets/images/post-card.png);
+  background-position: center center;
+
+  box-shadow: 0 2rem 8rem 2rem var(--main-brown-middle);
+
+  transition-property: top;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+
+  &_open {
+    top: 12%;
+  }
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.legend-header {
+  position: absolute;
+  top: 0;
+
+  display: flex;
+  justify-content: center;
+  gap: 0.2em;
+
+  width: 26%;
+
+  transform: translateY(-100%) skewX(-20deg);
+  transform-origin: center bottom;
+
+  border-left: 2rem solid var(--main-brown-middle);
+
+  overflow: hidden;
+  cursor: pointer;
+
+  @media (hover: hover) {
+    &:hover .legend-header-image {
+      opacity: 1;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+
+    transform: skewX(33deg);
+    transform-origin: center bottom;
+
+    border-right: 2rem solid var(--main-brown-middle);
+    border-top: 2rem solid var(--main-brown-middle);
+
+    background-image: url(../../../../../../../assets/images/post-card.png);
+    background-position: center center;
+  }
+
+  &-text {
+    transform: skewX(20deg);
+    transform-origin: center bottom;
+
+    text-transform: capitalize;
+  }
+
+  &-image {
+    width: 20%;
+
+    transform: rotate(180deg) skewX(20deg);
+
+    background-image: url(../../../../../../../assets/images/arrowdown.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+
+    opacity: 0.5;
+
+    transition-property: transform, opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+
+    &_open {
+      transform: rotate(0deg) skewX(20deg);
     }
   }
 }
