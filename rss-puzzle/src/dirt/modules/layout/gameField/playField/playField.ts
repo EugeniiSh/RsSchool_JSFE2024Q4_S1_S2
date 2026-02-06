@@ -584,15 +584,21 @@ export class PlayField extends Component
         const levelProgressList = gameProgress.progress;
         const level = levelProgressList[oldLastGame.level];
         const round = level.roundProgress[oldLastGame.round];
+       
+        if(!round.completeSentence.includes(oldLastGame.sentense))
         round.completeSentence.push(oldLastGame.sentense);
 
+        const isOldRoundStatusComplete = round.isComplete;
         if(round.completeSentence.length === 10) round.isComplete = true;
 
         if(round.isComplete)
         {
           if(!this.contentData) throw Error("Can't update game progress.");
 
+          if(this.contentData.roundsCount > level.completeRoundCount
+          && !isOldRoundStatusComplete) 
           level.completeRoundCount += 1;
+
           level.isComplete = this.contentData.roundsCount === level.completeRoundCount;
         }
 
@@ -698,7 +704,9 @@ export class PlayField extends Component
         }
 
         let newSentence = nextRound.completeSentence.at(-1);
-        newSentence = newSentence === undefined ? 0 : newSentence;
+        newSentence = newSentence || newSentence === 0 ? newSentence + 1 : 0;
+
+        if(nextRound.isComplete) newSentence -= 1;
 
         oldLastGame.level = newLastGame.level;
         oldLastGame.round = newLastGame.round;
