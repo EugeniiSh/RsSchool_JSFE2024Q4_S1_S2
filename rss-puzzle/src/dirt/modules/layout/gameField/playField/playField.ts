@@ -35,7 +35,11 @@ export interface IPlayFieldStyleList
   wordBlockHLLeft: string,
   wordBlockHLRight: string,
   wordBlockHLCenter: string,
+  completePictureBlock: string;
+  pictureInformationBlock: string;
   hiddenBlock: string,
+  visibleBlock: string;
+  hiddenGuessBlock: string;
 }
 
 export interface IFetchDataOptions
@@ -468,6 +472,11 @@ export class PlayField extends Component
         this.currentButtonBlock.changeStatusNextButton(errors.length === 0);
         this.currentButtonBlock.toggleVisibleMotivationButton('next');
         if(this.supportField) this.supportField.showHints();
+
+        if(this.isAllSentenceInResultConteiner())
+        {
+          this.revealImageAndInformation();
+        }
       }
       
       return;
@@ -1296,6 +1305,51 @@ export class PlayField extends Component
   protected handlerPointerUp = () =>
   {
     if(this.timeoutId) clearTimeout(this.timeoutId);
+  }
+
+  protected revealImageAndInformation(): void
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No contentData for revealImageAndInformation()');
+      return;
+    } 
+
+    const currentRound = this.localStorage.getValue().game.last.round;
+    const { year, author, name } = this.contentData.rounds[currentRound].levelData;
+    const pictureBlock = new Component({tag: 'div', className: [this.style.completePictureBlock], text: ''});
+    const infoBlock = new Component
+    (
+      { 
+        tag: 'div', 
+        className: [this.style.pictureInformationBlock], 
+        text: `${author} - ${name}(${year} г.)`, 
+      }
+    );
+
+    pictureBlock.append(infoBlock);
+    this.currentResultContainer.append(pictureBlock);
+    
+    setTimeout(() =>
+    {
+      pictureBlock.toggleClass(this.style.visibleBlock, true);
+      this.currentResultContainer.toggleClass(this.style.hiddenGuessBlock, true);
+    }, 300);
+  }
+
+  protected isAllSentenceInResultConteiner(): boolean
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No contentData for isAllSentenceInResultConteiner()');
+      return false;
+    } 
+
+    const currentRound = this.localStorage.getValue().game.last.round;
+    const sentenceCount = this.contentData.rounds[currentRound].words.length;
+    const currentSentenceCount = this.currentResultContainer.getChildren().length;
+
+    return sentenceCount === currentSentenceCount;
   }
 
   public getWordCount(): number
