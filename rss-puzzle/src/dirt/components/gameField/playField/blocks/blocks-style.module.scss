@@ -120,10 +120,14 @@
   calc(var(--size-circle-piece-half) * 0) calc(var(--size-padding-circle-piece) + calc(var(--size-circle-piece) * 0))
   );
 
-  line-height: 1.75;
-  letter-spacing: -0.05em;
+  font-size: 0.8em;
+  line-height: 2;
   text-align: center;
-  text-shadow: -0.4rem -0.4rem 0rem var(--milk);
+  text-shadow: 
+  -0.9rem -0.9rem 0rem var(--milk), 
+  0.9rem 0.9rem 0rem var(--milk),
+  -0.9rem 0.9rem 0rem var(--milk),
+  0.9rem -0.9rem 0rem var(--milk);
 
   touch-action: none;
   cursor: pointer;
