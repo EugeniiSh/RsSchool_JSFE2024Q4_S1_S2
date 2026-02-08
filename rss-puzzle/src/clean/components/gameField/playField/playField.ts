@@ -39,7 +39,11 @@ const playFieldStyle: IPlayFieldStyleList = {
   wordBlockHLLeft: styleBlocks['word-block__hl_left'],
   wordBlockHLRight: styleBlocks['word-block__hl_right'],
   wordBlockHLCenter: styleBlocks['word-block__hl_center'],
+  completePictureBlock: styleBlocks['complete-picture-block'],
+  pictureInformationBlock: styleBlocks['picture-information-block'],
   hiddenBlock: styleBlocks['hidden-block'],
+  visibleBlock: styleBlocks['visible-block'],
+  hiddenGuessBlock: styleBlocks['hidden-guess-block'],
 };
 
 const playFieldOptions: IPlayFieldOption = {

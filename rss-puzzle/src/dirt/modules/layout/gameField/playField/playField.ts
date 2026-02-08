@@ -35,7 +35,11 @@ export interface IPlayFieldStyleList
   wordBlockHLLeft: string,
   wordBlockHLRight: string,
   wordBlockHLCenter: string,
+  completePictureBlock: string;
+  pictureInformationBlock: string;
   hiddenBlock: string,
+  visibleBlock: string;
+  hiddenGuessBlock: string;
 }
 
 export interface IFetchDataOptions
@@ -468,6 +472,11 @@ export class PlayField extends Component
         this.currentButtonBlock.changeStatusNextButton(errors.length === 0);
         this.currentButtonBlock.toggleVisibleMotivationButton('next');
         if(this.supportField) this.supportField.showHints();
+
+        if(this.isAllSentenceInResultConteiner())
+        {
+          this.revealImageAndInformation();
+        }
       }
       
       return;
@@ -575,15 +584,21 @@ export class PlayField extends Component
         const levelProgressList = gameProgress.progress;
         const level = levelProgressList[oldLastGame.level];
         const round = level.roundProgress[oldLastGame.round];
+       
+        if(!round.completeSentence.includes(oldLastGame.sentense))
         round.completeSentence.push(oldLastGame.sentense);
 
+        const isOldRoundStatusComplete = round.isComplete;
         if(round.completeSentence.length === 10) round.isComplete = true;
 
         if(round.isComplete)
         {
           if(!this.contentData) throw Error("Can't update game progress.");
 
+          if(this.contentData.roundsCount > level.completeRoundCount
+          && !isOldRoundStatusComplete) 
           level.completeRoundCount += 1;
+
           level.isComplete = this.contentData.roundsCount === level.completeRoundCount;
         }
 
@@ -689,7 +704,9 @@ export class PlayField extends Component
         }
 
         let newSentence = nextRound.completeSentence.at(-1);
-        newSentence = newSentence === undefined ? 0 : newSentence;
+        newSentence = newSentence || newSentence === 0 ? newSentence + 1 : 0;
+
+        if(nextRound.isComplete) newSentence -= 1;
 
         oldLastGame.level = newLastGame.level;
         oldLastGame.round = newLastGame.round;
@@ -1296,6 +1313,51 @@ export class PlayField extends Component
   protected handlerPointerUp = () =>
   {
     if(this.timeoutId) clearTimeout(this.timeoutId);
+  }
+
+  protected revealImageAndInformation(): void
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No contentData for revealImageAndInformation()');
+      return;
+    } 
+
+    const currentRound = this.localStorage.getValue().game.last.round;
+    const { year, author, name } = this.contentData.rounds[currentRound].levelData;
+    const pictureBlock = new Component({tag: 'div', className: [this.style.completePictureBlock], text: ''});
+    const infoBlock = new Component
+    (
+      { 
+        tag: 'div', 
+        className: [this.style.pictureInformationBlock], 
+        text: `${author} - ${name}(${year} г.)`, 
+      }
+    );
+
+    pictureBlock.append(infoBlock);
+    this.currentResultContainer.append(pictureBlock);
+    
+    setTimeout(() =>
+    {
+      pictureBlock.toggleClass(this.style.visibleBlock, true);
+      this.currentResultContainer.toggleClass(this.style.hiddenGuessBlock, true);
+    }, 300);
+  }
+
+  protected isAllSentenceInResultConteiner(): boolean
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No contentData for isAllSentenceInResultConteiner()');
+      return false;
+    } 
+
+    const currentRound = this.localStorage.getValue().game.last.round;
+    const sentenceCount = this.contentData.rounds[currentRound].words.length;
+    const currentSentenceCount = this.currentResultContainer.getChildren().length;
+
+    return sentenceCount === currentSentenceCount;
   }
 
   public getWordCount(): number
