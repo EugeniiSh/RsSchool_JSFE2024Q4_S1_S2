@@ -1,4 +1,6 @@
 .result-container {
+  position: relative;
+
   width: var(--size-width-result);
   height: var(--size-height-result);
 
@@ -36,6 +38,9 @@
   background-color: var(--main-brown-light);
 
   user-select: none;
+
+  transition-property: opacity;
+  transition-duration: 3s;
 }
 
 .result-guess {
@@ -168,10 +173,14 @@
       )
   );
 
-  line-height: 1.75;
-  letter-spacing: -0.05em;
+  font-size: 0.8em;
+  line-height: 2;
   text-align: center;
-  text-shadow: -0.4rem -0.4rem 0rem var(--milk);
+  text-shadow:
+    -0.9rem -0.9rem 0rem var(--milk),
+    0.9rem 0.9rem 0rem var(--milk),
+    -0.9rem 0.9rem 0rem var(--milk),
+    0.9rem -0.9rem 0rem var(--milk);
 
   touch-action: none;
   cursor: pointer;
@@ -375,6 +384,39 @@
   }
 }
 
+.complete-picture-block {
+  position: absolute;
+  inset: 0;
+
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  opacity: 0;
+  z-index: 999;
+
+  transition-property: opacity;
+  transition-duration: 3s;
+}
+
+.picture-information-block {
+  position: absolute;
+  top: 106%;
+
+  width: 100%;
+
+  text-align: center;
+}
+
 .hidden-block {
   display: none;
+}
+
+.visible-block {
+  opacity: 1;
+}
+
+.hidden-guess-block .guess-block {
+  opacity: 0;
+  pointer-events: none;
 }
