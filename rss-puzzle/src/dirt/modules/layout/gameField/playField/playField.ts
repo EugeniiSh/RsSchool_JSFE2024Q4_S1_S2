@@ -476,6 +476,7 @@ export class PlayField extends Component
         if(this.isAllSentenceInResultConteiner())
         {
           this.revealImageAndInformation();
+          this.currentButtonBlock.toggleVisibleSupportButton('results');
         }
       }
       

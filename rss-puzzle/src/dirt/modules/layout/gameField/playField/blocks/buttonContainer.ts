@@ -56,9 +56,15 @@ export class ButtonContainer extends Component
 
   protected supportButtonWraper: Component;
 
+  protected supportButtonState: 'help' | 'results';
+
   protected autoCompleteButtonOption: ICommonButtonOptions;
 
   protected autoCompleteButton: CommonButton;
+
+  protected resultsButtonOption: ICommonButtonOptions;
+
+  protected resultsButton: CommonButton;
 
   constructor
   (
@@ -113,7 +119,20 @@ export class ButtonContainer extends Component
       clickListener: () => { this.handleClickAutoComleteButton() },
     }
 
+    this.resultsButtonOption =
+    {
+      className: 
+      [
+        this.style.buttonSentence,
+        this.style.buttonSentenceHidden,
+      ],
+      text: "results",
+      items: [],
+      clickListener: () => { this.handleClickResultsButton() },
+    }
+
     this.motivationButtonState = 'check';
+    this.supportButtonState = 'help';
 
     this.motivationWrapperButtonOption =
     {
@@ -139,10 +158,12 @@ export class ButtonContainer extends Component
     );
 
     this.autoCompleteButton = new CommonButton(this.autoCompleteButtonOption);
+    this.resultsButton = new CommonButton(this.resultsButtonOption);
     this.supportButtonWraper = new Component
     (
       this.supportWrapperButtonOption,
-      this.autoCompleteButton
+      this.autoCompleteButton,
+      this.resultsButton
     )
     
 
@@ -173,6 +194,14 @@ export class ButtonContainer extends Component
     }
   }
 
+  protected handleClickResultsButton()
+  {
+    if(this.parentMethods)
+    {
+      console.log('handleClickResultsButton');
+    }
+  }
+
   public toggleVisibleMotivationButton(visibleButton: 'next' | 'check')
   {
     if(visibleButton === 'next')
@@ -194,6 +223,29 @@ export class ButtonContainer extends Component
     } 
 
     this.motivationButtonState = visibleButton;
+  }
+
+  public toggleVisibleSupportButton(visibleButton: 'help' | 'results')
+  {
+    if(visibleButton === 'help')
+    {
+      this.resultsButton.toggleClass(this.style.buttonSentenceHidden, true);
+      this.autoCompleteButton.toggleClass(this.style.buttonSentenceHidden, false);
+      if(this.sparkEffect) this.sparkEffect(this.autoCompleteButton);
+
+      this.supportButtonState = visibleButton;
+
+      return;
+    }
+
+    this.autoCompleteButton.toggleClass(this.style.buttonSentenceHidden, true);
+    this.resultsButton.toggleClass(this.style.buttonSentenceHidden, false);
+    if(this.sparkEffect && this.supportButtonState === 'help')
+    {
+      this.sparkEffect(this.resultsButton);
+    } 
+
+    this.supportButtonState = visibleButton;
   }
 
   public changeStatusCheckButton(status: boolean): void
