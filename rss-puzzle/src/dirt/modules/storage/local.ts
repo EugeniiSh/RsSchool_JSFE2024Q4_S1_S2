@@ -1,10 +1,16 @@
 import { TFieldsValue } from '../layout/login-form/form';
 import { TNumberOfLevel } from './external';
 
+export interface IStorageSentenceProgress
+{
+  number: number;
+  isWithHelp: boolean;
+}
+
 export interface IStorageRoundProgress
 {
   isComplete: boolean,
-  completeSentence: number[]
+  completeSentence: IStorageSentenceProgress[]
 }
 
 export interface IStorageLevelProgress
@@ -18,7 +24,7 @@ export interface ILastlevelData
 {
   level: TNumberOfLevel
   round: number,
-  sentense: number,
+  sentense: IStorageSentenceProgress,
 }
 
 export interface ITranslationHintsStatus
@@ -46,7 +52,7 @@ export class PuzzleGameStorage
 
   private startValue: TStorageValue;
 
-  protected startArray: number[];
+  protected startArray: IStorageSentenceProgress[];
 
   constructor()
   {
@@ -77,7 +83,7 @@ export class PuzzleGameStorage
       {
         level: 1,
         round: 0,
-        sentense: 0,
+        sentense: { number: 0, isWithHelp: false },
       },
 
       translateHints: 

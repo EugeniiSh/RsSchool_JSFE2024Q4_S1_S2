@@ -275,7 +275,6 @@
 .button-container
 {
   display: flex;
-  // justify-content: center;
   justify-content: space-around;
 
   width: 100%;
@@ -290,14 +289,12 @@
   &__motivation
   {
     height: 3em;
-    // width: 7em;
     width: 8.5em;
   }
 
   &__support
   {
     height: 3em;
-    // width: 7em;
     width: 8.5em;
   }
 }
