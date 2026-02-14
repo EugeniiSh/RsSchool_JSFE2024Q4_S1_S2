@@ -17,6 +17,7 @@ export interface IButtonContainerExternalMethods
   collectSentenceInRightOrder: () => void;
   goToNextSentence: () => void;
   toggleWordValidationHighligh: (isHighligh: boolean) => void;
+  showRoundResults: () => void;
 }
 
 export interface IButtonContainerOptions
@@ -198,7 +199,7 @@ export class ButtonContainer extends Component
   {
     if(this.parentMethods)
     {
-      console.log('handleClickResultsButton');
+      this.parentMethods.showRoundResults();
     }
   }
 
