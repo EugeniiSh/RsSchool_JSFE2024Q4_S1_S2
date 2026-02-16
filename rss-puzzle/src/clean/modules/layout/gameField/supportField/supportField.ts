@@ -109,7 +109,7 @@ export class SupportField extends Component {
 
     const lastSentence =
       contentData.rounds[playerProgress.last.round].words[
-        playerProgress.last.sentense
+        playerProgress.last.sentense.number
       ];
 
     const newTranslationText = lastSentence.textExampleTranslate;

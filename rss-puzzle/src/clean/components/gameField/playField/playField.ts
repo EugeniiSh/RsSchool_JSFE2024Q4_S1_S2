@@ -14,6 +14,8 @@ import BC from './blocks/buttonContainer';
 import storageExternal from '../../storage/external';
 import storageLocal from '../../storage/local';
 import { customEventList } from '../../events/custom';
+import windowModal from '../../pop-up/modal-window/modal-window';
+import resultsRound from '../../pop-up/roundResults/roundResults';
 
 const playFieldStyle: IPlayFieldStyleList = {
   pazzleWrapper: style['play-field'],
@@ -59,6 +61,8 @@ const playFieldOptions: IPlayFieldOption = {
   externalStorage: storageExternal,
   localStorage: storageLocal,
   eventList: customEventList,
+  modalWindow: windowModal,
+  roundResults: resultsRound,
 };
 
 export default new PlayField(playFieldOptions);
