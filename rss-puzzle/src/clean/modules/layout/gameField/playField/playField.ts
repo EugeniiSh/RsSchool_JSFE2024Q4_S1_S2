@@ -7,6 +7,8 @@ import { WordBlock } from './blocks/wordBlock';
 import { ButtonContainer } from './blocks/buttonContainer';
 import { type SupportField } from '../../../shared/index';
 import collapsEffect from '../../../effects/collapse/collapse';
+import { ModalWindow } from '../../modal-window/modal-window';
+import { RoundResults } from '../../modal-window/content/roundResults';
 
 import {
   IPuzzleWordsData,
@@ -67,6 +69,8 @@ export interface IPlayFieldOption {
   externalStorage: PuzzleGameExternalStorage;
   localStorage: PuzzleGameStorage;
   eventList: TCustomEventList;
+  modalWindow: ModalWindow;
+  roundResults: RoundResults;
 }
 
 export interface IRenderContentInfo {
@@ -81,6 +85,7 @@ export type TPlayFieldMethods = Pick<
   | 'collectSentenceInRightOrder'
   | 'goToNextSentence'
   | 'toggleWordValidationHighligh'
+  | 'showRoundResults'
 >;
 
 export type TStatusForBgImg = 'on' | 'off';
@@ -132,6 +137,10 @@ export class PlayField extends Component {
 
   protected timeoutId: NodeJS.Timeout | null;
 
+  protected modalWindow: ModalWindow;
+
+  protected roundResults: RoundResults;
+
   constructor({
     className,
     text,
@@ -145,6 +154,8 @@ export class PlayField extends Component {
     externalStorage,
     localStorage,
     eventList,
+    modalWindow,
+    roundResults,
   }: IPlayFieldOption) {
     super({ tag: 'div', className, text });
     this.className = className;
@@ -159,6 +170,8 @@ export class PlayField extends Component {
     this.externalStorage = externalStorage;
     this.localStorage = localStorage;
     this.eventList = eventList;
+    this.modalWindow = modalWindow;
+    this.roundResults = roundResults.getRoundResults();
 
     this.contentData = null;
     this.wordCount = 0;
@@ -320,7 +333,7 @@ export class PlayField extends Component {
 
     const roundSentenceGroup = this.getRoundSentenceGroup(
       lastRoundSentenceList,
-      lastGameData.sentense,
+      lastGameData.sentense.number,
     );
     this.renderRoundSentenceGroup(roundSentenceGroup);
 
@@ -483,6 +496,7 @@ export class PlayField extends Component {
 
         if (this.isAllSentenceInResultConteiner()) {
           this.revealImageAndInformation();
+          this.currentButtonBlock.toggleVisibleSupportButton('results');
         }
       }
 
@@ -508,7 +522,7 @@ export class PlayField extends Component {
 
     const currentLevel = userData.game.last.level;
     const currentRound = userData.game.last.round;
-    const nextSentenceNum = userData.game.last.sentense;
+    const nextSentenceNum = userData.game.last.sentense.number;
 
     if (oldLevel !== currentLevel || oldRound !== currentRound) {
       this.localStorage.setValue(userData);
@@ -570,7 +584,37 @@ export class PlayField extends Component {
 
     this.errorInSentence = this.getErrorsInSentence();
     this.toggleWordValidationHighligh(true);
+    this.updateLastSentenceAsCompleteWithHelp();
     this.dispatchSomeEvent(this.eventList.anableUI());
+  }
+
+  protected updateLastSentenceAsCompleteWithHelp(): void {
+    const localStorageValue = this.localStorage.getValue();
+    localStorageValue.game.last.sentense.isWithHelp = true;
+    this.localStorage.setValue(localStorageValue);
+  }
+
+  public showRoundResults(): void {
+    if (!this.contentData) {
+      Error('Custom: No content data for Round results');
+      return;
+    }
+
+    const playerProgress = this.localStorage.getValue();
+    const lastGame = playerProgress.game.last;
+    const sentenceProgress =
+      playerProgress.game.progress[lastGame.level].roundProgress[lastGame.round]
+        .completeSentence;
+
+    const currentRoundSentences = this.contentData.rounds[lastGame.round];
+
+    const roundResultsContainer = this.roundResults.getPlayerResultsComponent(
+      sentenceProgress,
+      currentRoundSentences,
+      () => this.modalWindow.hideModal(),
+    );
+
+    this.modalWindow.showModal(roundResultsContainer);
   }
 
   public mutableUpdateUserGameProgress(
@@ -585,7 +629,12 @@ export class PlayField extends Component {
         const level = levelProgressList[oldLastGame.level];
         const round = level.roundProgress[oldLastGame.round];
 
-        if (!round.completeSentence.includes(oldLastGame.sentense))
+        const isSentenceComplete = round.completeSentence.find(
+          (completeSentence) =>
+            completeSentence.number === oldLastGame.sentense.number,
+        );
+
+        if (!isSentenceComplete)
           round.completeSentence.push(oldLastGame.sentense);
 
         const isOldRoundStatusComplete = round.isComplete;
@@ -634,7 +683,9 @@ export class PlayField extends Component {
           const lastSentence =
             nextRoundProgress[nextRound].completeSentence.at(-1);
           const nextSentence =
-            lastSentence || lastSentence === 0 ? lastSentence + 1 : 0;
+            lastSentence?.number === 0 || lastSentence
+              ? { number: lastSentence.number + 1, isWithHelp: false }
+              : { number: 0, isWithHelp: false };
 
           oldLastGame.level = Number(nextLevel) as TNumberOfLevel;
           oldLastGame.round = nextRound;
@@ -671,7 +722,9 @@ export class PlayField extends Component {
           const lastSentence =
             currentRoundProgress[nextRound].completeSentence.at(-1);
           const nextSentence =
-            lastSentence || lastSentence === 0 ? lastSentence + 1 : 0;
+            lastSentence?.number === 0 || lastSentence
+              ? { number: lastSentence.number + 1, isWithHelp: false }
+              : { number: 0, isWithHelp: false };
 
           oldLastGame.round = nextRound;
           oldLastGame.sentense = nextSentence;
@@ -679,7 +732,10 @@ export class PlayField extends Component {
           return;
         }
 
-        oldLastGame.sentense += 1;
+        oldLastGame.sentense = {
+          number: oldLastGame.sentense.number + 1,
+          isWithHelp: false,
+        };
         break;
       }
 
@@ -703,10 +759,13 @@ export class PlayField extends Component {
           nextRound = nextLevel.roundProgress[newLastGame.round];
         }
 
-        let newSentence = nextRound.completeSentence.at(-1);
-        newSentence = newSentence || newSentence === 0 ? newSentence + 1 : 0;
+        const lastSentence = nextRound.completeSentence.at(-1);
+        let newSentence =
+          lastSentence?.number === 0 || lastSentence
+            ? { number: lastSentence.number + 1, isWithHelp: false }
+            : { number: 0, isWithHelp: false };
 
-        if (nextRound.isComplete) newSentence -= 1;
+        if (nextRound.isComplete && lastSentence) newSentence = lastSentence;
 
         oldLastGame.level = newLastGame.level;
         oldLastGame.round = newLastGame.round;
@@ -1389,6 +1448,7 @@ export class PlayField extends Component {
       goToNextSentence: this.goToNextSentence.bind(this),
       toggleWordValidationHighligh:
         this.toggleWordValidationHighligh.bind(this),
+      showRoundResults: this.showRoundResults.bind(this),
     };
   }
 
@@ -1406,6 +1466,8 @@ export class PlayField extends Component {
       externalStorage: this.externalStorage,
       localStorage: this.localStorage,
       eventList: this.eventList,
+      modalWindow: this.modalWindow,
+      roundResults: this.roundResults.getRoundResults(),
     });
   }
 

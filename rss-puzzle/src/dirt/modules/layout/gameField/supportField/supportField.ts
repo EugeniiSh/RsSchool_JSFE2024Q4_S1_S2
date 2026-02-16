@@ -108,7 +108,7 @@ export class SupportField extends Component
 
     const lastSentence = contentData
     .rounds[playerProgress.last.round]
-    .words[playerProgress.last.sentense];
+    .words[playerProgress.last.sentense.number];
 
     const newTranslationText = lastSentence.textExampleTranslate;
     const newAudioTranslation = this.externalStorage.getAudioPath(lastSentence);
