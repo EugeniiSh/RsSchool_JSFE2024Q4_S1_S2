@@ -63,7 +63,10 @@ export class RoundResults extends Component {
     return sentenceContainer;
   }
 
-  protected getRoundResultsButtons(closeHandler: EventListener): Component {
+  protected getRoundResultsButtons(
+    closeHandler: EventListener,
+    nextHandler: EventListener,
+  ): Component {
     const closeButton = new CommonButton({
       className: [this.style.button],
       text: 'close',
@@ -71,12 +74,19 @@ export class RoundResults extends Component {
       clickListener: closeHandler,
     });
 
+    const nextButton = new CommonButton({
+      className: [this.style.button],
+      text: 'next',
+      items: [],
+      clickListener: nextHandler,
+    });
+
     const buttonsContainer = new Component({
       tag: 'div',
       className: [this.style.buttonContainer],
       text: '',
     });
-    buttonsContainer.appendChildren([closeButton]);
+    buttonsContainer.appendChildren([closeButton, nextButton]);
 
     return buttonsContainer;
   }
@@ -85,6 +95,7 @@ export class RoundResults extends Component {
     sentenceProgress: IStorageSentenceProgress[],
     roundData: IPuzzleRound,
     closeHandler: EventListener,
+    nextHandler: EventListener,
   ): Component {
     const resultsContainer = new Component({
       tag: 'div',
@@ -93,7 +104,7 @@ export class RoundResults extends Component {
     });
     resultsContainer.appendChildren([
       this.getRoundResultsSentences(sentenceProgress, roundData),
-      this.getRoundResultsButtons(closeHandler),
+      this.getRoundResultsButtons(closeHandler, nextHandler),
     ]);
 
     return resultsContainer;

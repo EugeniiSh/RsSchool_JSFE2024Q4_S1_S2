@@ -612,6 +612,10 @@ export class PlayField extends Component {
       sentenceProgress,
       currentRoundSentences,
       () => this.modalWindow.hideModal(),
+      () => {
+        this.modalWindow.hideModal();
+        this.goToNextSentence();
+      },
     );
 
     this.modalWindow.showModal(roundResultsContainer);
