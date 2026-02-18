@@ -40,7 +40,8 @@
 }
 
 .button-container {
-  border: none;
+  display: flex;
+  gap: 1em;
 }
 
 .button {
