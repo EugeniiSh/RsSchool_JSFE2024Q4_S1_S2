@@ -8,6 +8,8 @@ export interface IRoundResultsStyleList
 {
   resultsContainer: string;
   sentenceContainer: string;
+  knowledgeBlock: string;
+  knowledgeHeader: string;
   sentence: string;
   withHelp: string;
   withOutHelp: string;
@@ -44,26 +46,53 @@ export class RoundResults extends Component
 
   protected getRoundResultsSentences(sentenceProgress: IStorageSentenceProgress[], roundData: IPuzzleRound): Component
   {
-    const completeSentences = roundData.words.map((roundSentence, index) =>
+    const iKnowBlock = new Component({ tag: 'div',className: [this.style.knowledgeBlock],text: '', });
+    const iKnowHeader = new Component
+    (
+      { 
+        tag: 'div',
+        className: [this.style.knowledgeHeader, this.style.withOutHelp],
+        text: 'i know', 
+      }
+    );
+    iKnowBlock.append(iKnowHeader);
+
+    const iDontKnowBlock = new Component({ tag: 'div',className: [this.style.knowledgeBlock],text: '', });
+    const iDontKnowHeader = new Component
+    (
+      { 
+        tag: 'div',
+        className: [this.style.knowledgeHeader, this.style.withHelp],
+        text: "i don't know", 
+      }
+    );
+    iDontKnowBlock.append(iDontKnowHeader);
+
+    roundData.words.forEach((roundSentence, index) =>
     {
       const sentence = roundSentence.textExample;
       const isWithHelp = sentenceProgress[index] ? sentenceProgress[index].isWithHelp : false;
-      const helpStatusStyle = isWithHelp ? this.style.withHelp : this.style.withOutHelp;
 
       const sentenceComponent = new Component
       (
         {
           tag: 'div',
-          className: [this.style.sentence, helpStatusStyle],
+          className: [this.style.sentence],
           text: sentence,
         }
       );
 
-      return sentenceComponent;
+      if(isWithHelp)
+      {
+        iDontKnowBlock.append(sentenceComponent);
+        return;
+      }
+
+      iKnowBlock.append(sentenceComponent);
     });
 
     const sentenceContainer = new Component({ tag: 'div', className: [this.style.sentenceContainer], text: '' });
-    sentenceContainer.appendChildren(completeSentences);
+    sentenceContainer.appendChildren([iKnowBlock, iDontKnowBlock]);
 
     return sentenceContainer;
   }

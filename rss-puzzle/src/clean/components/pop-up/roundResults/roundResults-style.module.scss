@@ -5,7 +5,7 @@
   align-items: center;
   gap: 16rem;
 
-  padding: 16rem;
+  padding: 32rem 0;
 
   background-image: url(../../../../assets/images/post-card.png);
   background-repeat: no-repeat;
@@ -23,8 +23,23 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  gap: 16rem;
+}
+
+.knowledge-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: start;
   gap: 8rem;
+
+  width: 80%;
+}
+
+.knowledge-header {
+  align-self: center;
+  text-transform: capitalize;
 }
 
 .sentence {

@@ -5,6 +5,8 @@ const roundResultsStyleList: IRoundResultsStyleList =
 {
   resultsContainer: style['results-container'],
   sentenceContainer: style['sentence-container'],
+  knowledgeBlock: style['knowledge-block'],
+  knowledgeHeader: style['knowledge-header'],
   sentence: style.sentence,
   withHelp: style['with-help'],
   withOutHelp: style['with-out-help'],
