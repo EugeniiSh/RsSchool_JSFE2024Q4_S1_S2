@@ -46,9 +46,22 @@
   text-transform: capitalize;
 }
 
+.sentence-block
+{
+  display: flex;
+}
+
 .sentence
 {
   border: none;
+}
+
+.audio-hint
+{
+  width: 10rem;
+  height: 10rem;
+
+  background-color: red;
 }
 
 .with-help
@@ -88,4 +101,100 @@
   {
     box-shadow: 1rem 1rem 1rem 0rem var(--main-brown-middle);
   }
+}
+
+
+
+.audio-player
+{
+  border: none;
+}
+
+.volume-container
+{
+  border: none;
+}
+
+.volume-button
+{
+  border: none;
+}
+
+.volume-line
+{
+  border: none;
+}
+
+.volume-line-persent
+{
+  border: none;
+}
+
+
+.progress-container
+{
+  border: none;
+}
+
+.progress-line
+{
+  border: none;
+}
+.progress-persent
+{
+  border: none;
+}
+
+.total-time
+{
+  display: none;
+  border: none;
+}
+
+.current-time
+{
+  display: none;
+  border: none;
+}
+
+
+.buttons-container
+{
+  border: none;
+}
+
+.btn
+{
+  border: none;
+}
+
+.button-prev
+{
+  border: none;
+}
+
+.button-play
+{
+  border: none;
+}
+
+.button-next
+{
+  border: none;
+}
+
+
+.playing
+{
+  border: none;
+}
+
+.playing .button-play
+{
+  border: none;
+}
+
+.active-mute-volume
+{
+  border: none;
 }
