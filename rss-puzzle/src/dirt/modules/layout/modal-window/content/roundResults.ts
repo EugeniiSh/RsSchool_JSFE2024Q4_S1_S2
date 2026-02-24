@@ -1,8 +1,9 @@
 import { Component } from '../../common/component';
 import { CommonButton } from '../../button/common-button';
+import { AudioPlayer } from '../../../audio/audioPlayer';
+import { PuzzleGameExternalStorage, type IPuzzleRound } from '../../../storage/external';
 
 import { type IStorageSentenceProgress } from '../../../storage/local';
-import { type IPuzzleRound } from '../../../storage/external';
 
 export interface IRoundResultsStyleList
 {
@@ -10,7 +11,9 @@ export interface IRoundResultsStyleList
   sentenceContainer: string;
   knowledgeBlock: string;
   knowledgeHeader: string;
+  sentenceBlock: string;
   sentence: string;
+  audioHint: string;
   withHelp: string;
   withOutHelp: string;
   buttonContainer: string;
@@ -22,6 +25,8 @@ export interface IRoundResultsOption
   className: string[];
   text: string;
   style: IRoundResultsStyleList;
+  audioPlayer: AudioPlayer;
+  externalStorage: PuzzleGameExternalStorage;
 }
 
 export class RoundResults extends Component
@@ -30,18 +35,44 @@ export class RoundResults extends Component
 
   protected style: IRoundResultsStyleList;
 
+  protected audioPlayer: AudioPlayer;
+
+  protected externalStorage: PuzzleGameExternalStorage;
+
   constructor
   (
     {
       className,
       text,
       style,
+      audioPlayer,
+      externalStorage,
     }: IRoundResultsOption
   )
   {
     super({ tag: 'div', className, text });
     this.className = className;
     this.style = style;
+    this.audioPlayer = audioPlayer.getAudioPlayer();
+    this.externalStorage = externalStorage;
+
+    this.append(this.audioPlayer);
+  }
+
+  protected audioHintClickHandler = (event: Event) =>
+  {
+    if(event.target === null) return;
+    if(!(event.target instanceof HTMLElement)) return;
+
+    const audioHintNode = event.target.closest(`.${this.style.audioHint}`);
+    if(audioHintNode === null) return;
+    if(!(audioHintNode instanceof HTMLElement)) return;
+
+    const audioHintPart = audioHintNode.dataset.audio;
+    if(!audioHintPart) return;
+
+    this.audioPlayer.loadSong(audioHintPart);
+    this.audioPlayer.playSong();
   }
 
   protected getRoundResultsSentences(sentenceProgress: IStorageSentenceProgress[], roundData: IPuzzleRound): Component
@@ -73,26 +104,26 @@ export class RoundResults extends Component
       const sentence = roundSentence.textExample;
       const isWithHelp = sentenceProgress[index] ? sentenceProgress[index].isWithHelp : false;
 
-      const sentenceComponent = new Component
-      (
-        {
-          tag: 'div',
-          className: [this.style.sentence],
-          text: sentence,
-        }
-      );
+      const sentenceComponent = new Component({ tag: 'div',className: [this.style.sentence], text: sentence, });
+
+      const audioComponent = new Component({ tag: 'div',className: [this.style.audioHint], text: '', });
+      audioComponent.setAttribute('data-audio', this.externalStorage.getAudioPath(roundSentence));
+
+      const sentenceBlock = new Component({ tag: 'div',className: [this.style.sentenceBlock], text: '', });
+      sentenceBlock.appendChildren([audioComponent, sentenceComponent]);
 
       if(isWithHelp)
       {
-        iDontKnowBlock.append(sentenceComponent);
+        iDontKnowBlock.append(sentenceBlock);
         return;
       }
 
-      iKnowBlock.append(sentenceComponent);
+      iKnowBlock.append(sentenceBlock);
     });
 
     const sentenceContainer = new Component({ tag: 'div', className: [this.style.sentenceContainer], text: '' });
     sentenceContainer.appendChildren([iKnowBlock, iDontKnowBlock]);
+    sentenceContainer.addListener('click', this.audioHintClickHandler);
 
     return sentenceContainer;
   }
@@ -153,6 +184,8 @@ export class RoundResults extends Component
         className: this.className,
         text: '',
         style: this.style,
+        audioPlayer: this.audioPlayer.getAudioPlayer(),
+        externalStorage: this.externalStorage,
       }
     )
   }
