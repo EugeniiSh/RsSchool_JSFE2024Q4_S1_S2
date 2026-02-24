@@ -49,6 +49,9 @@
 .sentence-block
 {
   display: flex;
+  gap: 4%;
+
+  width: 100%;
 }
 
 .sentence
@@ -58,10 +61,25 @@
 
 .audio-hint
 {
-  width: 10rem;
-  height: 10rem;
+  flex-shrink: 0;
 
-  background-color: red;
+  width: 16rem;
+  height: 16rem;
+
+  background-image: url(../../../../assets/images/audio-key.png);
+  background-repeat: no-repeat;
+  background-size: 90%;
+
+  border: 1rem dashed var(--main-black);
+
+  box-shadow: 1rem 1rem 1rem 1rem var(--main-brown-middle);
+
+  cursor: pointer;
+
+  &:active
+  {
+    box-shadow: 1rem 1rem 1rem 0rem var(--main-brown-middle);
+  }
 }
 
 .with-help
