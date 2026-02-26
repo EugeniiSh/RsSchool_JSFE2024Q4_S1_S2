@@ -14,10 +14,35 @@
 
   box-shadow: inset 0rem 0rem 5rem 2rem var(--main-brown-middle);
 
-  font-size: 16rem;
+  font-size: 0.4em;
   font-family: "Special Elite", serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.miniature-container
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8rem;
+}
+
+.miniature-image-block
+{
+  width: calc(var(--cover-width) * 0.3);
+  height: calc(var(--cover-width) * 0.2);
+
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  box-shadow: 1rem 1rem 4rem 1rem var(--main-brown-middle), -1rem -1rem 4rem 1rem var(--main-brown-middle);
+}
+
+.miniature-text-block
+{
+  border: none;
 }
 
 .sentence-container
@@ -49,6 +74,7 @@
 .sentence-block
 {
   display: flex;
+  align-items: center;
   gap: 4%;
 
   width: 100%;

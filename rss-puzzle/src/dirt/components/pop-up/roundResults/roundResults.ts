@@ -44,6 +44,9 @@ const resultAudioPlayer = new AudioPlayer(audioPlayerOption);
 const roundResultsStyleList: IRoundResultsStyleList =
 {
   resultsContainer: style['results-container'],
+  miniatureContainer: style['miniature-container'],
+  miniatureImageBlock: style['miniature-image-block'],
+  miniatureTextBlock: style['miniature-text-block'],
   sentenceContainer: style['sentence-container'],
   knowledgeBlock: style['knowledge-block'],
   knowledgeHeader: style['knowledge-header'],
