@@ -10,6 +10,9 @@ import { type IStorageSentenceProgress } from '../../../storage/local';
 
 export interface IRoundResultsStyleList {
   resultsContainer: string;
+  miniatureContainer: string;
+  miniatureImageBlock: string;
+  miniatureTextBlock: string;
   sentenceContainer: string;
   knowledgeBlock: string;
   knowledgeHeader: string;
@@ -69,6 +72,31 @@ export class RoundResults extends Component {
     this.audioPlayer.loadSong(audioHintPart);
     this.audioPlayer.playSong();
   };
+
+  protected getRoundResutsMiniature(roundData: IPuzzleRound): Component {
+    const imageBlock = new Component({
+      tag: 'div',
+      className: [this.style.miniatureImageBlock],
+      text: '',
+    });
+    imageBlock.getNode().style.backgroundImage = `url(${this.externalStorage.getImagePath(roundData.levelData)})`;
+
+    const { year, author, name } = roundData.levelData;
+    const textBlock = new Component({
+      tag: 'div',
+      className: [this.style.miniatureTextBlock],
+      text: `${author} - ${name}(${year} г.)`,
+    });
+
+    const miniatureContainer = new Component({
+      tag: 'div',
+      className: [this.style.miniatureContainer],
+      text: '',
+    });
+    miniatureContainer.appendChildren([imageBlock, textBlock]);
+
+    return miniatureContainer;
+  }
 
   protected getRoundResultsSentences(
     sentenceProgress: IStorageSentenceProgress[],
@@ -135,12 +163,18 @@ export class RoundResults extends Component {
       iKnowBlock.append(sentenceBlock);
     });
 
+    const miniatureContainer = this.getRoundResutsMiniature(roundData);
+
     const sentenceContainer = new Component({
       tag: 'div',
       className: [this.style.sentenceContainer],
       text: '',
     });
-    sentenceContainer.appendChildren([iKnowBlock, iDontKnowBlock]);
+    sentenceContainer.appendChildren([
+      miniatureContainer,
+      iKnowBlock,
+      iDontKnowBlock,
+    ]);
     sentenceContainer.addListener('click', this.audioHintClickHandler);
 
     return sentenceContainer;
