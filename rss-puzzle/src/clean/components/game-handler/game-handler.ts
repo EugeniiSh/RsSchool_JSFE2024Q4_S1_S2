@@ -12,12 +12,16 @@ import handlerGameField from '../gameField/gameFieldHandler';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
 
+import accompanySound from '../accompanySound/accompanySound';
+
 function loginHandler(this: GameHandler) {
   const player = storageLocal.getValue();
   const playerInitials = `${player.fname} ${player.lname}`;
   playerGreetings.setPlayerName(playerInitials);
 
   this.book.openCover(style['turn-over']);
+
+  accompanySound.startBackground();
 }
 
 function preLogoutHandler(this: GameHandler) {
