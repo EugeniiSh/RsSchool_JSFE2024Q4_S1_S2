@@ -8,8 +8,8 @@ import modalWindow from '../pop-up/modal-window/modal-window';
 import handlerGameField from '../gameField/gameFieldHandler';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
-
 import accompanySound from '../accompanySound/accompanySound';
+import startCard from '../pop-up/startCard/startCard';
 
 function loginHandler(this: GameHandler)
 {
@@ -18,8 +18,6 @@ function loginHandler(this: GameHandler)
   playerGreetings.setPlayerName(playerInitials);
 
   this.book.openCover(style['turn-over']);
-
-  accompanySound.startBackground();
 }
 
 function preLogoutHandler(this: GameHandler)
@@ -68,12 +66,21 @@ function anableUIHandler(this: GameHandler)
 
 function loadHandler(this: GameHandler)
 {
-  const userData = this.localStorage.getValue();
-  if(!userData.isNew)
+  const startCardCloseHandler = () =>
   {
-    this.wrapperForm.changeVisibility(true);
-    this.book.openCover(style['turn-over']);
+    this.modalWindow.hideModal();
+    accompanySound.startBackground();
+
+    const userData = this.localStorage.getValue();
+    if(!userData.isNew)
+    {
+      this.wrapperForm.changeVisibility(true);
+      this.book.openCover(style['turn-over']);
+    }
   }
+
+  startCard.setCloseHandler(startCardCloseHandler);
+  this.modalWindow.showModal(startCard);
 }
 
 function startHandler(this: GameHandler)
