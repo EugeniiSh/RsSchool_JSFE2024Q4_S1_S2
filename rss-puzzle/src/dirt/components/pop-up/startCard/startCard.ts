@@ -4,6 +4,7 @@ import { StartCard, IStartCardOption, IStartCardStyleList } from '../../../modul
 const startCardStyleList: IStartCardStyleList =
 {
   startCardContainer: style['start-card-container'],
+  cardText: style['card-text'],
   closeButton: style['close-button'],
 }
 
