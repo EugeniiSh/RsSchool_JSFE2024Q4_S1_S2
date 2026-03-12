@@ -1,9 +1,6 @@
 .a-c-container
 {
-  position: absolute;
-  
-  opacity: 0;
-  visibility: hidden;
+  border: none;
 }
 
 
@@ -11,43 +8,75 @@
 
 .audio-player
 {
-  position: absolute;
-  top: 0;
-  left: 0;
-
   display: flex;
-
-  width: 300px;
-  height: 200px;
-
-  background-color: grey;
-  border: none;
 }
 
 
 .volume-container{
-  border: none;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+
+  &::before
+  {
+    content: 'Background';
+    position: absolute;
+    top: 50%;
+    right: 105%;
+    transform: translateY(-50%);
+
+    font-size: 0.9em;
+    font-style: italic;
+  }
 }
 .volume-button{
-  width: 30px;
-  height: 30px;
-  background-color: green;
-  border: none;
+  width: 20px;
+  height: 20px;
+
+  background-image: url(../../../assets/images/volume-on.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+ 
+  cursor: pointer;
 }
 .volume-line{
   display: flex;
   align-items: end;
 
-  width: 25px;
-  height: 90px;
-  background-color: rgb(53, 184, 53);
-  border: none;
+  width: 200rem;
+  height: 18rem;
+
+  padding: 8rem 0;
+
+  background-color: var(--main-black-opacity05);
+  background-clip: content-box;
+
+  cursor: pointer;
 }
 .volume-line-persent{
+  position: relative;
+
   width: 100%;
-  background-color: rgb(65, 226, 65);
-  border: none;
+  height: 100%;
+
+  background-color: var(--main-black);
+
   pointer-events: none;
+
+  &::before
+  {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: 0;
+
+    width: 2rem;
+    height: 10rem;
+
+    background-color: var(--main-black);
+  }
 }
 
 
@@ -109,6 +138,5 @@
   border: none;
 }
 .active-mute-volume{
-  background-color: rgb(161, 244, 161);
-  border: none;
+  background-image: url(../../../assets/images/volume-off.png);
 }

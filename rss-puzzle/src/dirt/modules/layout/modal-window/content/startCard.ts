@@ -1,10 +1,13 @@
 import { Component } from '../../common/component';
 import { CommonButton } from '../../button/common-button';
+import { AccompanySound } from '../../../accompanySound/accompanySound';
 
 export interface IStartCardStyleList
 {
   startCardContainer: string;
   cardText: string;
+  audioSetting: string;
+  audioWarning: string;
   closeButton: string;
 }
 
@@ -13,6 +16,7 @@ export interface IStartCardOption
   className: string[];
   text: string;
   style: IStartCardStyleList;
+  accompanySound: AccompanySound;
 }
 
 export class StartCard extends Component
@@ -20,6 +24,8 @@ export class StartCard extends Component
   protected className: string[];
 
   protected style: IStartCardStyleList;
+
+  protected accompanySound: AccompanySound;
 
   protected closeHandler: () => void;
 
@@ -31,12 +37,14 @@ export class StartCard extends Component
       className,
       text,
       style,
+      accompanySound,
     }: IStartCardOption
   )
   {
     super({tag: 'div', className, text});
     this.className = className;
     this.style = style;
+    this.accompanySound = accompanySound;
     this.closeHandler = () => {};
     this.closeButtonListener = () => this.closeHandler();
 
@@ -57,7 +65,21 @@ export class StartCard extends Component
     const textComponents = textContent
     .map(([textPart, stylePart]) => 
     new Component({tag: 'div', className: [...stylePart], text: textPart}));
+
     
+    const audioWarning = new Component
+    (
+      {
+        tag: 'div', 
+        className: [this.style.audioWarning], 
+        text: 'Caution! This book may produce strange sounds. To adjust the volume, use the sliders below.',
+      }
+    );
+
+    const audioSettingBlock = new Component({tag: 'div', className: [this.style.audioSetting], text: ''});
+    audioSettingBlock.appendChildren([audioWarning, this.accompanySound.getBackgroundVolumeConteiner()]);
+
+
     const closeButton = new CommonButton
     (
       {
@@ -68,7 +90,7 @@ export class StartCard extends Component
       }
     );
 
-    this.appendChildren([...textComponents, closeButton]);
+    this.appendChildren([...textComponents, audioSettingBlock, closeButton]);
   }
 
   public setCloseHandler(func: () => void): void

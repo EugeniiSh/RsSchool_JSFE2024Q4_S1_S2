@@ -36,6 +36,13 @@ export class AccompanySound extends Component
     this.className = className;
     this.style = style;
     this.backgroundSound = backgroundSound;
+
+    this.appendChildren([this.backgroundSound]);
+  }
+
+  public getBackgroundVolumeConteiner(): Component
+  {
+    return this.backgroundSound.getPlayerComponents().volumeContainer;
   }
 
   public startBackground(): void
