@@ -77,7 +77,14 @@ export class StartCard extends Component
     );
 
     const audioSettingBlock = new Component({tag: 'div', className: [this.style.audioSetting], text: ''});
-    audioSettingBlock.appendChildren([audioWarning, this.accompanySound.getBackgroundVolumeConteiner()]);
+    audioSettingBlock.appendChildren
+    (
+      [
+        audioWarning, 
+        this.accompanySound.getBackgroundVolumeConteiner(),
+        this.accompanySound.getEffectVolumeConteiner(),
+      ]
+    );
 
 
     const closeButton = new CommonButton

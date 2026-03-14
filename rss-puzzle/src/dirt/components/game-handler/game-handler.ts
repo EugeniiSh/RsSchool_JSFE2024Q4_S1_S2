@@ -70,6 +70,7 @@ function loadHandler(this: GameHandler)
   {
     this.modalWindow.hideModal();
     accompanySound.startBackground();
+    accompanySound.startEffect('./static/assets/sound/scull-laugh.mp3');
 
     const userData = this.localStorage.getValue();
     if(!userData.isNew)

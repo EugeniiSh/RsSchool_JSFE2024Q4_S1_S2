@@ -12,7 +12,8 @@
 }
 
 
-.volume-container{
+.volume-container-background
+{
   position: relative;
 
   display: flex;
@@ -31,7 +32,30 @@
     font-style: italic;
   }
 }
-.volume-button{
+
+.volume-container-effect
+{
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+
+  &::before
+  {
+    content: 'Effect';
+    position: absolute;
+    top: 50%;
+    right: 105%;
+    transform: translateY(-50%);
+
+    font-size: 0.9em;
+    font-style: italic;
+  }
+}
+
+.volume-button
+{
   width: 20px;
   height: 20px;
 
@@ -41,7 +65,9 @@
  
   cursor: pointer;
 }
-.volume-line{
+
+.volume-line-background
+{
   display: flex;
   align-items: end;
 
@@ -55,7 +81,50 @@
 
   cursor: pointer;
 }
-.volume-line-persent{
+
+.volume-line-effect
+{
+  display: flex;
+  align-items: end;
+
+  width: 200rem;
+  height: 18rem;
+
+  padding: 8rem 0;
+
+  background-color: var(--main-black-opacity05);
+  background-clip: content-box;
+
+  cursor: pointer;
+}
+
+.volume-line-persent-background
+{
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--main-black);
+
+  pointer-events: none;
+
+  &::before
+  {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: 0;
+
+    width: 2rem;
+    height: 10rem;
+
+    background-color: var(--main-black);
+  }
+}
+
+.volume-line-persent-effect
+{
   position: relative;
 
   width: 100%;
