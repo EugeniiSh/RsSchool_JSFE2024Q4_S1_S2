@@ -11,8 +11,9 @@ import modalWindow from '../pop-up/modal-window/modal-window';
 import handlerGameField from '../gameField/gameFieldHandler';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
-
 import accompanySound from '../accompanySound/accompanySound';
+import startCard from '../pop-up/startCard/startCard';
+import settingButton from '../button/setting/setting';
 
 function loginHandler(this: GameHandler) {
   const player = storageLocal.getValue();
@@ -20,8 +21,6 @@ function loginHandler(this: GameHandler) {
   playerGreetings.setPlayerName(playerInitials);
 
   this.book.openCover(style['turn-over']);
-
-  accompanySound.startBackground();
 }
 
 function preLogoutHandler(this: GameHandler) {
@@ -61,11 +60,20 @@ function anableUIHandler(this: GameHandler) {
 }
 
 function loadHandler(this: GameHandler) {
-  const userData = this.localStorage.getValue();
-  if (!userData.isNew) {
-    this.wrapperForm.changeVisibility(true);
-    this.book.openCover(style['turn-over']);
-  }
+  const startCardCloseHandler = () => {
+    this.modalWindow.hideModal();
+    accompanySound.startBackground();
+    accompanySound.startEffect('./static/assets/sound/scull-laugh.mp3');
+
+    const userData = this.localStorage.getValue();
+    if (!userData.isNew) {
+      this.wrapperForm.changeVisibility(true);
+      this.book.openCover(style['turn-over']);
+    }
+  };
+
+  startCard.setCloseHandler(startCardCloseHandler);
+  this.modalWindow.showModal(startCard);
 }
 
 function startHandler(this: GameHandler) {
@@ -95,7 +103,7 @@ const gameHandlerOptions = {
 
   className: [style.game],
   text: '',
-  items: [wrapperFormElem, book, modalWindow],
+  items: [wrapperFormElem, book, modalWindow, settingButton],
   wrapperForm: wrapperFormElem,
   gameFieldHandler: handlerGameField,
   localStorage: storageLocal,
