@@ -157,6 +157,26 @@
   width: 80%;
 }
 
+.notification-block
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 90%;
+
+  font-size: 0.84em;
+}
+
+.notification-image
+{
+  width: 14rem;
+  height: 14rem;
+
+  background-image: url(../../../../assets/images/cogwheel.svg), radial-gradient(circle, white 10%, transparent 75%);
+  background-size: contain;
+}
+
 .close-button
 {
   grid-area: button;

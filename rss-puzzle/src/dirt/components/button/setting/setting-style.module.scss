@@ -1,0 +1,72 @@
+.setting-button
+{
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 30rem;
+  height: 30rem;
+
+  background-image: url(../../../../assets/images/cogwheel.svg), radial-gradient(circle, white 10%, transparent 75%);
+  background-size: contain;
+  
+  transition-property: transform;
+  transition-duration: 1s;
+
+  cursor: pointer;
+
+  @media(hover: hover)
+  {
+    &:hover
+    {
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.setting-container
+{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 8rem;
+
+  width: 350rem;
+
+  padding: 8rem 16rem;
+
+  background-image: url(../../../../assets/images/post-card.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  box-shadow: inset 0rem 0rem 5rem 2rem var(--main-brown-middle);
+
+  font-size: 0.45em;
+  font-family: "Special Elite", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.close-button
+{
+  align-self: center;
+
+  padding: 4rem 8rem;
+
+  background-color: transparent;
+  border: 1rem dashed var(--main-black);
+
+  box-shadow: 1rem 1rem 1rem 1rem var(--main-brown-middle);
+
+  font-family: "Special Elite", serif;
+  font-weight: normal;
+  font-style: normal;
+  text-transform: capitalize;
+
+  cursor: pointer;
+
+  &:active
+  {
+    box-shadow: 1rem 1rem 1rem 0rem var(--main-brown-middle);
+  }
+}

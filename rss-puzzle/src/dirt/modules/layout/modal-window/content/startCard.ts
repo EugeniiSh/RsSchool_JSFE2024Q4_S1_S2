@@ -8,6 +8,8 @@ export interface IStartCardStyleList
   cardText: string;
   audioSetting: string;
   audioWarning: string;
+  notificationBlock: string;
+  notificationImage:string;
   closeButton: string;
 }
 
@@ -76,6 +78,35 @@ export class StartCard extends Component
       }
     );
 
+    const notificationText = new Component
+    (
+      {
+        tag: 'div', 
+        className: [], 
+        text: 'These settings are always accessible in the upper right corner.',
+      }
+    );
+
+    const notificationImage = new Component
+    (
+      {
+        tag: 'div', 
+        className: [this.style.notificationImage], 
+        text: '',
+      }
+    );
+
+    const notificationBlock = new Component
+    (
+      {
+        tag: 'div', 
+        className: [this.style.notificationBlock], 
+        text: '',
+      },
+      notificationText,
+      notificationImage,
+    );
+
     const audioSettingBlock = new Component({tag: 'div', className: [this.style.audioSetting], text: ''});
     audioSettingBlock.appendChildren
     (
@@ -83,6 +114,7 @@ export class StartCard extends Component
         audioWarning, 
         this.accompanySound.getBackgroundVolumeConteiner(),
         this.accompanySound.getEffectVolumeConteiner(),
+        notificationBlock,
       ]
     );
 

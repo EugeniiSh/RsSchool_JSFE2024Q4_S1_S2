@@ -8,6 +8,8 @@ const startCardStyleList: IStartCardStyleList =
   cardText: style['card-text'],
   audioSetting: style['audio-setting'],
   audioWarning: style['audio-warning'],
+  notificationBlock: style['notification-block'], 
+  notificationImage: style['notification-image'],
   closeButton: style['close-button'],
 }
 

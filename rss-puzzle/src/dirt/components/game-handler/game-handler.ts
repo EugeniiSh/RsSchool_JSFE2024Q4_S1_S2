@@ -10,6 +10,7 @@ import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
 import accompanySound from '../accompanySound/accompanySound';
 import startCard from '../pop-up/startCard/startCard';
+import settingButton from '../button/setting/setting';
 
 function loginHandler(this: GameHandler)
 {
@@ -121,7 +122,8 @@ const gameHandlerOptions =
   [
     wrapperFormElem,
     book,
-    modalWindow
+    modalWindow,
+    settingButton,
   ],
   wrapperForm: wrapperFormElem,
   gameFieldHandler: handlerGameField,
