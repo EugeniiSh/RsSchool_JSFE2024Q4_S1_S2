@@ -8,7 +8,9 @@ import modalWindow from '../pop-up/modal-window/modal-window';
 import handlerGameField from '../gameField/gameFieldHandler';
 import preLogoutMessage from '../pop-up/pre-logout/pre-logout';
 import storageLocal from '../storage/local';
-
+import accompanySound from '../accompanySound/accompanySound';
+import startCard from '../pop-up/startCard/startCard';
+import settingButton from '../button/setting/setting';
 
 function loginHandler(this: GameHandler)
 {
@@ -65,12 +67,22 @@ function anableUIHandler(this: GameHandler)
 
 function loadHandler(this: GameHandler)
 {
-  const userData = this.localStorage.getValue();
-  if(!userData.isNew)
+  const startCardCloseHandler = () =>
   {
-    this.wrapperForm.changeVisibility(true);
-    this.book.openCover(style['turn-over']);
+    this.modalWindow.hideModal();
+    accompanySound.startBackground();
+    accompanySound.startEffect('./static/assets/sound/scull-laugh.mp3');
+
+    const userData = this.localStorage.getValue();
+    if(!userData.isNew)
+    {
+      this.wrapperForm.changeVisibility(true);
+      this.book.openCover(style['turn-over']);
+    }
   }
+
+  startCard.setCloseHandler(startCardCloseHandler);
+  this.modalWindow.showModal(startCard);
 }
 
 function startHandler(this: GameHandler)
@@ -110,7 +122,8 @@ const gameHandlerOptions =
   [
     wrapperFormElem,
     book,
-    modalWindow
+    modalWindow,
+    settingButton,
   ],
   wrapperForm: wrapperFormElem,
   gameFieldHandler: handlerGameField,

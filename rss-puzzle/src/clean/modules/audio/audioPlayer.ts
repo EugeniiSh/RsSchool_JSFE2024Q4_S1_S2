@@ -218,6 +218,10 @@ export class AudioPlayer extends Component {
     };
   }
 
+  public getPlayerComponents(): IAudioPlayerComponents {
+    return this.dom;
+  }
+
   // Загрузка трека с элемента < audio.src = >
   public loadSong(path: string): void {
     this.dom.audioNode.src = path;

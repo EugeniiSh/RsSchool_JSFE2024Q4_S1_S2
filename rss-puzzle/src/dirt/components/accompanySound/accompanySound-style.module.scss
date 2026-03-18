@@ -1,0 +1,211 @@
+.a-c-container
+{
+  border: none;
+}
+
+
+
+
+.audio-player
+{
+  display: flex;
+}
+
+
+.volume-container-background
+{
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+
+  &::before
+  {
+    content: 'Background';
+    position: absolute;
+    top: 50%;
+    right: 105%;
+    transform: translateY(-50%);
+
+    font-size: 0.9em;
+    font-style: italic;
+  }
+}
+
+.volume-container-effect
+{
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+
+  &::before
+  {
+    content: 'Effect';
+    position: absolute;
+    top: 50%;
+    right: 105%;
+    transform: translateY(-50%);
+
+    font-size: 0.9em;
+    font-style: italic;
+  }
+}
+
+.volume-button
+{
+  width: 20px;
+  height: 20px;
+
+  background-image: url(../../../assets/images/volume-on.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+ 
+  cursor: pointer;
+}
+
+.volume-line-background
+{
+  display: flex;
+  align-items: end;
+
+  width: 200rem;
+  height: 18rem;
+
+  padding: 8rem 0;
+
+  background-color: var(--main-black-opacity05);
+  background-clip: content-box;
+
+  cursor: pointer;
+}
+
+.volume-line-effect
+{
+  display: flex;
+  align-items: end;
+
+  width: 200rem;
+  height: 18rem;
+
+  padding: 8rem 0;
+
+  background-color: var(--main-black-opacity05);
+  background-clip: content-box;
+
+  cursor: pointer;
+}
+
+.volume-line-persent-background
+{
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--main-black);
+
+  pointer-events: none;
+
+  &::before
+  {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: 0;
+
+    width: 2rem;
+    height: 10rem;
+
+    background-color: var(--main-black);
+  }
+}
+
+.volume-line-persent-effect
+{
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--main-black);
+
+  pointer-events: none;
+
+  &::before
+  {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: 0;
+
+    width: 2rem;
+    height: 10rem;
+
+    background-color: var(--main-black);
+  }
+}
+
+
+.progress-container{
+  border: none;
+}
+.progress-line{
+  width: 90px;
+  height: 25px;
+  background-color: rgb(53, 116, 184);
+  border: none;
+}
+.progress-persent{
+  height: 100%;
+  background-color: rgb(122, 172, 226);
+  border: none;
+  pointer-events: none;
+}
+.total-time{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(122, 200, 226);
+  border: none;
+}
+.current-time{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(122, 200, 226);
+  border: none;
+}
+
+
+.buttons-container{
+  border: none;
+}
+.btn{
+  border: none;
+}
+.button-prev{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(255, 238, 1);
+  border: none;
+}
+.button-play{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(255, 1, 1);
+  border: none;
+}
+.button-next{
+  width: 30px;
+  height: 30px;
+  background-color: rgb(255, 166, 1);
+  border: none;
+}
+.playing{
+  background-color: rgb(243, 207, 207);
+  border: none;
+}
+.active-mute-volume{
+  background-image: url(../../../assets/images/volume-off.png);
+}
