@@ -1,6 +1,7 @@
 import * as style from './scull-style.module.scss';
 import { Component } from '../../modules/layout/common/component';
 import { Scull } from '../../modules/layout/scull/scull';
+import accompanySound from '../accompanySound/accompanySound';
 
 const scullTop = new Component({ tag: 'div', className: [style['scull-top']], text: '' });
 const scullBottom = new Component({ tag: 'div', className: [style['scull-bottom']], text: '' });
@@ -10,7 +11,11 @@ const rightEye = new Component({ tag: 'div', className: [style['right-eye'], sty
 function scullLaugh(this: Scull)
 {
   this.toggleClass(style['scull-laugh'], false);
-  setTimeout(() => this.toggleClass(style['scull-laugh'], true), 10);
+  setTimeout(() =>
+  {
+    this.toggleClass(style['scull-laugh'], true);
+    accompanySound.startEffect('./static/assets/sound/scull-laugh.mp3');
+  }, 10);
 }
 
 const scullOption =
