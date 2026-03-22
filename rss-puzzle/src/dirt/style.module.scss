@@ -1,0 +1,77 @@
+:root
+{
+  --book-space: min(60vw, 90vh);
+
+  --cover-height: max(var(--book-space), 390rem);
+  --cover-width-ratio: 0.78;
+  --cover-width: calc(var(--cover-height) * var(--cover-width-ratio));
+
+  --scull-width: calc(calc(var(--cover-height) * var(--cover-width-ratio)) * 0.2);
+  --scull-top-height-ratio: 1.16;
+  --scull-bottom-height-ratio: 0.56;
+  --scull-bottom-width-ratio: 0.76;
+  --scull-eye-size: calc(var(--scull-width) * 0.05);
+
+  --login-form-width: 25vw;
+  --login-form-height-ratio: 0.5;
+
+  --middle-font-size: 24rem;
+
+  --login-form-left-1-percent: calc((192 - 9) / 100);
+  --adaptable-width-1-percent: calc((1920 - 320) / 100);
+  --current-adaptable-width-percent: calc((min(100vw, 1920rem) - 320rem) / var(--adaptable-width-1-percent));
+  --current-login-form-left: calc((var(--current-adaptable-width-percent) * var(--login-form-left-1-percent)) + 9rem);
+
+  --main-black: rgb(0, 0, 0);
+  --main-black-opacity05: rgba(0,0,0, 0.5);
+
+  --main-brown: rgb(101, 66, 44);
+  --main-brown-middle: rgb(140, 93, 65);
+  --main-brown-light: rgb(149, 127, 116);
+
+  --main-red: rgb(255, 0, 0);
+  --main-blue: rgb(78, 124, 166);
+  --main-grey: rgb(183, 187, 191);
+
+  --text-color-dark: rgb(44, 28, 13);
+  --first-letter-red: rgb(199, 0, 0);
+  --pupil-eye: rgb(240, 248, 255);
+  --iris-eye: rgb(0, 255, 208);
+  --magic-color: rgb(195, 12, 227);
+  --milk: rgb(255, 248, 239);
+
+
+  // --size-width-result: 700rem;
+  --size-width-result: calc(calc(var(--cover-height) * var(--cover-width-ratio)) * 0.85);
+  --size-height-result: calc(var(--size-width-result) * 0.65);
+  --size-circle-piece: calc(var(--size-height-result) / 10 / 2.2);
+  --size-circle-piece-half: calc(var(--size-circle-piece) / 2);
+  --size-height-word-block: calc(var(--size-height-result) / 10);
+  --size-padding-circle-piece: calc(calc(var(--size-height-word-block) / 2) - var(--size-circle-piece-half));
+}
+
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html
+{
+  font-size: 1px;
+}
+
+@font-face 
+{
+  font-family: "Magic Spell Jf";
+  src: url(../assets/fonts/magic-spell-jf.otf) format("otf"),
+    url(../assets/fonts/magic-spell-jf.ttf) format("ttf"),
+    url(../assets/fonts/magic-spell-jf.woff) format("woff"),
+    url(../assets/fonts/magic-spell-jf.woff2) format("woff2"),;
+}
+
+body
+{
+  font-size: 32rem;
+}

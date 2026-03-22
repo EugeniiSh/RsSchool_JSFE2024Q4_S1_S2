@@ -1,0 +1,76 @@
+.block
+{
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+
+  padding-top: 1em;
+
+  font-size: 16rem;
+}
+
+.field
+{
+  display: flex;
+  gap: 6rem;
+}
+
+.tick
+{
+  position: relative;
+
+  flex-shrink: 0;
+
+  width: 1em;
+  height: 1em;
+
+  border: 1rem solid var(--main-black);
+
+  &::after
+  {
+    position: absolute;
+    top: 50%;
+    left: -40%;
+
+    content: '';
+
+    width: 100%;
+    height: 10%;
+
+    background-color: var(--main-black);
+
+    transform: rotate(45deg);
+  }
+
+  &::before
+  {
+    position: absolute;
+    top: 30%;
+    left: 10%;
+
+    content: '';
+
+    width: 130%;
+    height: 10%;
+
+    background-color: var(--main-black);
+
+    transform: rotate(120deg);
+  }
+}
+
+
+.string.error
+{
+  text-decoration: underline wavy var(--main-red);
+}
+
+.tick.error::after
+{
+  background-color: transparent;
+}
+
+.tick.error::before
+{
+  background-color: transparent;
+}

@@ -1,0 +1,98 @@
+.cover-top
+{
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  transform-style: preserve-3d;
+  transform-origin: 0.5% center;
+
+  // transition: 5s;
+  transition-property: transform;
+  transition-duration: 5s;
+}
+
+.cover-side
+{
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  transform-style: inherit;
+  backface-visibility: hidden;
+}
+
+.front
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 10%;
+
+  padding-top: 30%;
+
+  font-family: "Magic Spell Jf";
+  line-height: 1;
+
+  background-image: url(../../../../assets/images/book-cover.png);
+
+  transform-style: inherit;
+}
+
+.header
+{
+  // font-size: calc(var(--cover-height) * 0.13);
+  font-size: 1em;
+  text-align: center;
+  letter-spacing: 6rem;
+
+  text-shadow:  2rem -2rem 3rem var(--main-brown), -1rem 1rem 3rem var(--main-brown-light);
+
+  color: var(--text-color-dark);
+
+  &-top
+  {
+    text-transform: uppercase;
+  }
+
+  &-bottom
+  {
+    text-transform: capitalize;
+  }
+}
+
+.span
+{
+  display: block;
+}
+
+.back
+{
+  background-image: url(../../../../assets/images/book-cover-back.png);
+
+  transform: rotateY(-180deg) rotate(180deg);
+}
+
+.cover-bottom
+{
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-image: url(../../../../assets/images/book-cover-back.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  transform: rotateX(180deg);
+  transform-style: inherit;
+}

@@ -1,0 +1,45 @@
+.translation-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5%;
+
+  width: 100%;
+  height: 50%;
+
+  &__header {
+    width: 100%;
+
+    text-align: center;
+    text-transform: capitalize;
+    text-shadow: 0 0 6rem var(--main-brown-light);
+  }
+
+  &__content {
+    width: 100%;
+  }
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.disable-content {
+  position: absolute;
+  inset: 0;
+
+  font-style: normal;
+  text-align: center;
+
+  opacity: 0.5;
+
+  transition-property: opacity, visibility;
+  transition-duration: 0.3s;
+}
+
+.disable-block {
+  opacity: 0;
+  visibility: hidden;
+}

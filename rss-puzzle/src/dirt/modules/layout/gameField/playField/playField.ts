@@ -1,0 +1,1496 @@
+import { Component } from '../../common/component';
+import { InitialContainer } from './blocks/initialContainer';
+import { ResultContainer } from './blocks/resultContainer';
+import { ResultLine } from './blocks/resultLine';
+import { WordContainer } from './blocks/wordContainer';
+import { WordBlock } from './blocks/wordBlock';
+import { ButtonContainer } from './blocks/buttonContainer';
+import { type SupportField } from '../../../shared/index';
+import collapsEffect from '../../../effects/collapse/collapse';
+import { ModalWindow } from '../../modal-window/modal-window';
+import { RoundResults } from '../../modal-window/content/roundResults';
+
+import { IPuzzleWordsData ,IPuzzleLevelData, PuzzleGameExternalStorage, TNumberOfLevel } from '../../../storage/external';
+import { PuzzleGameStorage, IStorageGameProgress, TLastLevelAndRound } from '../../../storage/local';
+import { TCustomEventList } from '../../../events/custom';
+ 
+export interface IPlayFieldStyleList
+{
+  pazzleWrapper: string,
+  resultContainer: string,
+  initialContainer: string,
+  resultGuess: string,
+  initialGuess: string,
+  guessBlock: string,
+  wordContainer: string,
+  wordContainerFilled: string,
+  wordBlock: string,
+  statusCorrect: string,
+  statusError: string,
+  statusFirst: string,
+  wordBlockPiece: string,
+  wordBlockPieceStatusCorrect: string,
+  wordBlockPieceStatusError: string,
+  wordBlockPieceLeftStatusCorrect: string,
+  wordBlockPieceLeftStatusError: string,
+  wordBlockDrag: string,
+  wordBlockHLLeft: string,
+  wordBlockHLRight: string,
+  wordBlockHLCenter: string,
+  completePictureBlock: string;
+  pictureInformationBlock: string;
+  hiddenBlock: string,
+  visibleBlock: string;
+  hiddenGuessBlock: string;
+}
+
+export interface IFetchDataOptions
+{
+  level: TNumberOfLevel
+}
+
+export interface IPlayFieldOption
+{
+  className: string[], 
+  text: string,
+  style: IPlayFieldStyleList,
+  initialContainer: InitialContainer,
+  resultContainer: ResultContainer,
+  resultLine: ResultLine,
+  wordContainer: WordContainer,
+  wordBlock: WordBlock,
+  buttonContainer: ButtonContainer,
+  externalStorage: PuzzleGameExternalStorage,
+  localStorage: PuzzleGameStorage,
+  eventList: TCustomEventList,
+  modalWindow: ModalWindow,
+  roundResults: RoundResults,
+}
+
+export interface IRenderContentInfo
+{
+  playerProgress: IStorageGameProgress,
+  result: ResultContainer,
+  initial: InitialContainer,
+  button: ButtonContainer,
+}
+
+export type TPlayFieldMethods = Pick<
+  PlayField,
+  | 'collectSentenceInRightOrder'
+  | 'goToNextSentence'
+  | 'toggleWordValidationHighligh'
+  | 'showRoundResults'
+>
+
+export type TStatusForBgImg = 'on' | 'off';
+
+export class PlayField extends Component
+{
+  protected className: string[];
+
+  protected style: IPlayFieldStyleList;
+
+  protected initialContainer: InitialContainer;
+
+  protected resultContainer: ResultContainer;
+
+  protected resultLine: ResultLine;
+
+  protected wordContainer: WordContainer;
+
+  protected wordBlock: WordBlock;
+
+  protected buttonContainer: ButtonContainer;
+
+  protected supportField: SupportField | null;
+
+  protected externalStorage: PuzzleGameExternalStorage;
+
+  protected localStorage: PuzzleGameStorage;
+
+  protected eventList: TCustomEventList;
+
+  protected contentData: IPuzzleLevelData | null; 
+
+  protected wordCount: number;
+
+  protected currentSentence: WordBlock[];
+
+  protected errorInSentence: number[];
+
+  protected resultGuessFill: number[];
+
+  protected initialGuessFill: number[];
+
+  protected currentResultContainer: ResultContainer;
+
+  protected currentButtonBlock: ButtonContainer;
+
+  protected currentLine: { result: ResultLine, initial: InitialContainer };
+
+  protected isMouseDown: boolean;
+
+  protected timeoutId: NodeJS.Timeout | null;
+
+  protected modalWindow: ModalWindow;
+
+  protected roundResults: RoundResults;
+
+  constructor
+  (
+    {
+      className,
+      text,
+      style,
+      initialContainer,
+      resultContainer,
+      resultLine,
+      wordContainer,
+      wordBlock,
+      buttonContainer,
+      externalStorage,
+      localStorage,
+      eventList,
+      modalWindow,
+      roundResults,
+    }: IPlayFieldOption
+  )
+  {
+    super({ tag: 'div', className, text });
+    this.className = className;
+    this.style = style;
+    this.initialContainer = initialContainer;
+    this.resultContainer = resultContainer;
+    this.resultLine = resultLine;
+    this.wordContainer = wordContainer;
+    this.wordBlock = wordBlock;
+    this.buttonContainer = buttonContainer;
+    this.supportField = null;
+    this.externalStorage = externalStorage;
+    this.localStorage = localStorage;
+    this.eventList = eventList;
+    this.modalWindow = modalWindow;
+    this.roundResults = roundResults.getRoundResults();
+
+    this.contentData = null;
+    this.wordCount = 0;
+    this.currentSentence = [];
+    this.errorInSentence = [1]; // initial value to prevent accidental transition to a new sentence.
+    this.resultGuessFill = [];
+    this.initialGuessFill = [];
+    this.currentResultContainer = this.resultContainer.getResultContainer();
+    this.currentButtonBlock = this.buttonContainer.getButtonContainer();
+    this.currentLine =
+    {
+      result: this.resultLine.getResultLine(),
+      initial: this.initialContainer.getInitialContainer()
+    }
+
+    this.isMouseDown = false;
+    this.timeoutId = null;
+    
+    this.addListener('click', this.handlerClickWordBlock);
+    this.addListener('pointerdown', this.handlerPointerDown);
+    this.addListener('pointerup', this.handlerPointerUp);
+  }
+
+  static honestRandom(min: number, max: number): number
+  {
+    const range = max - min + 1;
+    const result = Math.round((Math.random() * range) + min - 0.5);
+
+    return result;
+  }
+
+  static getShuffleElementArr
+  (elementArr: WordContainer[]): 
+  { 
+    shuffleSentence: WordContainer[], 
+    shuffleOrderWords: number[]
+  } 
+  {
+    const shuffleSentence: WordContainer[] = [];
+    const shuffleOrderWords: number[] = [];
+    const randomNumSet: Set<number> = new Set();
+
+    while(randomNumSet.size < elementArr.length)
+    {
+      randomNumSet.add(PlayField.honestRandom(0, elementArr.length - 1));
+    }
+
+    randomNumSet.forEach((num) =>
+    {
+      shuffleSentence.push(elementArr[num]);
+      shuffleOrderWords.push(num + 1);
+    })
+
+    return { shuffleSentence, shuffleOrderWords };
+  }
+
+  static calculateAndSetBlockWidth(resultLine: ResultLine | InitialContainer, wordContainer: WordContainer[])
+  {
+    // === Get width rezult line ===
+    const resultWidth = resultLine.getNode().getBoundingClientRect().width;
+
+    // === Set the size of the word cards ===
+    wordContainer.forEach((elem) =>
+    {
+      // === Take the size '.word-container' ... ===
+      const wordElem = elem.getNode();
+      const elemWidth = wordElem.getBoundingClientRect().width;
+
+      // === and set it to '.word-block' ===
+      const wordElemChild = elem.getChildren()[0].getNode();
+      wordElemChild.style.width = 'calc(var(--size-width-result) * var(--size-width-ratio))';
+
+      // === add a variable for adaptability ===
+      const  wordElemWidthRatio = elemWidth / resultWidth;
+      wordElemChild.style.setProperty('--size-width-ratio', wordElemWidthRatio.toString());
+
+      // === updating the set width flag ===
+      // This is necessary to correctly adjust block widths when words are moved between 
+      // the initial block and the result block.
+      const wordContainerChild = elem.getChildren()[0];
+      if(wordContainerChild instanceof WordBlock)
+      {
+        wordContainerChild.setIsWidthSet(true);
+        elem.setFillStatus(true, wordContainerChild);
+      }
+
+      wordElem.style.flexGrow = '';
+    })
+  }
+
+  static calculateAndSetBgImgPosition(sentence: WordContainer[], sentenceIndex: number): void
+  {
+    let accWidthRatio = 0;
+
+    sentence.forEach((wordContainer) =>
+    {
+      const wordBlock = wordContainer.getChildren()[0] as WordBlock;
+      const wordBlockNode = wordBlock.getNode();
+      const piece = wordBlock.getPieceRight();
+      const pieceNode = piece.getNode();
+      const wordBlockWidthRatio = parseFloat(wordBlockNode.style.getPropertyValue('--size-width-ratio'));
+
+      const wordBlockWidth = wordBlockNode.offsetWidth;
+      const wordBlockHeight = wordBlockNode.offsetHeight;
+      const pieceWidth = pieceNode.offsetWidth;
+      const pieceHeight = pieceNode.offsetHeight;
+
+      const heightRatio = 0.1 * sentenceIndex;
+      const pieceBgPosXRatio = wordBlockWidthRatio * ((wordBlockWidth - pieceWidth / 2) / wordBlockWidth) + accWidthRatio;
+      const pieceBgPosYRatio = 0.1 * (((wordBlockHeight / 2) - (pieceHeight / 2)) / wordBlockHeight) + heightRatio;
+
+      wordBlockNode.style.backgroundPosition = `calc(var(--size-width-result) * ${accWidthRatio} * -1) calc(var(--size-height-result) * ${heightRatio} * -1)`;
+      pieceNode.style.backgroundPosition = `calc(var(--size-width-result) * ${pieceBgPosXRatio} * -1) calc(var(--size-height-result) * ${pieceBgPosYRatio} * -1)`;
+
+      accWidthRatio += wordBlockWidthRatio;
+    });
+  }
+
+  static setBgImagePath(component: Component, path: string): void
+  {
+    const node = component.getNode();
+    node.style.backgroundImage = `url(${path})`;
+  }
+
+  public setStatusBgImgForCurrentLine(status: TStatusForBgImg): void
+  {
+    const resultNode = this.currentLine.result.getNode();
+    const initialNode = this.currentLine.initial.getNode();
+
+    if(status === 'on')
+    {
+      resultNode.style.backgroundImage = 'inherit';
+      initialNode.style.backgroundImage = 'inherit';
+      return;
+    }
+
+    resultNode.style.backgroundImage = 'linear-gradient(transparent)';
+    initialNode.style.backgroundImage = 'linear-gradient(transparent)';
+  }
+
+
+  public async renderGameFieldContent(this: PlayField, contentInfo: IRenderContentInfo): Promise<void>
+  {
+    const lastGameData = contentInfo.playerProgress.last;
+    this.contentData = await this.externalStorage.getData(lastGameData.level);
+    const lastRound = this.contentData.rounds[lastGameData.round];
+    const lastRoundSentenceList = lastRound.words;
+    const roundImagePath = this.externalStorage.getImagePath(lastRound.levelData);
+
+    this.currentResultContainer = contentInfo.result;
+    this.currentLine.initial = contentInfo.initial;
+    this.currentButtonBlock = contentInfo.button;
+    this.currentButtonBlock.setParentMethods(this.getBoundMethods());
+    
+    const roundSentenceGroup = this.getRoundSentenceGroup(lastRoundSentenceList, lastGameData.sentense.number);
+    this.renderRoundSentenceGroup(roundSentenceGroup);
+
+    PlayField.setBgImagePath(this, roundImagePath);
+  }
+
+  protected renderCurrentSentence(currentSentence: WordContainer[], sentenceIndex: number)
+  {
+    const { shuffleSentence, shuffleOrderWords } = PlayField.getShuffleElementArr(currentSentence);
+    this.setCurrentSentence(currentSentence, shuffleOrderWords);
+    this.currentLine.initial.destroyChildren();
+    this.currentLine.initial.appendChildren(shuffleSentence);
+
+    this.currentLine.result.appendChildren(this.wordContainer.getWordContainerArr(shuffleSentence.length));
+    this.currentResultContainer.append(this.currentLine.result);
+
+    PlayField.calculateAndSetBlockWidth(this.currentLine.initial, shuffleSentence);
+    PlayField.calculateAndSetBgImgPosition(currentSentence, sentenceIndex);
+  }
+
+  protected renderRoundSentenceGroup(sentenceGroup: WordContainer[][])
+  {
+    const lastSentence = sentenceGroup.length - 1;
+
+    sentenceGroup.forEach((sentence, index) =>
+    {
+      const resultLine = this.resultLine.getResultLine();
+
+      if(lastSentence === index)
+      {
+        this.currentLine.result = resultLine;
+        this.renderCurrentSentence(sentence, index);
+      }
+      else
+      {
+        resultLine.appendChildren(sentence);
+        this.currentResultContainer.append(resultLine);
+
+        PlayField.calculateAndSetBlockWidth(resultLine, sentence);
+        PlayField.calculateAndSetBgImgPosition(sentence, index);
+      }
+    })
+  }
+
+  protected setCurrentSentence(currentSentence: WordContainer[], initialGuessFill: number[]): void
+  {
+    // In this array, the words are arranged in the correct order.
+    this.currentSentence = currentSentence.map((container) => container.getChildren()[0]) as WordBlock[];
+
+    const wordCount = this.currentSentence.length;
+    this.resultGuessFill = new Array(wordCount).fill(0);
+    this.initialGuessFill = initialGuessFill;
+  }
+
+  protected getRoundSentenceGroup(round: IPuzzleWordsData[], currentSentenceIndex: number): WordContainer[][]
+  {
+    let count = -1;
+    const roundSentenceArr: WordContainer[][] = []
+
+    do
+    {
+      count += 1;
+
+      const sentence = round[count].textExample.split(' ');
+      roundSentenceArr.push(this.getConvertSentenceIntoLayout(sentence));
+    }
+    while(count < currentSentenceIndex)
+
+    return roundSentenceArr;
+  }
+
+  protected getErrorsInSentence(): number[]
+  {
+    const errors: number[] = []; 
+    this.resultGuessFill.forEach((item, index) =>
+    {
+      if(item !== index + 1) errors.push(index);
+    })
+
+    return errors;
+  }
+
+  protected getConvertSentenceIntoLayout(sentence: string[]): WordContainer[]
+  {
+    const result = sentence.map((word, index, arr) => 
+    {
+      const wordContainer = this.wordContainer.getWordContainerArr()[0];
+      const wordBlock = this.wordBlock.getBlockWithWord(word);
+      wordContainer.append(wordBlock);
+
+      wordContainer.getNode().style.flexGrow = `${word.length}`;
+
+      if(index === 0)
+      {
+        wordBlock.getPieceLeft().toggleClass(this.style.hiddenBlock, true);
+        wordBlock.toggleClass(this.style.statusFirst);
+      }
+
+      if(index === arr.length - 1)
+      {
+        wordBlock.getPieceRight().toggleClass(this.style.hiddenBlock, true);
+      }
+
+      return wordContainer;
+    });
+
+    return result;
+  }
+
+  public toggleWordValidationHighligh(isHighligh: boolean): void
+  {
+    const wordContainerList = this.currentLine.result.getChildren();
+
+    const setHLWordBlock = (wordBlock: Component, highLight: 'correct' | 'error', isSet: boolean): void =>
+    {
+      const HL = highLight === 'correct' ? {
+        wordBlock: this.style.statusCorrect,
+        piece: this.style.wordBlockPieceStatusCorrect,
+        pieceLeft: this.style.wordBlockPieceLeftStatusCorrect,
+      }:{
+        wordBlock: this.style.statusError,
+        piece: this.style.wordBlockPieceStatusError,
+        pieceLeft: this.style.wordBlockPieceLeftStatusError,
+      }
+
+      wordBlock.toggleClass(HL.wordBlock, isSet);
+      wordBlock.getChildren().forEach((child, index) =>
+      {
+        if(index === 0)
+        {
+          child.toggleClass(HL.piece, isSet);
+          return;
+        }
+
+        child.toggleClass(HL.pieceLeft, isSet);
+      })
+    }
+
+    if(isHighligh)
+    {
+      const errors = this.errorInSentence;
+      wordContainerList.forEach((wordContainer, index) =>
+      {
+        const wordBlock = wordContainer.getChildren()[0];
+
+        if(errors.includes(index))
+        {
+          setHLWordBlock(wordBlock, 'error', true);
+          return;
+        }
+
+        setHLWordBlock(wordBlock, 'correct', true);
+      })
+
+      if(errors.length === 0)
+      {
+        this.currentButtonBlock.changeStatusNextButton(errors.length === 0);
+        this.currentButtonBlock.toggleVisibleMotivationButton('next');
+        if(this.supportField) this.supportField.showHints();
+
+        if(this.isAllSentenceInResultConteiner())
+        {
+          this.revealImageAndInformation();
+          this.currentButtonBlock.toggleVisibleSupportButton('results');
+        }
+      }
+      
+      return;
+    }
+
+    wordContainerList.forEach((wordContainer) =>
+    {
+      const wordBlock = wordContainer.getChildren()[0];
+      if(wordBlock)
+      {
+        setHLWordBlock(wordBlock, 'error', false);
+        setHLWordBlock(wordBlock, 'correct', false);
+      }
+    })
+
+    this.currentButtonBlock.toggleVisibleMotivationButton('check');
+  }
+
+  public goToNextSentence(): void
+  {
+    const userData = this.localStorage.getValue();
+    const oldLevel = userData.game.last.level;
+    const oldRound = userData.game.last.round;
+    this.mutableUpdateUserGameProgress(userData.game, 'next-sentence');
+
+    const currentLevel = userData.game.last.level;
+    const currentRound = userData.game.last.round;
+    const nextSentenceNum = userData.game.last.sentense.number;
+
+    if(oldLevel !== currentLevel
+    || oldRound !== currentRound) 
+    {
+      this.localStorage.setValue(userData);
+      this.dispatchSomeEvent(this.eventList.start());
+
+      return;
+    }
+
+    if(!this.contentData) throw new Error('No information about current round.');
+    if(!Number.isInteger(nextSentenceNum) 
+    || (nextSentenceNum < 0 && nextSentenceNum > 9)) throw new Error('No information about next sentence.');
+
+    this.localStorage.setValue(userData);
+    this.toggleWordValidationHighligh(false);
+    this.setStatusBgImgForCurrentLine('on');
+
+    const nextSentence = this.contentData
+    .rounds[currentRound]
+    .words[nextSentenceNum]
+    .textExample
+    .split(' ');
+    
+    const sentenceInLayout = this.getConvertSentenceIntoLayout(nextSentence);
+    this.currentLine.result = this.resultLine.getResultLine();
+    this.renderCurrentSentence(sentenceInLayout, nextSentenceNum);
+
+    this.errorInSentence = this.getErrorsInSentence();
+    this.currentButtonBlock.changeStatusNextButton(this.errorInSentence.length === 0);
+    this.currentButtonBlock.changeStatusCheckButton(false);
+    this.currentButtonBlock.toggleVisibleMotivationButton('check');
+
+    if(this.supportField) this.supportField.updateSupportField();
+  }
+
+  public async collectSentenceInRightOrder(): Promise<void>
+  {
+    this.dispatchSomeEvent(this.eventList.disableUI());
+    this.toggleWordValidationHighligh(false);
+
+    await collapsEffect(this.currentSentence, 'hide');
+
+    const currentLineResultChildren = this.currentLine.result.getChildren();
+    this.currentLine.initial.getChildren().forEach((wordContainer, index) =>
+    {
+      currentLineResultChildren[index].cleanInnerHTML();
+      wordContainer.cleanInnerHTML();
+    });
+
+    this.currentSentence.forEach((wordBlock, index) =>
+    {
+      currentLineResultChildren[index].append(wordBlock);
+      this.resultGuessFill[index] = index + 1;
+      this.initialGuessFill[index] = 0;
+    });
+
+    await collapsEffect(this.currentSentence, 'show');
+
+    this.errorInSentence = this.getErrorsInSentence();
+    this.toggleWordValidationHighligh(true);
+    this.updateLastSentenceAsCompleteWithHelp();
+    this.dispatchSomeEvent(this.eventList.anableUI());
+  }
+
+  protected updateLastSentenceAsCompleteWithHelp(): void
+  {
+    const localStorageValue = this.localStorage.getValue();
+    localStorageValue.game.last.sentense.isWithHelp = true;
+    this.localStorage.setValue(localStorageValue);
+  }
+
+  public showRoundResults(): void
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No content data for Round results');
+      return;
+    } 
+
+    const playerProgress = this.localStorage.getValue();
+    const lastGame = playerProgress.game.last;
+    const sentenceProgress = playerProgress
+    .game.progress[lastGame.level]
+    .roundProgress[lastGame.round]
+    .completeSentence;
+
+    const currentRoundSentences = this.contentData.rounds[lastGame.round];
+
+    const roundResultsContainer = this.roundResults
+    .getPlayerResultsComponent
+    (
+      sentenceProgress, 
+      currentRoundSentences, 
+      () => this.modalWindow.hideModal(),
+      () =>
+      {
+        this.modalWindow.hideModal();
+        this.goToNextSentence();
+      }
+    );
+
+    this.modalWindow.showModal(roundResultsContainer);
+  }
+
+  public mutableUpdateUserGameProgress
+  (
+    gameProgress: IStorageGameProgress, 
+    action: 'next-sentence' | 'custom-choice',
+    newLastGame?: TLastLevelAndRound
+  ): void
+  {
+    switch(action)
+    {
+      case 'next-sentence':
+      {
+        const oldLastGame = gameProgress.last;
+        const levelProgressList = gameProgress.progress;
+        const level = levelProgressList[oldLastGame.level];
+        const round = level.roundProgress[oldLastGame.round];
+       
+        const isSentenceComplete = round.completeSentence
+        .find((completeSentence) => completeSentence.number === oldLastGame.sentense.number);
+
+        if(!isSentenceComplete)
+        round.completeSentence.push(oldLastGame.sentense);
+
+        const isOldRoundStatusComplete = round.isComplete;
+        if(round.completeSentence.length === 10) round.isComplete = true;
+
+        if(round.isComplete)
+        {
+          if(!this.contentData) throw Error("Can't update game progress.");
+
+          if(this.contentData.roundsCount > level.completeRoundCount
+          && !isOldRoundStatusComplete) 
+          level.completeRoundCount += 1;
+
+          level.isComplete = this.contentData.roundsCount === level.completeRoundCount;
+        }
+
+        if(level.isComplete)
+        {
+          const nextLevel = Object.keys(levelProgressList).find((levelNum) =>
+          {
+            const isNotComplete = !levelProgressList[Number(levelNum) as TNumberOfLevel].isComplete
+            return isNotComplete;
+          }) as TNumberOfLevel | undefined;
+
+          if(!nextLevel) throw Error("Game Over");
+
+          const nextRoundProgress = levelProgressList[nextLevel].roundProgress;
+          let nextRound = 0;
+          Object.keys(nextRoundProgress).find((roundNum, index) =>
+          {
+            if(!nextRoundProgress[index])
+            {
+              nextRoundProgress[index] = this.localStorage.getStartRoundProgress();
+              nextRound = index;
+              return true;
+            }
+
+            if(!nextRoundProgress[Number(roundNum)].isComplete)
+            {
+              nextRound = Number(roundNum);
+              return true;
+            }
+
+            return false;
+          })
+
+          const lastSentence = nextRoundProgress[nextRound].completeSentence.at(-1); 
+          const nextSentence = lastSentence?.number === 0 || lastSentence
+          ? { number: lastSentence.number + 1, isWithHelp: false } 
+          : { number: 0, isWithHelp: false };
+
+          oldLastGame.level = Number(nextLevel) as TNumberOfLevel;
+          oldLastGame.round = nextRound;
+          oldLastGame.sentense = nextSentence;
+
+          return;
+        }
+
+        if(round.isComplete)
+        {
+          const currentRoundProgress = level.roundProgress;
+          let nextRound = 0;
+
+          if(!this.contentData) throw Error("Can't update game progress.");
+
+          const roundCount = this.contentData.roundsCount;
+          Array.from({ length: roundCount }, (_ , index) => index)
+          .find((roundNum) =>
+          {
+            if(!currentRoundProgress[roundNum])
+            {
+              currentRoundProgress[roundNum] = this.localStorage.getStartRoundProgress();
+              nextRound = roundNum;
+              return true;
+            }
+
+            if(!currentRoundProgress[Number(roundNum)].isComplete)
+            {
+              nextRound = Number(roundNum);
+              return true;
+            }
+
+            return false;
+          });
+
+          const lastSentence = currentRoundProgress[nextRound].completeSentence.at(-1);
+          const nextSentence = lastSentence?.number === 0 || lastSentence
+          ? { number: lastSentence.number + 1, isWithHelp: false } 
+          : { number: 0, isWithHelp: false };
+
+          oldLastGame.round = nextRound;
+          oldLastGame.sentense = nextSentence;
+
+          return;
+        }
+
+        oldLastGame.sentense = { number: oldLastGame.sentense.number + 1, isWithHelp: false };
+        break;
+      };
+
+      case 'custom-choice':
+      {
+        if(!newLastGame) throw Error("New game is undefined.");
+
+        const oldLastGame = gameProgress.last;
+        const levelProgressList = gameProgress.progress;
+
+        let nextLevel = levelProgressList[newLastGame.level];
+        if(!nextLevel)
+        {
+          levelProgressList[newLastGame.level] = this.localStorage.getStartLevelProgress();
+          nextLevel = levelProgressList[newLastGame.level];
+        } 
+
+        let nextRound = nextLevel.roundProgress[newLastGame.round];
+        if(!nextRound)
+        {
+          nextLevel.roundProgress[newLastGame.round] = this.localStorage.getStartRoundProgress();
+          nextRound = nextLevel.roundProgress[newLastGame.round];
+        }
+
+        const lastSentence = nextRound.completeSentence.at(-1);
+        let newSentence = lastSentence?.number === 0 || lastSentence
+        ? { number: lastSentence.number + 1, isWithHelp: false } 
+        : { number: 0, isWithHelp: false };
+
+        if(nextRound.isComplete && lastSentence) newSentence = lastSentence;
+
+        oldLastGame.level = newLastGame.level;
+        oldLastGame.round = newLastGame.round;
+        oldLastGame.sentense = newSentence;
+
+        break;
+      }
+
+      default: break;
+    }
+  }
+
+  protected handlerClickWordBlock = (event: Event) =>
+  {
+    if(!this.isMouseDown) return;
+    if(event.target === null) return;
+    if(!(event.target instanceof HTMLElement)) return;
+   
+    const parent = event.target.closest(`.${this.style.wordBlock}`);
+    if(parent === null) return;
+
+    if(parent.closest(`.${this.style.initialGuess}`))
+    {
+      let position = 0;
+      
+      this.currentLine.initial.getChildren().find((wordContainer, index) =>
+      {
+        const wordBlock = wordContainer.getChildren()[0];
+        if(wordBlock && wordBlock.getNode() === parent) 
+        {
+          position = index;
+          return true;
+        }
+
+        return false;
+      })
+
+      const wordBlockComponent = 
+      this.currentLine.initial
+      .getChildren()[position]
+      .getChildren()[0];
+
+      this.currentLine.initial
+      .getChildren()[position]
+      .cleanInnerHTML();
+
+      const numberCorrectOrder = this.initialGuessFill[position];
+      this.initialGuessFill[position] = 0;
+
+      const resultNewPosition = this.resultGuessFill.indexOf(0);
+      this.resultGuessFill[resultNewPosition] = numberCorrectOrder;
+
+      this.currentLine.result.getChildren()[resultNewPosition].append(wordBlockComponent);
+    }
+    else
+    {
+      const resultGuess = parent.closest(`.${this.style.resultGuess}`);
+      if(resultGuess !== this.currentLine.result.getNode()) return;
+      this.toggleWordValidationHighligh(false);
+
+      let position = 0;
+      
+      this.currentLine.result.getChildren().find((wordContainer, index) =>
+      {
+        const wordBlock = wordContainer.getChildren()[0];
+        if(wordBlock && wordBlock.getNode() === parent) 
+        {
+          position = index;
+          return true;
+        }
+
+        return false;
+      })
+
+      const wordBlockComponent = 
+      this.currentLine.result
+      .getChildren()[position]
+      .getChildren()[0];
+
+      this.currentLine.result
+      .getChildren()[position]
+      .cleanInnerHTML();
+
+      const numberCorrectOrder = this.resultGuessFill[position];
+      this.resultGuessFill[position] = 0;
+
+      const initialNewPosition = this.initialGuessFill.indexOf(0);
+      this.initialGuessFill[initialNewPosition] = numberCorrectOrder;
+
+      this.currentLine.initial.getChildren()[initialNewPosition].append(wordBlockComponent);
+    }
+
+    
+    this.errorInSentence = this.getErrorsInSentence();
+
+    const isResultLineFill = !this.resultGuessFill.includes(0);
+    this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);
+
+    this.isMouseDown = false;
+  }
+
+  protected handlerDragAndDropWordBlock = (event: Event) =>
+  {
+    if(!(event instanceof PointerEvent)) return;
+    if(event.target === null) return;
+    if(!(event.target instanceof HTMLElement)) return;
+  
+    const parent = event.target.closest<HTMLElement>(`.${this.style.wordBlock}`);
+    if(parent === null) return;
+    if(!parent.closest(`.${this.style.initialGuess}`) 
+    && (parent.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode())) return;
+
+    let guessBlockElemBelow: 'result' | 'initial' = 'result';
+    let guessBlockWordRised: 'result' | 'initial' = 'result';
+    if(parent.closest(`.${this.style.initialGuess}`))
+    {
+      guessBlockWordRised = 'initial';
+    }
+    if(parent === null) return;
+
+    parent.setPointerCapture(event.pointerId);
+    this.toggleWordValidationHighligh(false);
+
+    let position = 0;
+      
+    this.currentLine[guessBlockWordRised].getChildren().find((wordContainer, index) =>
+    {
+      const wordBlock = wordContainer.getChildren()[0];
+      if(wordBlock && wordBlock.getNode() === parent) 
+      {
+        position = index;
+        return true;
+      }
+
+      return false;
+    })
+
+    const parentComp = this.currentLine[guessBlockWordRised]
+    .getChildren()[position]
+    .getChildren()[0];
+
+    const playFildCord = this.getNode().getBoundingClientRect();
+
+    const dragstartOff = (dragstartEvent: Event) => {dragstartEvent.preventDefault();}
+    parentComp.addListener('dragstart', dragstartOff);
+
+    const parentCord = parentComp.getNode().getBoundingClientRect();
+    const shiftX = event.clientX - parentCord.left;
+    const shiftY = event.clientY - parentCord.top;
+
+    const moveAt = (moveEvent: PointerEvent) =>
+    {
+      let isFlayOver = false;
+      switch(true)
+      {
+        case (moveEvent.pageX - shiftX) < playFildCord.left: isFlayOver = true;
+        break; 
+        case ((moveEvent.pageX - shiftX) + parentCord.width) > playFildCord.right: isFlayOver = true;
+        break;
+        case (moveEvent.pageY - shiftY) < playFildCord.top: isFlayOver = true;
+        break;
+        case ((moveEvent.pageY - shiftY) + parentCord.height) > playFildCord.bottom: isFlayOver = true;
+        break;
+        default: isFlayOver = false;
+      }
+      if(isFlayOver) return;
+
+      const cordX = moveEvent.pageX - playFildCord.left;
+      const cordY = moveEvent.pageY - playFildCord.top;
+      // Because of the "perspective" the Y coordinates are calculated incorrectly. 
+      // Perhaps there is another reason that I don't know.
+      // correctionCordY is used to correct these coordinates.
+      const correctionCordY = 1.03;
+
+      parentComp.getNode().style.left = `${cordX - shiftX}rem`;
+      parentComp.getNode().style.top = `${(cordY - shiftY) * correctionCordY}rem`;
+    }
+
+    type TElemParts = 'center' | 'right' | 'left' | 'none';
+    interface IDropableElems
+    {
+      center: Component | null,
+      left: Component | null,
+      right: Component | null,
+    }
+
+    const cleanHL = (components: (Component | null)[]) =>
+    {
+      components.forEach((component) =>
+      {
+        if(!component) return;
+        component.toggleClass(this.style.wordBlockHLLeft, false);
+        component.toggleClass(this.style.wordBlockHLRight, false);
+        component.toggleClass(this.style.wordBlockHLCenter, false);
+      })
+    }
+
+    const highLighPartElem = 
+    (
+      HLElems: IDropableElems,
+      HLPart: TElemParts, 
+      cleanHLElems?: (Component | null)[]
+    ) =>
+    {
+      switch(HLPart)
+      {
+        case 'center': 
+          if(cleanHLElems) cleanHL(cleanHLElems);
+          if(!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        case 'left': 
+          if(cleanHLElems) cleanHL(cleanHLElems);
+          if(!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLLeft, true);
+          if(!HLElems.left) break;
+          HLElems.left.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        case 'right': 
+          if(cleanHLElems) cleanHL(cleanHLElems);
+          if(!HLElems.center) break;
+          HLElems.center.toggleClass(this.style.wordBlockHLRight, true);
+          if(!HLElems.right) break;
+          HLElems.right.toggleClass(this.style.wordBlockHLCenter, true);
+          break;
+
+        default: break;
+      }
+    }
+
+    const wordContainerOfDragElem = parentComp.getParentComponent();
+    if(!wordContainerOfDragElem) throw Error('Parent container of the drag element was not found');
+    if(!(wordContainerOfDragElem instanceof WordContainer)) throw Error('Parent container of the drag element is not WordContainer');
+    wordContainerOfDragElem.setFillStatus(false);
+
+    parentComp.toggleClass(this.style.wordBlockDrag, true);
+    moveAt(event);
+
+    let elemBelowPosition = 0;
+    let currentElemPart: TElemParts = 'none';
+
+    const currentDroppable: IDropableElems = 
+    {
+      center: null,
+      left: null,
+      right: null,
+    }
+    
+    const halfWidthParent = parentCord.width / 2;
+    const xShiftForCordBelow = halfWidthParent - shiftX;
+
+    const onMouseMove = (mouseMoveEvent: PointerEvent) => 
+    {
+      moveAt(mouseMoveEvent);
+
+      const xCordBelow = mouseMoveEvent.clientX + xShiftForCordBelow;
+      const yCordBelow = mouseMoveEvent.clientY - shiftY;
+
+      parentComp.getNode().hidden = true;
+      let elemBelow = document.elementFromPoint(xCordBelow, yCordBelow);
+      parentComp.getNode().hidden = false;
+
+      if(!elemBelow
+      || !(elemBelow.closest(`.${this.style.wordBlock}`) || elemBelow.closest(`.${this.style.wordContainer}`))
+      || ((elemBelow.closest(`.${this.style.resultGuess}`) !== this.currentLine.result.getNode()) && !elemBelow.closest(`.${this.style.initialGuess}`)))
+      {
+        currentElemPart = 'none';
+        cleanHL(this.currentLine.result.getChildren());
+        cleanHL(this.currentLine.initial.getChildren());
+        return;
+      }
+
+      if(elemBelow.closest(`.${this.style.initialGuess}`))
+      {
+        guessBlockElemBelow = 'initial';
+        elemBelow = elemBelow.closest(`.${this.style.wordContainer}`);
+        if(!elemBelow) throw new Error('Element below initial container does not contain wordContainer. 869');
+      }
+      else
+      {
+        guessBlockElemBelow = 'result';
+        elemBelow = elemBelow.closest(`.${this.style.wordContainer}`);
+        if(!elemBelow) throw new Error('Element below result conteiner does not contain wordContainer. 877');
+      }
+
+      const elemBelowCord = elemBelow.getBoundingClientRect();
+      const EBPartWidth = elemBelowCord.width / 5;
+      let elemBelowPart: TElemParts = 'none';
+      switch(true)
+      {
+        case (xCordBelow >= elemBelowCord.left) 
+        && (xCordBelow < (elemBelowCord.left + EBPartWidth)):
+        {
+          elemBelowPart = 'left';
+          break;
+        }
+        case (xCordBelow >= (elemBelowCord.left + EBPartWidth))
+        && (xCordBelow < (elemBelowCord.left + EBPartWidth * 4)):
+        {
+          elemBelowPart = 'center';
+          break;
+        }
+        case (xCordBelow >= (elemBelowCord.left + EBPartWidth * 4))
+        && (xCordBelow < (elemBelowCord.left + EBPartWidth * 5)):
+        {
+          elemBelowPart = 'right';
+          break;
+        }
+        default: elemBelowPart = 'none';
+      }
+
+      elemBelowPosition = 0;
+      this.currentLine[guessBlockElemBelow].getChildren().find((wordContainer, index) =>
+      {
+        if(wordContainer && wordContainer.getNode() === elemBelow) 
+        {
+          elemBelowPosition = index;
+          return true;
+        }
+
+        return false;
+      })
+
+      const compBelow = this.currentLine[guessBlockElemBelow].getChildren()[elemBelowPosition];
+      const compBelowNearbyLeft = this.currentLine[guessBlockElemBelow].getChildren()[elemBelowPosition - 1];
+      const compBelowNearbyRight = this.currentLine[guessBlockElemBelow].getChildren()[elemBelowPosition + 1];
+
+      if(currentDroppable.center !== compBelow)
+      {
+        const { center, left, right } = currentDroppable;
+        const dropArr = [center, left, right];
+        cleanHL(dropArr);
+        
+        currentDroppable.center = compBelow;
+        currentDroppable.left = compBelowNearbyLeft;
+        currentDroppable.right = compBelowNearbyRight;
+        if(!currentDroppable.center) return;
+
+        highLighPartElem(currentDroppable, elemBelowPart);
+        return;
+      }
+
+      if(currentElemPart === elemBelowPart) return;
+      currentElemPart = elemBelowPart;
+
+      const { center, left, right } = currentDroppable;
+      const dropArr = [center, left, right];
+
+      highLighPartElem(currentDroppable, elemBelowPart, dropArr);
+    }
+
+    parentComp.getNode().addEventListener('pointermove', onMouseMove);
+
+    const insertDragElement = () =>
+    {
+      const isSameGuessBlocks = guessBlockElemBelow === guessBlockWordRised;
+
+      if(currentElemPart === 'center'
+      && currentDroppable.center)
+      {
+        if(position === elemBelowPosition
+        && isSameGuessBlocks)
+        {
+          wordContainerOfDragElem.setFillStatus(true, parentComp);
+          return;
+        } 
+
+        const replacingElem = 
+        this.currentLine[guessBlockElemBelow]
+        .getChildren()[elemBelowPosition]
+        .getChildren()[0];
+
+        this.currentLine[guessBlockElemBelow]
+        .getChildren()[elemBelowPosition]
+        .cleanInnerHTML();
+
+        this.currentLine[guessBlockWordRised]
+        .getChildren()[position]
+        .cleanInnerHTML();
+
+        this.currentLine[guessBlockElemBelow]
+        .getChildren()[elemBelowPosition]
+        .append(parentComp);
+
+        if(replacingElem)
+        {
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[position]
+          .append(replacingElem);
+        }
+
+        const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
+        this[`${guessBlockWordRised}GuessFill`][position] = this[`${guessBlockElemBelow}GuessFill`][elemBelowPosition];
+        this[`${guessBlockElemBelow}GuessFill`][elemBelowPosition] = parentCorrectOrder;
+
+        return;
+      }
+
+      if(currentElemPart === 'right'
+      && currentDroppable.center)
+      {
+        let deletingBlockPosition = position;
+
+        if(!isSameGuessBlocks)
+        {
+          const emptyPosition = this[`${guessBlockElemBelow}GuessFill`].lastIndexOf(0);
+          if(emptyPosition === -1) throw new Error(`Not emptyPosition found into <${guessBlockElemBelow}> block`);
+
+          const vector = emptyPosition - elemBelowPosition;
+          deletingBlockPosition = vector > 0 ? emptyPosition + 1 : emptyPosition;
+          
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[position]
+          .cleanInnerHTML();
+
+          this.currentLine[guessBlockElemBelow].destroyOneChild(deletingBlockPosition);
+
+          const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockWordRised}GuessFill`][position] = 0;
+          this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
+          {
+            if(emptyPosition === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if(index === emptyPosition) return acc;
+            if(index === elemBelowPosition)
+            {
+              acc.push(corOrder, parentCorrectOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+
+        }
+        else
+        {
+          const vector = position - elemBelowPosition;
+          deletingBlockPosition = vector > 0 ? position + 1 : position;
+          
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appAfterSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[deletingBlockPosition]
+          .cleanInnerHTML();
+
+          this.currentLine[guessBlockWordRised].destroyOneChild(deletingBlockPosition);
+
+          const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
+          {
+            if(position === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if(index === position) return acc;
+            if(index === elemBelowPosition)
+            {
+              acc.push(corOrder, parentCorrectOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        }
+
+        return;
+      }
+
+      if(currentElemPart === 'left'
+      && currentDroppable.center)
+      {
+        let deletingBlockPosition = position;
+
+        if(!isSameGuessBlocks)
+        {
+          const emptyPosition = this[`${guessBlockElemBelow}GuessFill`].indexOf(0);
+          if(emptyPosition === -1) throw new Error(`Not emptyPosition found into <${guessBlockElemBelow}> block`);
+
+          const vector = emptyPosition - elemBelowPosition;
+          deletingBlockPosition = vector >= 0 ? emptyPosition + 1 : emptyPosition;
+         
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[position]
+          .cleanInnerHTML();
+
+          this.currentLine[guessBlockElemBelow].destroyOneChild(deletingBlockPosition);
+
+          const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockWordRised}GuessFill`][position] = 0;
+          this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
+          {
+            if(emptyPosition === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if(index === emptyPosition) return acc;
+            if(index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder, corOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        }
+        else
+        {
+          const vector = position - elemBelowPosition;
+          deletingBlockPosition = vector >= 0 ? position + 1 : position;
+          
+          const wordContainer = this.wordContainer.getWordContainerArr()[0];
+          wordContainer.append(parentComp);
+          this.currentLine[guessBlockElemBelow].appBeforeSpecifiedChildren(elemBelowPosition, wordContainer);
+
+          this.currentLine[guessBlockWordRised]
+          .getChildren()[deletingBlockPosition]
+          .cleanInnerHTML();
+
+          this.currentLine[guessBlockWordRised].destroyOneChild(deletingBlockPosition);
+
+          const parentCorrectOrder = this[`${guessBlockWordRised}GuessFill`][position];
+          this[`${guessBlockElemBelow}GuessFill`] = this[`${guessBlockElemBelow}GuessFill`].reduce((acc, corOrder, index) =>
+          {
+            if(position === elemBelowPosition
+            && index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder);
+              return acc;
+            }
+            if(index === position) return acc;
+            if(index === elemBelowPosition)
+            {
+              acc.push(parentCorrectOrder, corOrder);
+              return acc;
+            }
+
+            acc.push(corOrder);
+            return acc;
+          }, [] as number[]);
+        }
+
+        return;
+      }
+
+      wordContainerOfDragElem.setFillStatus(true, parentComp);
+    }
+
+    const handlerPointerUp = () =>
+    {
+      cleanHL(this.currentLine[guessBlockElemBelow].getChildren());
+      insertDragElement();
+
+      parentComp.getNode().removeEventListener('pointermove', onMouseMove);
+      parentComp.toggleClass(this.style.wordBlockDrag, false);
+      parentComp.removeListener('dragstart', dragstartOff);
+      parentComp.getNode().removeEventListener('pointerup', handlerPointerUp);
+      parentComp.getNode().style.left = `0rem`;
+      parentComp.getNode().style.top = `0rem`;
+
+      this.errorInSentence = this.getErrorsInSentence();
+      const isResultLineFill = !this.resultGuessFill.includes(0);
+      this.currentButtonBlock.changeStatusCheckButton(isResultLineFill);
+    }
+
+    parentComp.getNode().addEventListener('pointerup', handlerPointerUp);
+  }
+
+  protected handlerPointerDown = (event: Event) =>
+  {
+    this.isMouseDown = true;
+    this.timeoutId = setTimeout(() =>
+    {
+      if(this.isMouseDown)
+      {
+        this.handlerDragAndDropWordBlock(event);
+        this.isMouseDown = false;
+      }
+    }, 200);
+  }
+
+  protected handlerPointerUp = () =>
+  {
+    if(this.timeoutId) clearTimeout(this.timeoutId);
+  }
+
+  protected revealImageAndInformation(): void
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No contentData for revealImageAndInformation()');
+      return;
+    } 
+
+    const currentRound = this.localStorage.getValue().game.last.round;
+    const { year, author, name } = this.contentData.rounds[currentRound].levelData;
+    const pictureBlock = new Component({tag: 'div', className: [this.style.completePictureBlock], text: ''});
+    const infoBlock = new Component
+    (
+      { 
+        tag: 'div', 
+        className: [this.style.pictureInformationBlock], 
+        text: `${author} - ${name}(${year} г.)`, 
+      }
+    );
+
+    pictureBlock.append(infoBlock);
+    this.currentResultContainer.append(pictureBlock);
+    
+    setTimeout(() =>
+    {
+      pictureBlock.toggleClass(this.style.visibleBlock, true);
+      this.currentResultContainer.toggleClass(this.style.hiddenGuessBlock, true);
+    }, 300);
+  }
+
+  protected isAllSentenceInResultConteiner(): boolean
+  {
+    if(!this.contentData)
+    {
+      Error('Custom: No contentData for isAllSentenceInResultConteiner()');
+      return false;
+    } 
+
+    const currentRound = this.localStorage.getValue().game.last.round;
+    const sentenceCount = this.contentData.rounds[currentRound].words.length;
+    const currentSentenceCount = this.currentResultContainer.getChildren().length;
+
+    return sentenceCount === currentSentenceCount;
+  }
+
+  public getWordCount(): number
+  {
+    return this.wordCount;
+  }
+
+  public getBoundMethods(): TPlayFieldMethods
+  {
+    return {
+      collectSentenceInRightOrder: this.collectSentenceInRightOrder.bind(this),
+      goToNextSentence: this.goToNextSentence.bind(this),
+      toggleWordValidationHighligh: this.toggleWordValidationHighligh.bind(this),
+      showRoundResults: this.showRoundResults.bind(this),
+    }
+  }
+
+  public getPlayField(): PlayField
+  {
+    return new PlayField
+    (
+      {
+        className: this.className,
+        text: '',
+        style: this.style,
+        initialContainer: this.initialContainer.getInitialContainer(),
+        resultContainer: this.resultContainer.getResultContainer(),
+        resultLine: this.resultLine.getResultLine(),
+        wordContainer: this.wordContainer.getWordContainerArr()[0],
+        wordBlock: this.wordBlock.getBlockWithWord(''),
+        buttonContainer: this.buttonContainer.getButtonContainer(),
+        externalStorage: this.externalStorage,
+        localStorage: this.localStorage,
+        eventList: this.eventList,
+        modalWindow: this.modalWindow,
+        roundResults: this.roundResults.getRoundResults(),
+      }
+    )
+  }
+
+  public getPlayFieldInterface(progressPlayer: IStorageGameProgress): { playField: PlayField, renderInfo: IRenderContentInfo }
+  {
+    const playField = this.getPlayField();
+    const resultContainer = this.resultContainer.getResultContainer();
+    const initialContainer = this.initialContainer.getInitialContainer();
+    const buttonContainer = this.buttonContainer.getButtonContainer();
+    
+    const renderInfo: IRenderContentInfo =
+    {
+      playerProgress: progressPlayer,
+      initial: initialContainer,
+      result: resultContainer,
+      button: buttonContainer,
+    }
+
+    playField.appendChildren([resultContainer, initialContainer, buttonContainer]);
+
+    return {playField, renderInfo};
+  }
+
+  public setSupportField(newSupportField: SupportField): void
+  {
+    this.supportField = newSupportField;
+  }
+
+  destroy() 
+  {
+    this.removeListener('click', this.handlerClickWordBlock);
+    super.destroy();
+  }
+  
+}

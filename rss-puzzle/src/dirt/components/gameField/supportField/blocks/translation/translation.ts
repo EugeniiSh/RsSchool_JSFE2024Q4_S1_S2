@@ -1,0 +1,29 @@
+import * as style from './translation-style.module.scss';
+import { TranslationBlock, ITranslationBlockStyleList, ITranslationBlockOption } from '../../../../../modules/layout/gameField/supportField/blocks/translation/translation';
+import TranslationAudio from './audioTranslation/audioTranslation';
+import TranslationText from './textTranslation/textTranslation';
+import TranslationSwitch from './switchTranslation/switchTranslation';
+import storageLocal from '../../../../storage/local';
+
+const translationBlockStyleList: ITranslationBlockStyleList =
+{
+  translationBlock: style['translation-block'],
+  header: style['translation-block__header'],
+  content: style['translation-block__content'],
+  disableBlock: style['disable-block'],
+  wrapper: style.wrapper,
+  disableContent: style['disable-content'],
+}
+
+const translationBlockOption: ITranslationBlockOption =
+{
+  className: [style['translation-block']],
+  text: '',
+  style: translationBlockStyleList,
+  audioTranslation: TranslationAudio,
+  textTranslation: TranslationText,
+  switchTranslation: TranslationSwitch,
+  localStorage: storageLocal,
+}
+
+export default new TranslationBlock(translationBlockOption);

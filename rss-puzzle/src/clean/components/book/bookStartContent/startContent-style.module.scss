@@ -1,0 +1,111 @@
+.h3 {
+  font-family: Magic Spell Jf;
+  font-style: normal;
+  font-size: 0.5em;
+
+  letter-spacing: 3rem;
+  text-transform: capitalize;
+  text-align: center;
+  text-shadow: 0rem 0rem 1rem var(--main-black);
+}
+
+.p {
+  font-size: 0.3em;
+}
+
+.span {
+  box-shadow: none;
+}
+
+.ul {
+  font-family: Magic Spell Jf;
+  font-style: normal;
+  font-size: 0.5em;
+
+  letter-spacing: 3rem;
+  text-transform: capitalize;
+  text-align: center;
+  text-shadow: 0rem 0rem 1rem var(--main-black);
+}
+
+.li {
+  font-family: 'Lora', serif;
+  font-style: italic;
+
+  text-transform: none;
+
+  list-style-type: none;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  padding: 5% 15%;
+
+  width: 100%;
+  height: 100%;
+}
+
+.first-side {
+  border: none;
+}
+
+.first-side__word {
+  display: block;
+
+  font-family: Magic Spell Jf;
+  font-style: normal;
+  font-size: 0.8em;
+
+  letter-spacing: 3rem;
+  text-transform: capitalize;
+  text-shadow: 0rem 0rem 2rem var(--main-black);
+
+  color: var(--text-color-dark);
+}
+
+.first-side__word::first-letter {
+  padding: 5rem;
+
+  font-family: Magic Spell Jf;
+  font-style: normal;
+  font-size: 1.2em;
+  font-weight: normal;
+
+  line-height: 1.25;
+  text-shadow: 0rem 0rem 3rem var(--main-black);
+
+  color: var(--first-letter-red);
+
+  float: left;
+}
+
+.second-side {
+  border: none;
+}
+
+.third-side {
+  border: none;
+}
+
+.fourth-side {
+  padding: 5% 10%;
+}
+
+.develop {
+  border: none;
+}
+
+.implement {
+  border: none;
+}
+
+.stack {
+  border: none;
+}
+
+.description {
+  border: none;
+}

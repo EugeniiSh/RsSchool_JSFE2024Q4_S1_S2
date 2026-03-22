@@ -1,0 +1,50 @@
+.game {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100vh;
+
+  background-image: url(../../../assets/images/table.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  perspective: 2000rem;
+
+  transform-style: flat;
+  overflow: hidden;
+}
+
+.game::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+
+  background-color: var(--main-black);
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: 0.3s;
+}
+
+.disableUI {
+  transform-style: preserve-3d;
+}
+
+.disableUI::after {
+  pointer-events: auto;
+  opacity: 0.2;
+}
+
+.turn-over {
+  transform: rotateY(-180deg);
+}
+
+.new-content {
+  background-color: mediumslateblue;
+  transform-style: inherit;
+}

@@ -1,0 +1,34 @@
+.start-menu {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0 10%;
+
+  transform-style: inherit;
+}
+
+.greetings {
+  width: 100%;
+  font-size: 0.5em;
+  text-align: center;
+}
+
+.hello {
+  font-family: Magic Spell Jf;
+  font-style: normal;
+  letter-spacing: 3rem;
+  text-transform: capitalize;
+}
+
+.player {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

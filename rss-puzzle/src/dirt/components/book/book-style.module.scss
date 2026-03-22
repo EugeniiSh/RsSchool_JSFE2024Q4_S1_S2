@@ -1,0 +1,14 @@
+.book
+{
+  position: relative;
+
+  height: var(--cover-height);
+  width: calc(var(--cover-height) * var(--cover-width-ratio));
+
+  font-size: calc(var(--cover-height) * 0.13);
+
+  transform-style: inherit;
+  transform: rotateX(10deg) translateX(50%);
+
+  box-shadow: -5rem 5rem 20rem 1rem var(--main-black), inset -1rem 1rem 30rem 1rem var(--main-black);
+}
