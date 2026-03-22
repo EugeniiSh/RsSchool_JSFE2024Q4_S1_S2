@@ -62,7 +62,55 @@ export class AccompanySound extends Component
 
   public startEffect(path: string): void
   {
+    if(this.effectSound.getSongStatus() === 'play')
+    {
+      const effectSoundClone = this.effectSound.getAudioPlayer();
+
+      effectSoundClone
+      .getPlayerComponents()
+      .audioTag
+      .addListener('ended', () =>
+      {
+        effectSoundClone.destroy();
+      });
+
+      effectSoundClone.loadSong(path);
+      effectSoundClone.playSong();
+
+      return;
+    }
+
     this.effectSound.loadSong(path);
     this.effectSound.playSong();
+  }
+
+  public asyncStartEffect(path: string, delay: number): void
+  {
+    if(this.effectSound.getSongStatus() === 'play')
+    {
+      const effectSoundClone = this.effectSound.getAudioPlayer();
+
+      effectSoundClone
+      .getPlayerComponents()
+      .audioTag
+      .addListener('ended', () =>
+      {
+        effectSoundClone.destroy();
+      });
+
+      setTimeout(() =>
+      {
+        effectSoundClone.loadSong(path);
+        effectSoundClone.playSong();
+      }, delay);
+
+      return;
+    }
+
+    setTimeout(() =>
+    {
+      this.effectSound.loadSong(path);
+      this.effectSound.playSong();
+    }, delay);
   }
 }

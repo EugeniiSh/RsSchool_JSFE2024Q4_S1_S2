@@ -2,6 +2,7 @@ import { Component } from '../common/component';
 import { CoverTop } from './cover/cover-top';
 import { PagesBlock } from './pages/pages-block';
 import { TCustomEventUI } from '../../events/custom';
+import { AccompanySound } from '../../accompanySound/accompanySound';
 
 export interface IBook
 {
@@ -10,16 +11,19 @@ export interface IBook
   items: [CoverTop, PagesBlock, Component],
   coverTop: CoverTop,
   pagesBlock: PagesBlock,
-  customEventsUI: TCustomEventUI
+  customEventsUI: TCustomEventUI,
+  accompanySound: AccompanySound,
 }
 
 export class Book extends Component
 {
   private coverTop: CoverTop;
 
-  private pagesBlock: PagesBlock
+  private pagesBlock: PagesBlock;
 
-  protected customEventsUI: TCustomEventUI
+  protected customEventsUI: TCustomEventUI;
+
+  protected accompanySound: AccompanySound;
 
   constructor
   (
@@ -29,7 +33,8 @@ export class Book extends Component
       items,
       coverTop,
       pagesBlock,
-      customEventsUI
+      customEventsUI,
+      accompanySound,
     }: IBook
   )
   {
@@ -38,6 +43,7 @@ export class Book extends Component
     this.coverTop = coverTop;
     this.pagesBlock = pagesBlock;
     this.customEventsUI = customEventsUI;
+    this.accompanySound = accompanySound;
   }
 
   protected actionCoverEnd = () =>
@@ -49,13 +55,8 @@ export class Book extends Component
   public openCover(turnOverClass: string): void
   {
     this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI());
-
-    // this.coverTop.toggleClass(turnOverClass, true);
-    // this.coverTop.addListener('transitionend', this.openCoverEnd);
-
-    // this.pagesBlock.firstTurnOverPages(turnOverClass, 200);
-
     this.coverTop.scullLaugh();
+    setTimeout(() => this.accompanySound.asyncStartEffect('./static/assets/sound/turn-cover.mp3', 5000), 10);
 
     setTimeout(() =>
     {
@@ -70,6 +71,8 @@ export class Book extends Component
   {
     this.coverTop.dispatchSomeEvent(this.customEventsUI.disableUI());
     this.pagesBlock.backTurnOverPages(turnOverClass, 600);
+
+    this.accompanySound.startEffect('./static/assets/sound/turn-cover.mp3');
 
     setTimeout(() =>
     {
@@ -90,6 +93,8 @@ export class Book extends Component
       turnOverClass, 
       leftPageContent, 
       rightPageContent
-    )
+    );
+
+    this.accompanySound.startEffect('./static/assets/sound/turn-page.mp3');
   }
 }
