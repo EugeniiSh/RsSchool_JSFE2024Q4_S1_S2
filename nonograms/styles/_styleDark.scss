@@ -1,0 +1,96 @@
+/* +++ === _styleDark.scss === +++ */
+
+.dark-theme
+{
+  &::before
+  {
+    background-color: #0001306c;
+  }
+
+  .header__head
+  {
+    background-image: url(../assets/images/derevyannaya-doska-light3.png), url(../assets/images/derevyannaya-doska25.png);
+  }
+
+  .header__timer
+  {
+    background-image: url(../assets/images/derevyannaya-doska-light3.png), url(../assets/images/derevyannaya-doska25.png);
+  }
+  
+
+  .game-field
+  {
+    border-image-source: url(../assets/images/border2.png);
+
+    background-image: url(../assets/images/backGroundPaperNight.png);
+
+    &::before
+    {
+      border-image-source: url(../assets/images/border2.png);
+    }
+  }
+
+  .main__menu 
+  {
+    select
+    {
+      border-top-color: #e0d697;
+      border-right-color: #e0d697;
+      text-shadow: 1px -1px #F3E8A5
+    }
+
+    button
+    {
+      color: rgb(0, 255, 255);
+      text-shadow: 2px 2px 10px aqua, -2px -2px 10px aqua;
+
+      box-shadow: 0px 5px 5px -1px rgb(0, 204, 204), inset 0px 5px 5px -1px #F3E8A5;
+
+      @media (hover: hover)
+      {
+        &:hover
+        {
+          text-shadow: none;
+          box-shadow: 0px 5px 5px -1px rgb(162, 255, 255), inset 0px 5px 5px -1px #F3E8A5;
+        }
+      }
+    }
+  }
+
+  .butterfly
+  {
+    &::before
+    {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      content: '';
+      box-shadow: 0 0 10px 10px white;
+
+      transition-property: opacity;
+      transition-duration: 0.3s;
+
+      transform: rotateY(90deg);
+
+      animation: puls 1s linear infinite;
+    }
+    .leftwing
+    {
+      opacity: 0;
+    }
+
+    .rightwing
+    {
+      opacity: 0;
+    }
+  }
+
+  @keyframes puls
+  {
+    50% { box-shadow: 0 0 10px 12px white;}
+  }
+
+}
+
+/* --- === _styleDark.scss === --- */

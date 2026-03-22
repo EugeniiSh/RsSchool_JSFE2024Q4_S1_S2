@@ -1,0 +1,20 @@
+@media (max-width: 768px)
+{
+  .main-container
+  {
+    flex-direction: column;
+    align-items: center;
+
+    padding: 30px 15px;
+  }
+
+  .hangman-box__img
+  {
+    max-width: 200px;
+  }
+
+  .hangman-box__header
+  {
+    display: none;
+  }
+}

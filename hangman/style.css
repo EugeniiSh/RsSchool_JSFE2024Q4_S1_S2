@@ -1,0 +1,224 @@
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif; 
+}
+
+
+
+body
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100vh;
+  padding: 0 10px;
+
+  background: #5E63BA;
+}
+
+.main-container
+{
+  display: flex;
+  align-items: end;
+  gap: 70px;
+
+  width: 850px;
+  padding: 60px 40px;
+
+  background: #FFFFFF;
+  border-radius: 10px;
+}
+
+.hangman-box__img
+{
+  max-width: 270px;
+}
+
+.hangman-box__header
+{
+  margin-top: 20px;
+
+  font-size: 1.45rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.words-display
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  list-style: none;
+}
+
+.letter
+{
+  width: 28px;
+  margin-bottom: 40px;
+
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+
+  border-bottom: 3px solid #000000;
+}
+
+.correct-guess
+{
+  margin: -40px 0 35px;
+  border-color: transparent;
+}
+
+.hint-text,
+.guesses-text,
+.end-game__header
+{
+  margin-bottom: 15px;
+
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.hint-text__details,
+.guesses-text__details,
+.correct-word
+{
+  font-weight: 600;
+}
+
+.guesses-text__details
+{
+  color: #FF0000;
+}
+
+.keyboard
+{
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: wrap;
+
+  margin-top: 40px;
+}
+
+.keyboard__btn
+{
+  width: calc(100% / 9 - 5px);
+  padding: 7px;
+
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-transform: uppercase;
+
+  background: #5E63BA;
+  border-radius: 4px;
+  border: none;
+
+  cursor: pointer;
+  outline: none;
+}
+
+.keyboard__btn[disabled]
+{
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ================ + Modal Windows + ================ */
+.modal-window
+{
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+  padding: 0 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+  transition: 0.3s;
+}
+
+.window__end-game
+{
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+
+  text-align: center;
+
+  border-radius: 10px;
+  background: #FFFFFF;
+}
+
+.end-game__header
+{
+  font-size: 1.53rem;
+}
+
+.end-game__text
+{
+  margin: 15px 0 30px;
+
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.correct-word
+{
+  color: #5E63BA;
+}
+
+.end-game__play-again-btn
+{
+  padding: 12px 23px;
+
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-transform: uppercase;
+
+  background: #5E63BA;
+  border-radius: 4px;
+  border: none;
+
+  cursor: pointer;
+  outline: none;
+}
+/* ================ - Modal Windows - ================ */
+
+/* ===================== + @media hover:hover + ===================== */
+@media (hover: hover)
+{
+  .keyboard__btn:hover,
+  .end-game__play-again-btn:hover
+  {
+    background: #8286c9;
+  }
+}
+/* ===================== - @media hover:hover - ===================== */
+
+/* ================ + Activators + ================ */
+.active
+{
+  opacity: 1;
+  pointer-events: auto;
+}
+/* ================ - Activators - ================ */

@@ -1,0 +1,382 @@
+/* +++ === _styleMain.scss === +++ */
+
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body
+{
+  position: relative;
+
+  min-height: 100vh;
+  padding: 20px 0;
+
+  --backGroundSize: 2048px;
+  --backGroundPositionTop: -750px;
+  --backGroundPositionLeft: 55%;
+  
+  background-image: url(../assets/images/dojo2.png);
+  background-repeat: no-repeat;
+  background-size: var(--backGroundSize);
+  background-position: var(--backGroundPositionLeft) var(--backGroundPositionTop);
+
+  font-family: "Kalam", cursive;
+  font-weight: 400;
+  font-style: normal;
+
+  &::before
+  {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: calc(100% + 20px);
+    top: -20px;
+
+    background-color: transparent;
+
+    pointer-events: none;
+    z-index: 100;
+    transition: 0.6s;
+  }
+
+  .settings-button
+  {
+    position: absolute;
+    top: 20px;
+    right: 60px;
+
+    width: 40px;
+    height: 40px;
+
+    background-image: url(../assets/images/cogwheel.svg), radial-gradient(circle, white 10%, transparent 75%);
+    background-size: contain;
+
+    cursor: pointer;
+    transition-property: transform;
+    transition-duration: 2s;
+
+    @media (hover: hover)
+    {
+      &:hover
+      {
+        transform: rotate(180deg);
+      } 
+    }
+    
+    @media (max-width: 500px)
+    {
+      right: 30px;
+    }
+  }
+}
+
+.header__head
+{
+  padding: 10px 0; 
+
+  text-align: center;
+  text-transform: capitalize;
+
+  background-image: url(../assets/images/derevyannaya-doska25.png);
+  background-repeat: no-repeat;
+  background-size: 26% 100%;
+  background-position: center center;
+
+  transition-property: background-image;
+  transition-duration: 0.9s;
+
+  @media (max-width: 780px)
+  {
+    padding: 5px 0;
+
+    font-size: 24px;
+  }
+}
+
+.header__timer
+{
+  padding: 10px 0;
+
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+
+  background-image: url(../assets/images/derevyannaya-doska25.png);
+  background-repeat: no-repeat;
+  background-size: 26% 100%;
+  background-position: center center;
+
+  transition-property: background-image;
+  transition-duration: 0.9s;
+
+  @media (max-width: 780px)
+  {
+    padding: 5px 0;
+
+    font-size: 16px;
+  }
+}
+
+.table-wrapper
+{
+  margin: 0 auto;
+
+  @media (max-width: 780px)
+  {
+    width: auto;
+  }
+}
+
+select,
+button
+{
+  cursor: pointer;
+}
+
+.game-field
+{
+  position: relative;
+
+  margin: 0 auto;
+  max-width: 100%;
+
+  font-size: 14px;
+
+  border: 6px solid transparent;
+  border-collapse: collapse;
+
+  border-image-source: url(../assets/images/border.png);
+  border-image-slice: 16;
+  border-image-repeat: stretch;
+
+  background-image: url(../assets/images/backGroundPaper.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  z-index: 101;
+  transition: 0.6s;
+
+  &::before
+  {
+    position: absolute;
+    
+    content: '';
+    width: 99%;
+    height: 98.6%;
+    left: -3px;
+    top: -2px;
+
+    border-style: solid;
+    border-width: 6px;
+    border-image-source: url(../assets/images/border.png);
+    border-image-slice: 16;
+    border-image-repeat: stretch;
+
+    overflow: hidden;
+    pointer-events: none;
+    transition: 0.6s;
+  }
+
+
+  @media (max-width: 780px)
+  {
+    font-size: 12px;
+  }
+
+  @media (max-width: 510px)
+  {
+    font-size: 10px;
+  }
+
+  th,
+  td
+  {
+    --cell-size: 50px;
+    width: var(--cell-size);
+    height: var(--cell-size);
+
+    border: 1px solid rgb(95, 85, 79);
+
+    @media (max-width: 780px)
+    {
+      --cell-size: 27px;
+      width: var(--cell-size);
+      height: var(--cell-size);
+    }
+  }
+
+  td
+  {
+    cursor: pointer;
+
+    @media (hover: hover)
+    {
+      &:hover
+      {
+        box-shadow: 0 0 4px black;
+      }
+    }
+  }
+
+  td:nth-of-type(5n)
+  {
+    border-right: 3.9px ridge rgb(159, 134, 121);
+  }
+
+  td:nth-of-type(1)
+  {
+    border-left: 4px ridge rgb(162, 112, 92);
+  }
+
+  /* Select all tr that do not contain td and are followed by a tr that contains td. */
+  /* Выбрать все tr, которые не содержат td, и после которых идёт tr, который содержит td. */
+  tr:not(:has(td)) + tr:has(td) td
+  {
+    border-top: 4px ridge rgb(162, 112, 92);
+  }
+
+  /* Выбрать дочерние tr, каждый пятый в котором есть td, начиная с первого */
+  tr:nth-child(5n + 1 of :has(td))
+  {
+    border-top: 3.9px ridge rgb(159, 134, 121);
+  }
+
+  tr:nth-of-type(1) th:nth-of-type(5n + 1)
+  {
+    border-right: 3.9px ridge rgb(159, 134, 121);
+  }
+
+  tr:not(:has(td)):nth-of-type(1n + 2) th:nth-of-type(5n)
+  {
+    border-right: 3.9px ridge rgb(159, 134, 121);
+  }
+}
+
+.main__menu
+{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  padding-top: 20px;
+
+  text-align: center;
+  text-transform: capitalize;
+
+  font-family: "Teko", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+
+  @media (max-width: 500px)
+  {
+    gap: 5px;
+  }
+  
+
+  div
+  {
+    perspective: 300px;
+  }
+
+  p
+  {
+    margin-bottom: 10px;
+    font-size: 32px;
+
+    border: 5px solid transparent;
+    border-image-source: url(../assets/images/bambuk2.png);
+    border-image-slice: 10;
+
+    background-image: url(..//assets/images/pattern6.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-clip: content-box;
+
+    @media (max-width: 500px)
+    {
+      font-size: 18px;;
+    }
+  }
+
+  select
+  {
+    width: 100px;
+    max-height: 30px;
+
+    font-family: "Kalam", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 18px;
+    
+    text-align: center;
+
+    border: 2px solid #000000;
+
+    background-image: url(..//assets/images/vasiPartG-1.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    transition-property: text-shadow, border-color;
+    transition-duration: 0.6s;
+
+    option
+    {
+      background-color: rgb(114, 169, 134);
+
+      &:nth-of-type(2n)
+      {
+        background-color: rgb(128, 191, 151);
+      }
+    }
+  }
+
+  button
+  {
+    width: 90%;
+    margin: 0 5px;
+    padding: 9px 5px;
+
+    font-family: inherit;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 28px;
+
+    color: rgb(62, 62, 62);
+    line-height: 0.9;
+    text-transform: capitalize;
+    text-shadow: 1px 1px #dbdbdb, -1px -1px #000000;
+
+    border: 1px solid rgb(0, 18, 76);
+    border-radius: 30% 70% 50% 30%/70% 50% 30% 25%;
+
+    background-image: url(../assets/images/stone.jpg);
+    background-size: cover;
+
+    box-shadow: 0px 5px 5px -1px rgb(0, 0, 0);
+
+    transform: rotateX(35deg);
+    transition: 0.3s;
+
+    @media (max-width: 500px)
+    {
+      font-size: 22px;;
+    }
+
+    @media (hover: hover)
+    {
+      &:hover
+      {
+        color: rgb(5, 0, 46);
+        box-shadow: 0px 5px 5px -1px rgb(5, 0, 46);
+      }
+    }
+  }
+}
+
+/*! --- === _styleMain.scss === ---*/

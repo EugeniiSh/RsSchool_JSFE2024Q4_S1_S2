@@ -1,0 +1,86 @@
+/* +++ === _activators.scss === +++ */
+
+@each $num in (1, 2, 3, 4)
+{
+  .shaded-cell-#{$num}
+  {
+    background-image: url(../assets/images/tornPaperV#{$num}.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    transition-property: background-image;
+    transition-duration: 0.9s;
+  }
+} 
+
+@each $num in (1, 2, 3, 4)
+{
+  .crossed-cell-#{$num}
+  {
+    background-image: url(../assets/images/crossV#{$num}.svg);
+    background-size: 90%;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+}
+
+@each $num in (1, 2)
+{
+  .active-batterfly-#{$num}
+  {
+    animation: butterfly-to-right 5s linear infinite, flyPath-#{$num} 20s linear 1;
+  }
+}
+
+@each $num in (3, 4)
+{
+  .active-batterfly-#{$num}
+  {
+    animation: butterfly-to-left 5s linear infinite, flyPath-#{$num} 20s linear 1;
+  }
+}
+
+.active__end-game
+{
+  pointer-events: none;
+}
+
+.active__solution
+{
+  pointer-events: none;
+}
+
+.active__modal-window
+{
+  visibility: visible;
+  opacity: 1;
+}
+
+.active__audio-container
+{
+  position: static;
+  visibility: visible;
+  opacity: 1;
+}
+
+.active__mute-volume
+{
+  background-image: url(../assets/images/volOff.svg)!important;
+}
+
+.dark-theme 
+{
+  @each $num in (1, 2, 3, 4)
+  {
+    .shaded-cell-#{$num}
+    {
+      background-image: url(../assets/images/tornPaperVN#{$num}.svg);
+      background-size: 100%;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+  }
+}
+
+/* --- === _activators.scss === --- */

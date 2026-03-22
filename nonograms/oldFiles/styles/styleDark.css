@@ -1,0 +1,48 @@
+.dark-theme
+{
+  color: #ffffff;
+  background-color: #000000;
+}
+
+.dark-theme .game-field
+{
+  border-color: #ffffff;
+}
+
+.dark-theme .game-field td:nth-of-type(1)
+{
+  border-left: 4px solid #ffffff;
+}
+
+.dark-theme .game-field tr:not(:has(td)) + tr:has(td) td
+{
+  border-top: 4px solid #ffffff;
+}
+
+.dark-theme .main__menu select
+{
+  border: 2px solid #ffffff;
+}
+
+/* ===================== + @media hover:hover + ===================== */
+@media (hover: hover)
+{
+  .dark-theme td:hover
+  {
+    box-shadow: 0 0 4px #ffffff;
+  }
+}
+/* ===================== - @media hover:hover - ===================== */
+
+/* ================ + Activators + ================ */
+.dark-theme .shaded-cell
+{
+  background-color: #ffffff;
+}
+
+.dark-theme .crossed-cell::after,
+.dark-theme .crossed-cell::before
+{
+  background-color: #ffffff;
+}
+/* ================ - Activators - ================ */

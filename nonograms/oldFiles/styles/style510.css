@@ -1,0 +1,20 @@
+@media (max-width: 510px)
+{
+  /* .header__head
+  {
+    padding-bottom: 10px;
+
+    font-size: 24px;
+  }
+
+  .header__timer
+  {
+    padding-bottom: 10px;
+
+    font-size: 16px;
+  } */
+  .game-field
+  {
+    font-size: 10px;
+  }
+}

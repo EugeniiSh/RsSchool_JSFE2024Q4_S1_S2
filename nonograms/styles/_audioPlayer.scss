@@ -1,0 +1,154 @@
+/* +++ === _audioPlayer.scss === +++ */
+
+.audio-container
+{
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 5px;
+
+  border: 2px solid black;
+
+  background-image: url(../assets/images/pattern6.svg);
+  background-size: cover;
+  
+  visibility: hidden;
+  opacity: 0;
+  z-index: 110;
+
+  .audio-player
+  {
+    position: relative;
+    padding-top: 40px;
+
+    &:nth-child(1)::before
+    {
+      position: absolute;
+      top: 0;
+
+      content: 'Sound effect';
+      width: 100%;
+      height: 40px;
+
+      text-align: center;
+    }
+
+    &:nth-child(2)::before
+    {
+      position: absolute;
+      top: 0;
+
+      content: 'Sound background';
+      width: 100%;
+      height: 40px;
+
+      text-align: center;
+    }
+  }
+  
+
+  .volume-container
+  {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+
+    .volume-button
+    {
+      width: 30px;
+      height: 30px;
+
+      // background-color: rgb(123, 175, 220);
+      background-image: url(../assets/images/volOn.svg);
+
+      cursor: pointer;
+    }
+
+    .volume-line
+    {
+      width: 200px;
+      height: 30px;
+
+      border-radius: 10px;
+      border: 2px solid black;
+
+      background-color: rgb(255, 249, 238);
+
+      cursor: pointer;
+
+      .volume-line__persent
+      {
+        width: 0;
+        height: 26px;
+
+        border-top-left-radius: 9px;
+        border-bottom-left-radius: 9px;
+
+        // background-color: rgb(53, 144, 224);
+        background-color: rgb(96, 40, 145);
+
+        overflow: hidden;
+      }
+    }
+  }
+  
+  .progress-container
+  {
+    padding: 5px;
+
+    .progress-line
+    {
+      width: 200px;
+      height: 20px;
+
+      background-color: rgb(175, 223, 198);
+      border: 2px solid black;
+
+      .progress-persent
+      {
+        width: 0;
+        height: 20px;
+
+        background-color: rgb(53, 224, 76);
+      }
+    }
+  }
+
+  .buttons-container
+  {
+    display: flex;
+    gap: 10px;
+
+    padding: 5px;
+
+    .btn
+    {
+      width: 20px;
+      height: 20px;
+
+      border: 2px solid black;
+    }
+
+    .prev
+    {
+      background-color: red;
+    }
+
+    .play
+    {
+      background-color: green;
+    }
+
+    .next
+    {
+      background-color: blue;
+    }
+  }
+  
+}
+
+/* --- === _audioPlayer.scss === --- */

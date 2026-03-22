@@ -1,0 +1,982 @@
+@charset "UTF-8";
+/* +++ === _styleMain.scss === +++ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  padding: 20px 0;
+  --backGroundSize: 2048px;
+  --backGroundPositionTop: -750px;
+  --backGroundPositionLeft: 55%;
+  background-image: url(../assets/images/dojo2.png);
+  background-repeat: no-repeat;
+  background-size: var(--backGroundSize);
+  background-position: var(--backGroundPositionLeft) var(--backGroundPositionTop);
+  font-family: "Kalam", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+body::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: calc(100% + 20px);
+  top: -20px;
+  background-color: transparent;
+  pointer-events: none;
+  z-index: 100;
+  transition: 0.6s;
+}
+body .settings-button {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  width: 40px;
+  height: 40px;
+  background-image: url(../assets/images/cogwheel.svg), radial-gradient(circle, white 10%, transparent 75%);
+  background-size: contain;
+  cursor: pointer;
+  transition-property: transform;
+  transition-duration: 2s;
+}
+@media (hover: hover) {
+  body .settings-button:hover {
+    transform: rotate(180deg);
+  }
+}
+@media (max-width: 500px) {
+  body .settings-button {
+    right: 30px;
+  }
+}
+
+.header__head {
+  padding: 10px 0;
+  text-align: center;
+  text-transform: capitalize;
+  background-image: url(../assets/images/derevyannaya-doska25.png);
+  background-repeat: no-repeat;
+  background-size: 26% 100%;
+  background-position: center center;
+  transition-property: background-image;
+  transition-duration: 0.9s;
+}
+@media (max-width: 780px) {
+  .header__head {
+    padding: 5px 0;
+    font-size: 24px;
+  }
+}
+
+.header__timer {
+  padding: 10px 0;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  background-image: url(../assets/images/derevyannaya-doska25.png);
+  background-repeat: no-repeat;
+  background-size: 26% 100%;
+  background-position: center center;
+  transition-property: background-image;
+  transition-duration: 0.9s;
+}
+@media (max-width: 780px) {
+  .header__timer {
+    padding: 5px 0;
+    font-size: 16px;
+  }
+}
+
+.table-wrapper {
+  margin: 0 auto;
+}
+@media (max-width: 780px) {
+  .table-wrapper {
+    width: auto;
+  }
+}
+
+select,
+button {
+  cursor: pointer;
+}
+
+.game-field {
+  position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+  font-size: 14px;
+  border: 6px solid transparent;
+  border-collapse: collapse;
+  border-image-source: url(../assets/images/border.png);
+  border-image-slice: 16;
+  border-image-repeat: stretch;
+  background-image: url(../assets/images/backGroundPaper.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  z-index: 101;
+  transition: 0.6s;
+  /* Select all tr that do not contain td and are followed by a tr that contains td. */
+  /* Выбрать все tr, которые не содержат td, и после которых идёт tr, который содержит td. */
+  /* Выбрать дочерние tr, каждый пятый в котором есть td, начиная с первого */
+}
+.game-field::before {
+  position: absolute;
+  content: "";
+  width: 99%;
+  height: 98.6%;
+  left: -3px;
+  top: -2px;
+  border-style: solid;
+  border-width: 6px;
+  border-image-source: url(../assets/images/border.png);
+  border-image-slice: 16;
+  border-image-repeat: stretch;
+  overflow: hidden;
+  pointer-events: none;
+  transition: 0.6s;
+}
+@media (max-width: 780px) {
+  .game-field {
+    font-size: 12px;
+  }
+}
+@media (max-width: 510px) {
+  .game-field {
+    font-size: 10px;
+  }
+}
+.game-field th,
+.game-field td {
+  --cell-size: 50px;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 1px solid rgb(95, 85, 79);
+}
+@media (max-width: 780px) {
+  .game-field th,
+  .game-field td {
+    --cell-size: 27px;
+    width: var(--cell-size);
+    height: var(--cell-size);
+  }
+}
+.game-field td {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .game-field td:hover {
+    box-shadow: 0 0 4px black;
+  }
+}
+.game-field td:nth-of-type(5n) {
+  border-right: 3.9px ridge rgb(159, 134, 121);
+}
+.game-field td:nth-of-type(1) {
+  border-left: 4px ridge rgb(162, 112, 92);
+}
+.game-field tr:not(:has(td)) + tr:has(td) td {
+  border-top: 4px ridge rgb(162, 112, 92);
+}
+.game-field tr:nth-child(5n+1 of :has(td)) {
+  border-top: 3.9px ridge rgb(159, 134, 121);
+}
+.game-field tr:nth-of-type(1) th:nth-of-type(5n + 1) {
+  border-right: 3.9px ridge rgb(159, 134, 121);
+}
+.game-field tr:not(:has(td)):nth-of-type(1n + 2) th:nth-of-type(5n) {
+  border-right: 3.9px ridge rgb(159, 134, 121);
+}
+
+.main__menu {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 20px;
+  text-align: center;
+  text-transform: capitalize;
+  font-family: "Teko", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+@media (max-width: 500px) {
+  .main__menu {
+    gap: 5px;
+  }
+}
+.main__menu div {
+  perspective: 300px;
+}
+.main__menu p {
+  margin-bottom: 10px;
+  font-size: 32px;
+  border: 5px solid transparent;
+  border-image-source: url(../assets/images/bambuk2.png);
+  border-image-slice: 10;
+  background-image: url(..//assets/images/pattern6.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+}
+@media (max-width: 500px) {
+  .main__menu p {
+    font-size: 18px;
+  }
+}
+.main__menu select {
+  width: 100px;
+  max-height: 30px;
+  font-family: "Kalam", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 18px;
+  text-align: center;
+  border: 2px solid #000000;
+  background-image: url(..//assets/images/vasiPartG-1.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition-property: text-shadow, border-color;
+  transition-duration: 0.6s;
+}
+.main__menu select option {
+  background-color: rgb(114, 169, 134);
+}
+.main__menu select option:nth-of-type(2n) {
+  background-color: rgb(128, 191, 151);
+}
+.main__menu button {
+  width: 90%;
+  margin: 0 5px;
+  padding: 9px 5px;
+  font-family: inherit;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 28px;
+  color: rgb(62, 62, 62);
+  line-height: 0.9;
+  text-transform: capitalize;
+  text-shadow: 1px 1px #dbdbdb, -1px -1px #000000;
+  border: 1px solid rgb(0, 18, 76);
+  border-radius: 30% 70% 50% 30%/70% 50% 30% 25%;
+  background-image: url(../assets/images/stone.jpg);
+  background-size: cover;
+  box-shadow: 0px 5px 5px -1px rgb(0, 0, 0);
+  transform: rotateX(35deg);
+  transition: 0.3s;
+}
+@media (max-width: 500px) {
+  .main__menu button {
+    font-size: 22px;
+  }
+}
+@media (hover: hover) {
+  .main__menu button:hover {
+    color: rgb(5, 0, 46);
+    box-shadow: 0px 5px 5px -1px rgb(5, 0, 46);
+  }
+}
+
+/*! --- === _styleMain.scss === ---*/
+/* +++ === _styleDark.scss === +++ */
+.dark-theme::before {
+  background-color: rgba(0, 1, 48, 0.4235294118);
+}
+.dark-theme .header__head {
+  background-image: url(../assets/images/derevyannaya-doska-light3.png), url(../assets/images/derevyannaya-doska25.png);
+}
+.dark-theme .header__timer {
+  background-image: url(../assets/images/derevyannaya-doska-light3.png), url(../assets/images/derevyannaya-doska25.png);
+}
+.dark-theme .game-field {
+  border-image-source: url(../assets/images/border2.png);
+  background-image: url(../assets/images/backGroundPaperNight.png);
+}
+.dark-theme .game-field::before {
+  border-image-source: url(../assets/images/border2.png);
+}
+.dark-theme .main__menu select {
+  border-top-color: #e0d697;
+  border-right-color: #e0d697;
+  text-shadow: 1px -1px #F3E8A5;
+}
+.dark-theme .main__menu button {
+  color: rgb(0, 255, 255);
+  text-shadow: 2px 2px 10px aqua, -2px -2px 10px aqua;
+  box-shadow: 0px 5px 5px -1px rgb(0, 204, 204), inset 0px 5px 5px -1px #F3E8A5;
+}
+@media (hover: hover) {
+  .dark-theme .main__menu button:hover {
+    text-shadow: none;
+    box-shadow: 0px 5px 5px -1px rgb(162, 255, 255), inset 0px 5px 5px -1px #F3E8A5;
+  }
+}
+.dark-theme .butterfly::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  box-shadow: 0 0 10px 10px white;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  transform: rotateY(90deg);
+  animation: puls 1s linear infinite;
+}
+.dark-theme .butterfly .leftwing {
+  opacity: 0;
+}
+.dark-theme .butterfly .rightwing {
+  opacity: 0;
+}
+@keyframes puls {
+  50% {
+    box-shadow: 0 0 10px 12px white;
+  }
+}
+
+/* --- === _styleDark.scss === --- */
+/* +++ === _modalWindows.scss === +++ */
+.modal-window {
+  position: fixed;
+  width: 100%;
+  height: calc(100% + 20px);
+  top: -20px;
+  font-size: 28px;
+  background-color: rgba(0, 0, 0, 0.3843137255);
+  visibility: hidden;
+  opacity: 0;
+  z-index: 105;
+  transition: 0.6s;
+}
+@media (max-width: 500px) {
+  .modal-window {
+    font-size: 22px;
+  }
+}
+.modal-window .wrapper {
+  max-width: 70%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 500px) {
+  .modal-window .wrapper {
+    max-width: 100%;
+  }
+}
+.modal-window .content-block {
+  position: relative;
+  padding: 10px 20px 10px 30px;
+  border-width: 10px;
+  border-style: solid;
+  border-image: url(../assets/images/bambuk3.png);
+  border-image-slice: 10;
+  border-image-repeat: round;
+  border-image-outset: 10px;
+  background-image: url(../assets/images/pattern6.svg);
+}
+@media (max-width: 500px) {
+  .modal-window .content-block {
+    padding: 20px 10px 10px 20px;
+  }
+}
+.modal-window .content-block .close-cross {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background-image: url(../assets/images/crossV1.svg);
+  background-size: contain;
+  cursor: pointer;
+  transition: 0.3s;
+}
+@media (hover: hover) {
+  .modal-window .content-block .close-cross:hover {
+    transform: scale(1.1, 1.1);
+  }
+}
+.modal-window .content-block .close-btn {
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+@media (hover: hover) {
+  .modal-window .content-block .close-btn:hover {
+    transform: scale(1.1, 1.3);
+  }
+}
+.modal-window .content-block p {
+  text-align: center;
+}
+.modal-window .modal-header {
+  text-align: center;
+}
+
+/* --- === _modalWindows.scss === --- */
+/* +++ === _audioPlayer.scss === +++ */
+.audio-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border: 2px solid black;
+  background-image: url(../assets/images/pattern6.svg);
+  background-size: cover;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 110;
+}
+.audio-container .audio-player {
+  position: relative;
+  padding-top: 40px;
+}
+.audio-container .audio-player:nth-child(1)::before {
+  position: absolute;
+  top: 0;
+  content: "Sound effect";
+  width: 100%;
+  height: 40px;
+  text-align: center;
+}
+.audio-container .audio-player:nth-child(2)::before {
+  position: absolute;
+  top: 0;
+  content: "Sound background";
+  width: 100%;
+  height: 40px;
+  text-align: center;
+}
+.audio-container .volume-container {
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+}
+.audio-container .volume-container .volume-button {
+  width: 30px;
+  height: 30px;
+  background-image: url(../assets/images/volOn.svg);
+  cursor: pointer;
+}
+.audio-container .volume-container .volume-line {
+  width: 200px;
+  height: 30px;
+  border-radius: 10px;
+  border: 2px solid black;
+  background-color: rgb(255, 249, 238);
+  cursor: pointer;
+}
+.audio-container .volume-container .volume-line .volume-line__persent {
+  width: 0;
+  height: 26px;
+  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
+  background-color: rgb(96, 40, 145);
+  overflow: hidden;
+}
+.audio-container .progress-container {
+  padding: 5px;
+}
+.audio-container .progress-container .progress-line {
+  width: 200px;
+  height: 20px;
+  background-color: rgb(175, 223, 198);
+  border: 2px solid black;
+}
+.audio-container .progress-container .progress-line .progress-persent {
+  width: 0;
+  height: 20px;
+  background-color: rgb(53, 224, 76);
+}
+.audio-container .buttons-container {
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+}
+.audio-container .buttons-container .btn {
+  width: 20px;
+  height: 20px;
+  border: 2px solid black;
+}
+.audio-container .buttons-container .prev {
+  background-color: red;
+}
+.audio-container .buttons-container .play {
+  background-color: green;
+}
+.audio-container .buttons-container .next {
+  background-color: blue;
+}
+
+/* --- === _audioPlayer.scss === --- */
+/* +++ === _startMessage.scss === +++ */
+.start-message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.start-message-container .start-message__text-block {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+@media (max-width: 500px) {
+  .start-message-container .start-message__text-block {
+    max-height: 360px;
+    overflow-y: scroll;
+  }
+}
+.start-message-container .start-message__text-2 span img {
+  width: 35px;
+  height: 35px;
+}
+
+/* --- === _startMessage.scss === --- */
+/* +++ === _butterfly.scss === +++ */
+.butterfly-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  perspective: 2600px;
+  perspective-origin: 50% 50%;
+  z-index: 104;
+  overflow: hidden;
+  pointer-events: none;
+}
+.butterfly-container .butterfly-box {
+  position: relative;
+}
+.butterfly-container .butterfly {
+  position: relative;
+  top: 0;
+  left: -100px;
+  width: 40px;
+  height: 31.2px;
+  transform: rotate3d(0, 1, 0, -90deg);
+  transform-origin: 100% 0%;
+  transform-style: preserve-3d;
+}
+@media (max-width: 780px) {
+  .butterfly-container .butterfly {
+    animation-duration: 5s, 10s;
+  }
+}
+.butterfly-container .butterfly .leftwing {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 20px;
+  height: 31.2px;
+  background-image: url(../assets/images/butterfly.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform: rotateX(90deg) rotate3d(0, 1, 0, 0deg);
+  transform-origin: inherit;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  animation: leftwing 0.2s linear infinite;
+}
+.butterfly-container .butterfly .rightwing {
+  position: absolute;
+  left: 175px;
+  top: 0px;
+  width: 20px;
+  height: 31.2px;
+  background-image: url(../assets/images/butterfly.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform: rotateX(90deg) translate3d(-178px, 0, 0) rotate3d(0, 1, 0, 180deg);
+  transform-origin: inherit;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  animation: rightwing 0.2s linear infinite;
+}
+@keyframes flyPath-1 {
+  from {
+    top: 80%;
+    left: -40px;
+  }
+  10% {
+    top: 85%;
+    left: 10%;
+  }
+  20% {
+    top: 90%;
+    left: 20%;
+  }
+  30% {
+    top: 85%;
+    left: 30%;
+  }
+  40% {
+    top: 80%;
+    left: 40%;
+  }
+  50% {
+    top: 75%;
+    left: 50%;
+  }
+  60% {
+    top: 70%;
+    left: 60%;
+  }
+  70% {
+    top: 65%;
+    left: 70%;
+  }
+  80% {
+    top: 60%;
+    left: 80%;
+  }
+  90% {
+    top: 55%;
+    left: 90%;
+  }
+  to {
+    top: 40%;
+    left: 101%;
+  }
+}
+@keyframes flyPath-2 {
+  from {
+    top: 50%;
+    left: -40px;
+  }
+  10% {
+    top: 53%;
+    left: 10%;
+  }
+  20% {
+    top: 56%;
+    left: 20%;
+  }
+  30% {
+    top: 53%;
+    left: 30%;
+  }
+  40% {
+    top: 50%;
+    left: 40%;
+  }
+  50% {
+    top: 47%;
+    left: 50%;
+  }
+  60% {
+    top: 44%;
+    left: 60%;
+  }
+  70% {
+    top: 47%;
+    left: 70%;
+  }
+  80% {
+    top: 44%;
+    left: 80%;
+  }
+  90% {
+    top: 41%;
+    left: 90%;
+  }
+  to {
+    top: 44%;
+    left: 101%;
+  }
+}
+@keyframes flyPath-3 {
+  from {
+    top: 20%;
+    left: 101%;
+  }
+  10% {
+    top: 23%;
+    left: 90%;
+  }
+  20% {
+    top: 27%;
+    left: 80%;
+  }
+  30% {
+    top: 30%;
+    left: 70%;
+  }
+  40% {
+    top: 27%;
+    left: 60%;
+  }
+  50% {
+    top: 30%;
+    left: 50%;
+  }
+  60% {
+    top: 35%;
+    left: 40%;
+  }
+  70% {
+    top: 38%;
+    left: 30%;
+  }
+  80% {
+    top: 35%;
+    left: 20%;
+  }
+  90% {
+    top: 30%;
+    left: 10%;
+  }
+  to {
+    top: 33%;
+    left: -40px;
+  }
+}
+@keyframes flyPath-4 {
+  from {
+    top: 70%;
+    left: 101%;
+  }
+  10% {
+    top: 67%;
+    left: 90%;
+  }
+  20% {
+    top: 62%;
+    left: 80%;
+  }
+  30% {
+    top: 65%;
+    left: 70%;
+  }
+  40% {
+    top: 61%;
+    left: 60%;
+  }
+  50% {
+    top: 55%;
+    left: 50%;
+  }
+  60% {
+    top: 58%;
+    left: 40%;
+  }
+  70% {
+    top: 56%;
+    left: 30%;
+  }
+  80% {
+    top: 51%;
+    left: 20%;
+  }
+  90% {
+    top: 47%;
+    left: 10%;
+  }
+  to {
+    top: 44%;
+    left: -40px;
+  }
+}
+@keyframes butterfly-to-right {
+  from {
+    transform: rotate3d(0, 1, 0, -90deg);
+  }
+  25% {
+    transform: rotate3d(0, 1, 0, -50deg);
+  }
+  50% {
+    transform: rotate3d(0, 1, 0, -90deg);
+  }
+  75% {
+    transform: rotate3d(0, 1, 0, -130deg);
+  }
+  to {
+    transform: rotate3d(0, 1, 0, -90deg);
+  }
+}
+@keyframes butterfly-to-left {
+  from {
+    transform: rotate3d(0, 1, 0, 90deg);
+  }
+  25% {
+    transform: rotate3d(0, 1, 0, 50deg);
+  }
+  50% {
+    transform: rotate3d(0, 1, 0, 90deg);
+  }
+  75% {
+    transform: rotate3d(0, 1, 0, 130deg);
+  }
+  to {
+    transform: rotate3d(0, 1, 0, 90deg);
+  }
+}
+@keyframes rightwing {
+  from {
+    transform: rotateX(90deg) translate3d(-178px, 0, 0) rotate3d(0, 1, 0, 180deg);
+  }
+  50% {
+    transform: rotateX(90deg) translate3d(-178px, 0, 0) rotate3d(0, 1, 0, 100deg);
+  }
+  to {
+    transform: rotateX(90deg) translate3d(-178px, 0, 0) rotate3d(0, 1, 0, 180deg);
+  }
+}
+@keyframes leftwing {
+  from {
+    transform: rotateX(90deg) rotate3d(0, 1, 0, 0deg);
+  }
+  50% {
+    transform: rotateX(90deg) rotate3d(0, 1, 0, 80deg);
+  }
+  to {
+    transform: rotateX(90deg) rotate3d(0, 1, 0, 0deg);
+  }
+}
+
+/* --- === _butterfly.scss === --- */
+/* +++ === _activators.scss === +++ */
+.shaded-cell-1 {
+  background-image: url(../assets/images/tornPaperV1.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transition-property: background-image;
+  transition-duration: 0.9s;
+}
+
+.shaded-cell-2 {
+  background-image: url(../assets/images/tornPaperV2.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transition-property: background-image;
+  transition-duration: 0.9s;
+}
+
+.shaded-cell-3 {
+  background-image: url(../assets/images/tornPaperV3.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transition-property: background-image;
+  transition-duration: 0.9s;
+}
+
+.shaded-cell-4 {
+  background-image: url(../assets/images/tornPaperV4.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transition-property: background-image;
+  transition-duration: 0.9s;
+}
+
+.crossed-cell-1 {
+  background-image: url(../assets/images/crossV1.svg);
+  background-size: 90%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.crossed-cell-2 {
+  background-image: url(../assets/images/crossV2.svg);
+  background-size: 90%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.crossed-cell-3 {
+  background-image: url(../assets/images/crossV3.svg);
+  background-size: 90%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.crossed-cell-4 {
+  background-image: url(../assets/images/crossV4.svg);
+  background-size: 90%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.active-batterfly-1 {
+  animation: butterfly-to-right 5s linear infinite, flyPath-1 20s linear 1;
+}
+
+.active-batterfly-2 {
+  animation: butterfly-to-right 5s linear infinite, flyPath-2 20s linear 1;
+}
+
+.active-batterfly-3 {
+  animation: butterfly-to-left 5s linear infinite, flyPath-3 20s linear 1;
+}
+
+.active-batterfly-4 {
+  animation: butterfly-to-left 5s linear infinite, flyPath-4 20s linear 1;
+}
+
+.active__end-game {
+  pointer-events: none;
+}
+
+.active__solution {
+  pointer-events: none;
+}
+
+.active__modal-window {
+  visibility: visible;
+  opacity: 1;
+}
+
+.active__audio-container {
+  position: static;
+  visibility: visible;
+  opacity: 1;
+}
+
+.active__mute-volume {
+  background-image: url(../assets/images/volOff.svg) !important;
+}
+
+.dark-theme .shaded-cell-1 {
+  background-image: url(../assets/images/tornPaperVN1.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.dark-theme .shaded-cell-2 {
+  background-image: url(../assets/images/tornPaperVN2.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.dark-theme .shaded-cell-3 {
+  background-image: url(../assets/images/tornPaperVN3.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.dark-theme .shaded-cell-4 {
+  background-image: url(../assets/images/tornPaperVN4.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* --- === _activators.scss === --- */
+
+/*# sourceMappingURL=style.css.map */

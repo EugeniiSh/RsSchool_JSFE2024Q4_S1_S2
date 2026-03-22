@@ -1,0 +1,131 @@
+@media (max-width: 700px)
+{
+    /* ===================== +Activators+ ===================== */
+    .active-heading
+    {
+        padding-left: 4.21%;
+        padding-right: 4.21%;
+    }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    .wrapper
+    {
+        width: 91.57%;
+    }
+
+    /* ===================== +Offer section+ ===================== */
+    .offer
+    {
+        height: 552px;
+    }
+
+    .offer-container
+    {
+        padding: 60px 16px;
+    }
+
+    .offer-container__blocks
+    {
+        width: 100%;
+    }
+
+    .big-text-block__text
+    {
+        font-size: 42px;
+        line-height: 115%;
+    }
+
+    /* ===================== +Favorite section+ ===================== */
+    .favorite-heading
+    {
+        font-size: 32px;
+    }
+
+    .favorite__carousel-container
+    {
+        justify-content: center;
+    }
+
+    .carousel-arrow-left,
+    .carousel-arrow-right
+    {
+        display: none;
+    }
+
+    .carousel-blocks__item
+    {
+        width: 100%;
+    }
+
+       /* ===================== +About section+ ===================== */
+    .about-header
+    {
+        font-size: 32px;
+    }
+
+    /* ===================== +Mobile section+ ===================== */
+    .mobile-container
+    {
+        gap: 40px;
+    }
+    
+    .mobile-offer__header
+    {
+        font-size: 32px;
+    }
+
+    .mobile-offer__text
+    {
+        width: 100%;
+    }
+
+    .mobile-offer__buttons
+    {
+        flex-direction: column;
+    }
+
+    .mobile-block__smartphones,
+    .mobile-block__smartphones img
+    {
+        width: 100%;
+    }
+
+    /* ===================== +Footer section+ ===================== */
+    .footer-conteiner
+    {
+        gap: 40px;
+        padding: 60px 16px;
+    }
+
+    .footer-block__offer,
+    .footer-block__contacts
+    {
+        width: 100%;
+    }
+
+    .footer-offer__header
+    {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 510px)
+{
+    .carousel-wrapper
+    {
+        width: 348px;
+    }
+
+    .block-item__picture img
+    {
+        width: 348px;
+    }
+}
+
+@media (max-width: 381px)
+{
+    .heading__nav-container
+    {
+        padding: 80px 16px 60px;
+    }
+}

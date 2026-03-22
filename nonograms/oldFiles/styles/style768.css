@@ -1,0 +1,39 @@
+@media (max-width: 780px)
+{
+  .table-wrapper
+  {
+    /* width: 450px; */
+    width: auto;
+  }
+
+  .header__head
+  {
+    padding-bottom: 10px;
+
+    font-size: 24px;
+  }
+
+  .header__timer
+  {
+    padding-bottom: 10px;
+
+    font-size: 16px;
+  }
+
+  .game-field
+  {
+    font-size: 12px;
+  }
+
+  th,
+  td
+  {
+    --cell-size: 27px;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    /* width: 27px;
+    height: 27px; */
+
+    /* font-size: 4px; */
+  }
+}

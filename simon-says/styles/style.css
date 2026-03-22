@@ -1,0 +1,507 @@
+:root {
+  --bodyBgc: rgb(235, 233, 229);
+}
+
+html {
+  font-size: 1px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  background-color: var(--bodyBgc);
+  background-image: url(../assets/images/SimonSays.jpg);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+@media (max-width: 768px) {
+  body {
+    background-size: 1526rem 861rem;
+  }
+}
+@media (max-width: 540px) {
+  body {
+    background-size: 1063rem 600rem;
+  }
+}
+
+:root {
+  --mainBgc: rgb(241, 241, 240);
+  --blackMid: rgb(56, 56, 56);
+  --playerColor: rgb(0, 0, 200);
+  --simonColor: rgb(150, 39, 254);
+  --redMain: rgb(200, 0, 0);
+  --grenMain: rgb(0, 160, 30);
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+}
+
+.simon-game-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 40rem;
+  height: 100vh;
+  max-height: 1070rem;
+  padding-bottom: 20rem;
+}
+@media (max-width: 540px) {
+  .simon-game-wrapper {
+    gap: 16rem;
+  }
+}
+
+.speech-baloon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 500rem;
+  height: 200rem;
+  padding: 30rem 45rem 20rem;
+  font-size: 28rem;
+  border: 4rem solid var(--blackMid);
+  border-radius: 50%;
+  background-color: var(--mainBgc);
+}
+@media (max-width: 768px) {
+  .speech-baloon {
+    width: 400rem;
+    height: 160rem;
+    padding: 24rem 36rem 16rem;
+    font-size: 22rem;
+  }
+}
+@media (max-width: 540px) {
+  .speech-baloon {
+    width: 250rem;
+    height: 100rem;
+    padding: 10rem 18rem 6rem;
+    font-size: 14rem;
+    border-radius: 40%;
+  }
+}
+
+.simon-speech {
+  transform: translateX(-25%);
+}
+@media (max-width: 768px) {
+  .simon-speech {
+    transform: translateX(-20%);
+  }
+}
+@media (max-width: 540px) {
+  .simon-speech {
+    transform: translateX(-10%);
+  }
+}
+.simon-speech::after {
+  position: absolute;
+  right: 20rem;
+  bottom: 3rem;
+  content: "";
+  width: 50rem;
+  height: 70rem;
+  border-right: 4rem solid var(--blackMid);
+  border-bottom: 4rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  transform: skewX(30deg) rotate(31deg);
+}
+@media (max-width: 768px) {
+  .simon-speech::after {
+    right: 17rem;
+    bottom: 0rem;
+    width: 40rem;
+    height: 56rem;
+  }
+}
+@media (max-width: 540px) {
+  .simon-speech::after {
+    right: 17rem;
+    bottom: -8rem;
+    width: 20rem;
+    height: 28rem;
+    transform: skewX(30deg) rotate(34deg);
+  }
+}
+.simon-speech__own, .simon-speech__word, .simon-speech__answer {
+  text-align: center;
+}
+.simon-speech__word {
+  font-size: 48rem;
+  font-weight: 700;
+  color: var(--simonColor);
+}
+@media (max-width: 768px) {
+  .simon-speech__word {
+    font-size: 38rem;
+  }
+}
+@media (max-width: 540px) {
+  .simon-speech__word {
+    font-size: 22rem;
+  }
+}
+.simon-speech__answer {
+  font-size: 48rem;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  .simon-speech__answer {
+    font-size: 38rem;
+  }
+}
+@media (max-width: 540px) {
+  .simon-speech__answer {
+    font-size: 22rem;
+  }
+}
+.simon-speech__answer_bad {
+  color: var(--redMain);
+}
+.simon-speech__answer_good {
+  color: var(--grenMain);
+}
+.simon-speech__answer_trembling {
+  animation-name: trembling;
+  animation-duration: 0.1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.start-button {
+  align-self: center;
+  padding: 20rem;
+  border-radius: 15rem;
+  border: 2rem solid var(var(--simonColor));
+  box-shadow: 0 0 4rem 4rem var(--simonColor);
+  transition: 0.3s;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .start-button:hover {
+    box-shadow: 0 0 1rem 4rem var(--simonColor);
+    background-color: var(--simonColor);
+    color: var(--mainBgc);
+  }
+}
+@media (max-width: 768px) {
+  .start-button {
+    padding: 16rem;
+  }
+}
+@media (max-width: 540px) {
+  .start-button {
+    padding: 10rem 16rem;
+  }
+}
+
+.settings {
+  display: flex;
+  gap: 15rem;
+  transform: translateX(-40%);
+}
+@media (max-width: 768px) {
+  .settings {
+    transform: translateX(-36%);
+  }
+}
+@media (max-width: 540px) {
+  .settings {
+    transform: translateX(-18%);
+  }
+}
+
+.difficulty {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+  width: 150rem;
+  padding: 15rem;
+  border-radius: 15rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  transition: 0.3s;
+}
+@media (max-width: 768px) {
+  .difficulty {
+    width: 120rem;
+    padding: 12rem;
+  }
+}
+@media (max-width: 540px) {
+  .difficulty {
+    gap: 6rem;
+    width: 100rem;
+    padding: 6rem 8rem;
+  }
+}
+.difficulty__elem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16rem;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  .difficulty__elem {
+    font-size: 12rem;
+  }
+}
+.difficulty__label {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.difficulty__input {
+  transform: scale(1.5);
+  cursor: pointer;
+}
+@media (max-width: 540px) {
+  .difficulty__input {
+    transform: scale(1.2);
+  }
+}
+
+.round-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15rem;
+  width: 200rem;
+  padding: 15rem;
+  border-radius: 15rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  font-size: 36rem;
+  text-transform: capitalize;
+}
+@media (max-width: 768px) {
+  .round-view {
+    width: 160rem;
+    padding: 12rem;
+    font-size: 28rem;
+  }
+}
+@media (max-width: 540px) {
+  .round-view {
+    gap: 6rem;
+    width: 110rem;
+    padding: 12rem;
+    font-size: 20rem;
+  }
+}
+
+.keyboard {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10rem;
+  width: 515rem;
+  padding: 10rem;
+  border-radius: 15rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  transform: translate(-25%);
+  transition: 0.3s;
+}
+@media (max-width: 768px) {
+  .keyboard {
+    gap: 8rem;
+    width: 340rem;
+  }
+}
+@media (max-width: 540px) {
+  .keyboard {
+    gap: 6rem;
+    width: 210rem;
+    padding: 4rem;
+    transform: translate(-22%);
+  }
+}
+.keyboard__button {
+  width: 40rem;
+  height: 40rem;
+  border-radius: 15rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  font-size: 24rem;
+  text-align: center;
+  line-height: 1.5;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .keyboard__button {
+    width: 32rem;
+    height: 32rem;
+    border-radius: 12rem;
+    font-size: 18rem;
+    line-height: 1.6;
+  }
+}
+@media (max-width: 540px) {
+  .keyboard__button {
+    width: 28rem;
+    height: 28rem;
+    border-radius: 10rem;
+    font-size: 18rem;
+    line-height: 1.4;
+  }
+}
+.keyboard__button_active_simon {
+  background-color: var(--simonColor);
+  color: var(--mainBgc);
+}
+.keyboard__button_active_player {
+  background-color: var(--playerColor);
+  color: var(--mainBgc);
+}
+
+.player-speech {
+  position: relative;
+  align-self: flex-end;
+  margin-top: auto;
+  padding: 0 40rem 20rem 0;
+  transition: 0.3s;
+}
+@media (max-width: 768px) {
+  .player-speech {
+    padding: 0 32rem 16rem 0;
+  }
+}
+@media (max-width: 540px) {
+  .player-speech {
+    padding: 0 12rem 16rem 0;
+  }
+}
+.player-speech__block {
+  position: relative;
+}
+.player-speech__block::after {
+  position: absolute;
+  right: 70rem;
+  bottom: -16rem;
+  content: "";
+  width: 30rem;
+  height: 30rem;
+  border-right: 4rem solid var(--blackMid);
+  border-bottom: 4rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  transform: skewX(30deg) rotate(45deg);
+}
+@media (max-width: 540px) {
+  .player-speech__block::after {
+    right: 30rem;
+    bottom: -11rem;
+    width: 20rem;
+    height: 20rem;
+  }
+}
+.player-speech__own {
+  width: 500rem;
+  height: 100rem;
+  border-radius: 15rem;
+  border: 4rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  font-size: 24rem;
+  font-weight: 700;
+  letter-spacing: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--playerColor);
+}
+@media (max-width: 768px) {
+  .player-speech__own {
+    width: 400rem;
+    height: 80rem;
+    font-size: 20rem;
+  }
+}
+@media (max-width: 540px) {
+  .player-speech__own {
+    width: 300rem;
+    height: 60rem;
+    font-size: 14rem;
+  }
+}
+
+.player-buttons {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rem;
+}
+.player-buttons__help, .player-buttons__new-game {
+  position: relative;
+}
+
+.button-player {
+  height: 40rem;
+  padding: 0 10rem;
+  border-radius: 10rem;
+  border: 2rem solid var(--blackMid);
+  background-color: var(--mainBgc);
+  font-size: 24rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: 0.3s;
+}
+@media (max-width: 768px) {
+  .button-player {
+    font-size: 20rem;
+    line-height: 1.8;
+  }
+}
+@media (max-width: 540px) {
+  .button-player {
+    font-size: 18rem;
+    line-height: 2;
+  }
+}
+
+.block_action_hidden {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.block_action_disable {
+  opacity: 0.7;
+  cursor: auto;
+}
+
+@keyframes trembling {
+  from {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-10rem, -10rem);
+  }
+  40% {
+    transform: translate(-10rem, 10rem);
+  }
+  60% {
+    transform: translate(10rem, -10rem);
+  }
+  80% {
+    transform: translate(10rem, 10rem);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+
+/*# sourceMappingURL=style.css.map */
