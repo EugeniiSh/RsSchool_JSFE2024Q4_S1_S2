@@ -5,11 +5,13 @@ import { customEventsUI } from '../events/custom';
 import coverTop from './cover/cover-top';
 import coverBottom from './cover/cover-bottom';
 import pagesBlock from './pages/pages-block';
+import accompanySound from '../accompanySound/accompanySound';
 
 const bookOption: IBook = {
   coverTop,
   pagesBlock,
   customEventsUI,
+  accompanySound,
 
   className: [style.book],
   text: '',
