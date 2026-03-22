@@ -83,6 +83,12 @@ export class AudioPlayer extends Component
 
   protected seconds: number;
 
+  /*
+  TODO: Добавить настройку изначальной громкости в конструктор.
+  Держать этот параметр в создаваемом объекте и менять, при изменении громкости пользователем.
+  Это позволит передавать этот параметр в дубликат аудио плеера, что бы текущая громкость
+  родителя стала изначальной громкостью дубликата.
+  */       
   constructor
   (
     {
@@ -173,6 +179,15 @@ export class AudioPlayer extends Component
       buttonPlay,
       buttonNext,
     };
+  }
+
+  public getSongStatus(): 'play' | 'stop'
+  {
+    const isPlaing = this.getClassList()[this.style.playing];
+    
+    if(isPlaing) return 'play';
+
+    return 'stop';
   }
 
   public getPlayerComponents(): IAudioPlayerComponents

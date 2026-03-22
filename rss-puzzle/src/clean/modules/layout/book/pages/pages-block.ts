@@ -138,11 +138,7 @@ export class PagesBlock extends Component {
       this.getNode().style.zIndex = zIndexBlock;
     }, 10);
 
-    for (
-      let i = 1;
-      i < 3;
-      i += 1 // for(let i = 1; i < 2; i += 1)
-    ) {
+    for (let i = 1; i < 3; i += 1) {
       const upperPage = pages[pages.length - i];
 
       setTimeout(
