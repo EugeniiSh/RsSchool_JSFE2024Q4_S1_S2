@@ -16,7 +16,7 @@ export function buildPlugins(options: BuildOptions): Configuration['plugins']
     (
       { 
         template: options.paths.html, 
-        // favicon: path.resolve(options.paths.public, 'favicon.ico') /*путь к favicon*/
+        favicon: path.resolve(options.paths.public, 'puzzle_favicon.png') /*путь к favicon*/
       }
     ), 
     new DefinePlugin 
